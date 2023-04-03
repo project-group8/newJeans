@@ -1,7 +1,7 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require("sequelize");
+
+const Sequelize = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Likes extends Model {
     /**
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  
+
   Likes.init({
     likeIdx: {
       allowNull: false, // NOT NULL
