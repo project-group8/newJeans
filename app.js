@@ -3,8 +3,8 @@ const app = express();
 
 const cors = require("cors");
 const logger = require("./middlewares/logger.js");
-const errorhandler = require("./middlewares/errorhandler.js");
-const { sequelize } = require("./models/index.js");
+// const errorhandler = require("./middlewares/errorhandler.js");
+// const { sequelize } = require("./models/index.js");
 const cookieParser = require("cookie-parser");
 
 const indexRouter = require("./routes/index");
@@ -24,8 +24,14 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use("/user/kakaoLogin/", (req, res, next) => {
+  const { code } = req.body;
+  console.log(code);
+  logger.info(code);
+  return res.send(code || "값이 들어오지 않았습니다.");
+});
 app.use("/api", indexRouter);
-app.use(errorhandler);
+// app.use(errorhandler);
 
 app.listen(PORT, () => {
   console.log(PORT, "포트로 서버가 열렸어요!");
