@@ -167,6 +167,37 @@ class CardpostsRepository {
 
     return renamePost;
   };
+
+  postCard = async (title, category, desc, tag, imgUrl, userIdx) => {
+    await CardPost.create({
+      title,
+      category,
+      desc,
+      tag: tag || "",
+      imgUrl: imgUrl || "",
+      userIdx,
+      viewCount: 0,
+    });
+
+    return;
+  };
+
+  updatePost = async (postIdx, title, category, desc, tag, imgUrl) => {
+    await CardPost.update(
+      { title, category, desc, tag, imgUrl },
+      { where: { postIdx: postIdx } }
+    );
+
+    return;
+  };
+
+  deletePost = async (postIdx) => {
+    await CardPost.destroy({
+      where: { postIdx: postIdx },
+    });
+
+    return;
+  };
 }
 
 module.exports = CardpostsRepository;

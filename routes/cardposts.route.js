@@ -1,23 +1,36 @@
 const express = require("express");
-// const authMiddleware = require("../middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/authMiddleware");
 const router = express.Router();
 
 const CardpostsController = require("../controllers/cardposts.controller");
 const cardpostsController = new CardpostsController();
 
-//authMiddleware 장착해야함
 router.get("/", cardpostsController.findSplitCards);
 
 router.get("/hotPostCard", cardpostsController.findHotCards);
 
 router.get("/post/:postIdx", cardpostsController.findOnePost);
 
-// router.get("/:gameId", gamesController.getOneGame);
+router.get("/post/:postIdx/getPoll", cardpostsController.postPollResult);
 
-// router.post("/", authMiddleware, gamesController.postGame);
+router.post("/post/createPost", authMiddleware, cardpostsController.postCard);
 
-// router.put("/:gameId", authMiddleware, gamesController.updateOption);
+router.post(
+  "/post/:postIdx/createPoll",
+  authMiddleware,
+  cardpostsController.postPoll
+);
 
-// router.delete("/:gameId", authMiddleware, gamesController.deleteOneGame);
+router.put(
+  "/post/createPost/:postIdx",
+  authMiddleware,
+  cardpostsController.updatePost
+);
+
+router.delete(
+  "/post/createPost/:postIdx",
+  authMiddleware,
+  cardpostsController.deletePost
+);
 
 module.exports = router;
