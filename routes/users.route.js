@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 const express = require("express");
 const router = express.Router();
 const authLoginMiddleware = require("../middlewares/auth-login-middleware");
@@ -14,3 +16,4 @@ router.post("/login", authLoginMiddleware, userController.userLogin);
 // 로그 아웃
 router.get("/logout", userController.userlogout);
 module.exports = router;
+>>>>>>> d629c68ad3ce6c6ab87665d4fa0fb4e132b0ae2d
