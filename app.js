@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 
 const indexRouter = require("./routes/index");
 
-const port = 3000;
+const PORT = process.env.SERVER_PORT;
 
 app.use(
   cors({

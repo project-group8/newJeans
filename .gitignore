@@ -2,9 +2,6 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 
 ### Node ###
-#config
-config
-
 # Logs
 logs
 *.log
@@ -145,3 +142,12 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+
+# config
+config/
+
+# env
+.env
+
+#makeTables
+makeTable.js
