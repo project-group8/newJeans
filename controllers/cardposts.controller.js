@@ -51,7 +51,7 @@ class CardpostsController {
         throw Boom.badRequest("postIdx가 입력되지 않았습니다.");
       }
 
-      const findOnePost = this.cardpostsService.findOnePost(postIdx);
+      const findOnePost = await this.cardpostsService.findOnePost(postIdx);
 
       if (!findOnePost) {
         throw Boom.notFound(
