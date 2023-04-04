@@ -199,6 +199,15 @@ class CardpostsRepository {
     return;
   };
 
+  // title, category, desc값이 비워져있다면 포스트 수정하기 전의 값을 반환합니다.
+  nullCheck = async (postIdx, title, category, desc) => {
+    const checkTitle = nullFill(title, CardPost, postIdx);
+    const checkCategory = nullFill(category, CardPost, postIdx);
+    const checkDesc = nullFill(desc, CardPost, postIdx);
+
+    return { checkTitle, checkCategory, checkDesc };
+  };
+
   deletePost = async (postIdx) => {
     await CardPost.destroy({
       where: { postIdx: postIdx },
@@ -224,6 +233,20 @@ async function calculatePostIndex(postId) {
         getRandomIntInclusive(5, 10)) /
     Math.pow(daysElapsed, 0.8);
   return index;
+}
+
+// Model table을 설정하고 postIdx에 맞는 value 프로퍼티를 찾습니다.
+// 인자 value가 값이 없다면 설정한 table에서 value값을 찾아서 돌려줍니다.
+async function nullFill(value, table, postIdx) {
+  if (!value) {
+    const fill = await table.findOne({
+      where: { postIdx },
+      attibutes: [`${value}`],
+    });
+    return fill.value;
+  } else {
+    return value;
+  }
 }
 
 module.exports = CardpostsRepository;

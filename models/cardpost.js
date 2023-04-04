@@ -12,17 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      this.hasOne(models.Poll, {
-        sourceKey: "postIdx",
-        foreignKey: "postIdx",
-      });
-
-      this.hasMany(models.Likes, {
-        sourceKey: "postIdx",
-        foreignKey: "postIdx",
-      });
-
-      this.hasMany(models.DisLikes, {
+      this.hasMany(models.Prefer, {
         sourceKey: "postIdx",
         foreignKey: "postIdx",
       });
