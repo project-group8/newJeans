@@ -3,7 +3,7 @@ const { Model } = require("sequelize");
 
 const Sequelize = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Poll extends Model {
+  class Prefer extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+
       this.belongsTo(models.Users, {
         targetKey: "userIdx", // Users 모델의 userId 컬럼을
         foreignKey: "userIdx", // 현재 모델의 userId가 외래키로 가진다.
@@ -22,11 +23,23 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "postIdx", // 현재 모델의 userId가 외래키로 가진다.
         onDelete: "CASCADE",
       });
+
+      this.belongsTo(models.Comment, {
+        targetKey: "commentIdx", // Users 모델의 userId 컬럼을
+        foreignKey: "commentIdx", // 현재 모델의 userId가 외래키로 가진다.
+        onDelete: "CASCADE",
+      });
+
+      this.belongsTo(models.ReplyComment, {
+        targetKey: "replyIdx", // Users 모델의 userId 컬럼을
+        foreignKey: "replyIdx", // 현재 모델의 userId가 외래키로 가진다.
+        onDelete: "CASCADE",
+      });
     }
   }
-  Poll.init(
+  Prefer.init(
     {
-      pollIdx: {
+      preferIdx: {
         allowNull: false, // NOT NULL
         primaryKey: true, // Primary Key (기본키)
         type: DataTypes.UUID,
@@ -39,6 +52,26 @@ module.exports = (sequelize, DataTypes) => {
       postIdx: {
         allowNull: false,
         type: DataTypes.UUID,
+      },
+      commentIdx: {
+        allowNull: false,
+        type: DataTypes.UUID,
+        defaultValue: Sequelize.UUIDV4,
+      },
+      replyIdx: {
+        allowNull: false,
+        type: DataTypes.UUID,
+        defaultValue: Sequelize.UUIDV4,
+      },
+      selectprefer: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        defaultValue: "0",
+        // 0 디폴트
+        // 1. 포스트에 대한 좋아요 2. 포스트에 대한 싫어요.
+        // 3. 댓글에 대한 좋아요. 4 댓글에 대한 싫어요.
+        // 5. 대댓글에 대한 좋아요 6. 대댓글에 대한 싫어요.
+        // 7. 포스트 찬성 8. 포스트 반대.
       },
       createdAt: {
         allowNull: false, // NOT NULL
@@ -53,8 +86,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Poll",
+      modelName: "Prefer",
     }
   );
-  return Poll;
+  return Prefer;
 };

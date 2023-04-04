@@ -50,11 +50,20 @@ class CardpostsService {
   };
 
   updatePost = async (postIdx, title, category, desc, tag, imgUrl) => {
-    await this.cardpostsRepository.updatePost(
+    const nullCheck = await cardpostsRepository.nullCheck(
       postIdx,
       title,
       category,
-      desc,
+      desc
+    );
+
+    const { checkTitle, checkCategory, checkDesc } = nullCheck;
+
+    await this.cardpostsRepository.updatePost(
+      postIdx,
+      checkTitle,
+      checkCategory,
+      checkDesc,
       tag,
       imgUrl
     );
