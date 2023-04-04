@@ -3,7 +3,7 @@ const { Model } = require("sequelize");
 
 const Sequelize = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Likes extends Model {
+  class Poll extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -24,10 +24,9 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-
-  Likes.init(
+  Poll.init(
     {
-      likeIdx: {
+      pollIdx: {
         allowNull: false, // NOT NULL
         primaryKey: true, // Primary Key (기본키)
         type: DataTypes.UUID,
@@ -54,8 +53,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Likes",
+      modelName: "Poll",
     }
   );
-  return Likes;
+  return Poll;
 };
