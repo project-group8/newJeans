@@ -15,11 +15,15 @@ class CommentController {
       const { postIdx } = req.params;
       const { desc } = req.body;
       const { userIdx } = res.locals.user;
-      const resultSchema = await commentSchema.validate({ desc });
 
-      // 검증 실패 시 오류 메세지 반환
+      const resultSchema = await commentSchema.validate({ desc });
       if (resultSchema.error && desc.length < 1 ) {
         throw Boom.preconditionFailed('댓글 내용을 입력해주세요.');
+      }
+
+      const searchPost = await this.commentService.searchPost(postIdx)
+      if (!searchPost) {
+        throw Boom.notFound('해당 게시글은 존재하지 않습니다.');
       }
 
       await this.commentService.createComment(
@@ -29,7 +33,6 @@ class CommentController {
       );
 
       return res.status(200).json({
-          success: true,
           message: '댓글을 작성하였습니다.',
       });
     } catch (error) {
@@ -43,10 +46,15 @@ class CommentController {
     try {
       const { postIdx } = req.params;
 
-      const selectComments = await this.commentService.selectComments(postIdx);
+      const searchPost = await this.commentService.searchPost(postIdx)
+      if (!searchPost) {
+        throw Boom.notFound('해당 게시글은 존재하지 않습니다.');
+      }
+
+      const getComments = await this.commentService.getComments(postIdx);
 
       return res.status(200).json({
-        comments: selectComments,
+        comments: getComments,
       });
     } catch (error) {
         logger.error(error.message);
@@ -74,7 +82,6 @@ class CommentController {
         userIdx
       );
 
-      
         return res.status(200).json({
           message: '댓글을 수정하였습니다.',
         });
@@ -84,49 +91,41 @@ class CommentController {
     }
   };
 
-  /**
-   * 댓글 삭제
-   */
+
+   //댓글 삭제
   deleteComment = async (req, res, next) => {
     try {
       const { commentIdx } = req.params;
       const { userIdx } = res.locals.user;
 
-      const deleteComment = await this.commentService.deleteComment(
+      await this.commentService.deleteComment(
         commentIdx,
         userIdx
       );
 
-      if (deleteComment === 0) {
-        throw Boom.badRequest('댓글 삭제에 실패했습니다', false);
-      } else {
-        return res.status(200).json({
-          success: true,
-          message: '댓글을 삭제하였습니다.',
-        });
-      }
+      return res.status(200).json({
+        message: '댓글을 삭제하였습니다.',
+      });
     } catch (err) {
-      next(err);
-    }
+      logger.error(error.message);
+      throw error;
+  }
   };
 
-  /**
-   * 댓글 권한 확인
-   * @returns res
-   */
+   //댓글 권한 확인
   getAuth = async (req, res, next) => {
     try {
       const { commentId } = req.params;
       const { userId } = res.locals.user;
       await this.commentService.checkAuth(commentId, userId);
-      // const chk = await this.quizService.checkAuth(quizId, userId)
+
       return res.status(200).json({
-        success: true,
         message: '수정 및 삭제 권한이 확인 되었습니다.',
       });
-    } catch (error) {
-      next(error);
-    }
+    } catch (err) {
+      logger.error(error.message);
+      throw error;
+  }
   };
 }
 
