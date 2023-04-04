@@ -1,111 +1,85 @@
 require('dotenv').config();
 
 const Boom = require('boom');
-const CommentRepository = require('../repositories/comment.repository');
-const CustomError = require('../middlewares/errorHandler');
+const CommentRepository = require('../repositories/comments.repository');
 
-class AuthService {
+class CommentService {
   commentRepository = new CommentRepository();
 
   /**
-   * 댓글 생성
-   * @param {Integer} quizId
-   * @param {String} userId
-   * @param {String} content
+   * @param {UUID} postIdx
+   * @param {UUID} userIdx
+   * @param {String} desc
    * @return 생성된 댓글
    */
-  writeComment = async (quizId, userId, content) => {
-    const searchQuiz = await this.commentRepository.findQuiz(quizId);
+  //댓글 생성
+  createComment = async (postIdx, userIdx, desc) => {
+    await this.commentRepository.findPost(postIdx);
 
-    if (!searchQuiz) {
-      throw Boom.notFound('해당 퀴즈 게시글은 존재하지 않습니다.', false);
-    }
-
-    const createUser = await this.commentRepository.writeComment(
-      quizId,
-      userId,
-      content
+    const writeUser = await this.commentRepository.createComment(
+      postIdx,
+      userIdx,
+      desc
     );
-
-    return createUser;
+    return writeUser;
   };
 
   /**
-   * 댓글 조회
-   * @param {Integer} quizId
-   * @return 조회한 댓글 리스트
+   * @param {UUID} postIdx
+   * @return 조회한 댓글 목록
    */
-  selectComments = async (quizId) => {
-    const searchQuiz = await this.commentRepository.findQuiz(quizId);
+  //댓글 조회
+  findComment = async (postIdx) => {
+    await this.commentRepository.findPost(postIdx);
 
-    if (!searchQuiz) {
-      throw Boom.forbidden('해당 퀴즈 게시글은 존재하지 않습니다.', false);
-    }
+    const comment = await this.commentRepository.findComments(postIdx);
 
-    const selectComments = await this.commentRepository.selectComments(quizId);
-
-    return selectComments;
-  };
+    return {
+    commentIdx: comment.commentIdx,
+    postIdx: comment.postIdx,
+    nickname: comment.User.nickname,
+    desc: comment.desc,
+    createdAt: comment.createdAt,
+    updatedAt: comment.updatedAt,
+    };
+  }
 
   /**
-   * 댓글 수정
-   * @param {Integer} commentId
-   * @param {String} content
-   * @param {String} userId
+   * @param {UUID} commentIdx
+   * @param {String} desc
+   * @param {UUID} userIdx
    * @return 수정된 행의 수
    */
-  updateComment = async (commentId, content, userId) => {
-    const serachQuizComment = await this.commentRepository.findQuizComment(
-      commentId,
-      userId
+  //댓글 수정
+  updateComment = async (commentIdx, desc, userIdx) => {
+    await this.commentRepository.findeAuth(
+        commentIdx,
+        userIdx
     );
 
-    if (!serachQuizComment) {
-      throw Boom.forbidden('댓글의 수정 권한이 없습니다.', false);
-    }
-
-    const updateComment = await this.commentRepository.updateComment(
-      commentId,
-      userId,
-      content
+    const modifyComment = await this.commentRepository.updateComment(
+      commentIdx,
+      userIdx,
+      desc
     );
-
-    return updateComment;
+    return modifyComment;
   };
 
   /**
-   * 댓글 삭제
-   * @param {Integer} commentId
-   * @param {String} userId
+   * @param {UUID} commentIdx
+   * @param {UUID} userIdx
    * @return 삭제된 행의 수
    */
-  deleteComment = async (commentId, userId) => {
-    const serachQuizComment = await this.commentRepository.findQuizComment(
-      commentId,
-      userId
+  //댓글 삭제
+  deleteComment = async (commentIdx, userIdx) => {
+    await this.commentRepository.findeAuth(
+        commentIdx,
+        userIdx
     );
 
-    if (!serachQuizComment) {
-      throw Boom.forbidden('댓글의 삭제 권한이 없습니다.', false);
-    }
-
-    const deleteComment = await this.commentRepository.deleteComment(commentId);
-
-    return deleteComment;
-  };
-
-  /**
-   * 댓글 수정/삭제 권한 조회
-   * @param {Integer} commentId
-   * @param {String} userId
-   * @returns Boom Error Handler
-   */
-  checkAuth = async (commentId, userId) => {
-    const userAuthChk = await this.commentRepository.findUpdateAuth(commentId);
-    if (userAuthChk.userId !== userId) {
-      throw Boom.forbidden('권한이 없습니다.', false);
-    }
+    const removeComment = await this.commentRepository.deleteComment(commentIdx);
+    return removeComment;
   };
 }
 
-module.exports = AuthService;
+module.exports = CommentService;

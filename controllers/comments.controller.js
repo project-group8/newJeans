@@ -21,8 +21,8 @@ class CommentController {
         throw Boom.preconditionFailed('댓글 내용을 입력해주세요.');
       }
 
-      const searchPost = await this.commentService.searchPost(postIdx)
-      if (!searchPost) {
+      const seletPost = await this.commentService.findPost(postIdx)
+      if (!seletPost) {
         throw Boom.notFound('해당 게시글은 존재하지 않습니다.');
       }
 
@@ -46,15 +46,15 @@ class CommentController {
     try {
       const { postIdx } = req.params;
 
-      const searchPost = await this.commentService.searchPost(postIdx)
-      if (!searchPost) {
+      const seletPost = await this.commentService.findPost(postIdx)
+      if (!seletPost) {
         throw Boom.notFound('해당 게시글은 존재하지 않습니다.');
       }
 
-      const getComments = await this.commentService.getComments(postIdx);
+      const seletComments = await this.commentService.findComment(postIdx);
 
       return res.status(200).json({
-        comments: getComments,
+        comments: seletComments,
       });
     } catch (error) {
         logger.error(error.message);
@@ -69,11 +69,15 @@ class CommentController {
       const { commentIdx } = req.params;
       const { desc } = req.body;
       const { userIdx } = res.locals.user;
+
       const resultSchema = await commentSchema.validate({ desc });
-      
-      // 스키마를 이용해 데이터를 검증한다
       if (resultSchema.error && desc.length < 1 ) {
         throw Boom.preconditionFailed('댓글 내용을 입력해주세요.');
+      }
+
+      const chkAuthComment = await this.commentService.findeAuth( commentIdx, userIdx );
+      if (!chkAuthComment) {
+        throw Boom.forbidden('댓글의 수정 권한이 없습니다.');
       }
 
       await this.commentService.updateComment(
@@ -82,9 +86,9 @@ class CommentController {
         userIdx
       );
 
-        return res.status(200).json({
-          message: '댓글을 수정하였습니다.',
-        });
+      return res.status(200).json({
+        message: '댓글을 수정하였습니다.',
+      });
     } catch (err) {
         logger.error(error.message);
         throw error;
@@ -98,6 +102,11 @@ class CommentController {
       const { commentIdx } = req.params;
       const { userIdx } = res.locals.user;
 
+      const chkAuthComment = await this.commentService.findeAuth( commentIdx, userIdx );
+      if (!chkAuthComment) {
+        throw Boom.forbidden('댓글의 삭제 권한이 없습니다.');
+      }
+
       await this.commentService.deleteComment(
         commentIdx,
         userIdx
@@ -105,22 +114,6 @@ class CommentController {
 
       return res.status(200).json({
         message: '댓글을 삭제하였습니다.',
-      });
-    } catch (err) {
-      logger.error(error.message);
-      throw error;
-  }
-  };
-
-   //댓글 권한 확인
-  getAuth = async (req, res, next) => {
-    try {
-      const { commentId } = req.params;
-      const { userId } = res.locals.user;
-      await this.commentService.checkAuth(commentId, userId);
-
-      return res.status(200).json({
-        message: '수정 및 삭제 권한이 확인 되었습니다.',
       });
     } catch (err) {
       logger.error(error.message);
