@@ -1,5 +1,5 @@
 # project
-[git commit message type]
+-git commit message type
 
 !BREAKING CHANGE : 커다란 API 변경의 경우
 !HOTFIX : 급하게 치명적인 버그를 고쳐야 하는 경우
