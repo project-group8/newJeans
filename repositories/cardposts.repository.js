@@ -55,11 +55,9 @@ class CardpostsRepository {
     return renameSplitCards;
   };
 
-  // [미구현] 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.
+  // [테스트 필요] 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.
   findHotCards = async () => {
     const findCardPosts = await CardPost.findAll({
-      offset: splitNumber * (splitPageNumber - 1), // * (page - 1) 페이지당 게시글 수만큼 건너뛰기
-      limit: splitNumber, // 페이지당 게시글 수만큼 가져오기
       attibutes: [
         "postIdx",
         "userIdx",
@@ -99,7 +97,17 @@ class CardpostsRepository {
       })
     );
 
-    return renameSplitCards;
+    const postsWithIndex = await Promise.all(
+      renameSplitCards.map(async (post) => {
+        const index = await calculatePostIndex(post.postIdx);
+        return { ...post.toJSON(), index };
+      })
+    );
+
+    const top3Posts = postsWithIndex
+      .sort((a, b) => b.index - a.index)
+      .slice(0, 3);
+    return top3Posts;
   };
 
   // postIdx로 지정한 카드를 불러들입니다.
@@ -167,6 +175,55 @@ class CardpostsRepository {
 
     return renamePost;
   };
+
+  postCard = async (title, category, desc, tag, imgUrl, userIdx) => {
+    await CardPost.create({
+      title,
+      category,
+      desc,
+      tag: tag || "",
+      imgUrl: imgUrl || "",
+      userIdx,
+      viewCount: 0,
+    });
+
+    return;
+  };
+
+  updatePost = async (postIdx, title, category, desc, tag, imgUrl) => {
+    await CardPost.update(
+      { title, category, desc, tag, imgUrl },
+      { where: { postIdx: postIdx } }
+    );
+
+    return;
+  };
+
+  deletePost = async (postIdx) => {
+    await CardPost.destroy({
+      where: { postIdx: postIdx },
+    });
+
+    return;
+  };
+}
+
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+async function calculatePostIndex(postId) {
+  const post = await CardPost.findByPk(postId);
+  const daysElapsed = moment().diff(post.createdAt, "days");
+  const index =
+    (post.postViewCount +
+      (await Likes.findAll(post.postIdx).length) * getRandomIntInclusive(3, 5) +
+      (await Comment.findAll(post.postIdx).length) *
+        getRandomIntInclusive(5, 10)) /
+    Math.pow(daysElapsed, 0.8);
+  return index;
 }
 
 module.exports = CardpostsRepository;

@@ -5,7 +5,6 @@ const morgan = require("morgan");
 const cors = require("cors");
 const logger = require("./middlewares/logger.js");
 // const errorhandler = require("./middlewares/errorhandler.js");
-// const { sequelize } = require("./models/index.js");
 const cookieParser = require("cookie-parser");
 app.use(morgan("dev"));
 
@@ -26,12 +25,6 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use("/user/kakaoLogin/", (req, res, next) => {
-  const { code } = req.body;
-  console.log(code);
-  logger.info(code);
-  return res.send(code || "값이 들어오지 않았습니다.");
-});
 app.use("/api", indexRouter);
 
 app.use((err, req, res, next) => {
