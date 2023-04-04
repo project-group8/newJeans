@@ -5,8 +5,8 @@ const morgan = require("morgan");
 const cors = require("cors");
 const logger = require("./middlewares/logger.js");
 // const errorhandler = require("./middlewares/errorhandler.js");
-// const { sequelize } = require("./models/index.js");
 const cookieParser = require("cookie-parser");
+const connect = require("./schemas");
 app.use(morgan("dev"));
 
 const indexRouter = require("./routes/index");
@@ -25,6 +25,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+connect();
 
 app.use("/api", indexRouter);
 
