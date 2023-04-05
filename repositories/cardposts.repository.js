@@ -3,8 +3,9 @@ const moment = require("moment");
 
 class CardpostsRepository {
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다. [작동하는지 확인하고 수정하기]
-  findSplitCards = async (splitNumber, splitPageNumber) => {
+  findSplitCards = async (category, splitNumber, splitPageNumber) => {
     const findCardPosts = await CardPost.findAll({
+      where: category ? { category: category } : {},
       order: [["createdAt", "DESC"]], // createdAt 역순으로 정렬
       offset: splitNumber * (splitPageNumber - 1), // * (page - 1) 페이지당 게시글 수만큼 건너뛰기
       limit: splitNumber, // 페이지당 게시글 수만큼 가져오기

@@ -10,11 +10,17 @@ class CardpostsService {
   }
 
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
-  findSplitCards = async (splitNumber, splitPageNumber) => {
+  findSplitCards = async (category, splitNumber, splitPageNumber) => {
+    switch (category) {
+      case "전체":
+        category = null;
+        break;
+    }
     const changesplitNumber = Number(splitNumber);
     const changesplitPageNumber = Number(splitPageNumber);
 
     const findSplitCards = await this.cardpostsRepository.findSplitCards(
+      category,
       changesplitNumber,
       changesplitPageNumber
     );
