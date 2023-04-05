@@ -11,7 +11,8 @@ const Boom = require("boom");
 const logger = require("../middlewares/logger.js");
 
 const re_email = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const re_password = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+// const re_password = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,12})/; //특수문자 필수
+const re_password = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,12}$/
 
 const userSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -53,7 +54,7 @@ class UserService {
   //토큰 생성
   generateToken = async (email) => {
     const token = jwt.sign({ email }, process.env.SECRET_KEY, {
-      expiresIn: "60m",
+      // expiresIn: "12h",
     });
 
     return token;
