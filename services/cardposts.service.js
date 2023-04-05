@@ -86,24 +86,24 @@ class CardpostsService {
     if (proInputValue == true) {
       await this.preferRepository.postProInput(userIdx, postIdx);
 
-      return PostPollCount(postIdx);
+      return this.PostPollCount(postIdx);
     } else if (conInputValue == true) {
       await this.preferRepository.postConInput(userIdx, postIdx);
 
-      return PostPollCount(postIdx);
+      return this.PostPollCount(postIdx);
     }
   };
 
   postPollResult = async (postIdx) => {
-    return PostPollCount(postIdx);
+    return this.PostPollCount(postIdx);
   };
-}
 
-async function PostPollCount(postIdx) {
-  const postProCount = await this.preferRepository.postProCount(postIdx);
-  const postConCount = await this.preferRepository.postConCount(postIdx);
+  PostPollCount = async (postIdx) => {
+    const postProCount = await this.preferRepository.postProCount(postIdx);
+    const postConCount = await this.preferRepository.postConCount(postIdx);
 
-  return { proCount: postProCount, conCount: postConCount };
+    return { proCount: postProCount, conCount: postConCount };
+  };
 }
 
 module.exports = CardpostsService;

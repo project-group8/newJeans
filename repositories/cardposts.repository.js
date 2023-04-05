@@ -77,6 +77,8 @@ class CardpostsRepository {
           where: { postIdx: ele.postIdx },
         });
 
+        console.log("testetset", addUserInfo);
+
         return {
           postIdx: ele.postIdx,
           category: ele.category,
@@ -171,6 +173,7 @@ class CardpostsRepository {
     return renamePost;
   };
 
+  // 포스트를 작성합니다.
   postCard = async (title, category, desc, tag, imgUrl, userIdx) => {
     await CardPost.create({
       title,
@@ -185,6 +188,7 @@ class CardpostsRepository {
     return;
   };
 
+  // 포스트를 수정합니다.
   updatePost = async (postIdx, title, category, desc, tag, imgUrl) => {
     await CardPost.update(
       { title, category, desc, tag, imgUrl },
@@ -203,6 +207,7 @@ class CardpostsRepository {
     return { checkTitle, checkCategory, checkDesc };
   };
 
+  // 포스트를 삭제합니다.
   deletePost = async (postIdx) => {
     await CardPost.destroy({
       where: { postIdx: postIdx },
