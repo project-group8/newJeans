@@ -1,19 +1,14 @@
-const {
-  CardPost,
-  Users,
-  UserInfo,
-  Comment,
-  Likes,
-  DisLikes,
-} = require("../models");
+const { CardPost, Users, UserInfo, Comment, Prefer } = require("../models");
+const moment = require("moment");
 
 class CardpostsRepository {
-  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
+  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다. [작동하는지 확인하고 수정하기]
   findSplitCards = async (splitNumber, splitPageNumber) => {
     const findCardPosts = await CardPost.findAll({
+      order: [["createdAt", "DESC"]], // createdAt 역순으로 정렬
       offset: splitNumber * (splitPageNumber - 1), // * (page - 1) 페이지당 게시글 수만큼 건너뛰기
       limit: splitNumber, // 페이지당 게시글 수만큼 가져오기
-      attibutes: [
+      attributes: [
         "postIdx",
         "userIdx",
         "category",
@@ -28,13 +23,13 @@ class CardpostsRepository {
     const renameSplitCards = await Promise.all(
       findCardPosts.map(async (ele) => {
         const addUserInfo = await UserInfo.findOne({
-          where: { userIdx: userIdx },
+          where: { userIdx: ele.userIdx },
         });
         const addUser = await Users.findOne({
-          where: { userIdx: userIdx },
+          where: { userIdx: ele.userIdx },
         });
         const postCommentCount = await Comment.findAll({
-          where: { postIdx: postIdx },
+          where: { postIdx: ele.postIdx },
         });
 
         return {
@@ -47,7 +42,7 @@ class CardpostsRepository {
           nickname: addUser.nickname,
           postViewCount: ele.viewCount,
           commentCount: postCommentCount.length || 0,
-          isImg: imgUrl ? true : false,
+          isImg: ele.imgUrl ? true : false,
         };
       })
     );
@@ -55,10 +50,10 @@ class CardpostsRepository {
     return renameSplitCards;
   };
 
-  // [테스트 필요] 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.
+  // 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.
   findHotCards = async () => {
     const findCardPosts = await CardPost.findAll({
-      attibutes: [
+      attributes: [
         "postIdx",
         "userIdx",
         "category",
@@ -73,13 +68,13 @@ class CardpostsRepository {
     const renameSplitCards = await Promise.all(
       findCardPosts.map(async (ele) => {
         const addUserInfo = await UserInfo.findOne({
-          where: { userIdx: userIdx },
+          where: { userIdx: ele.userIdx },
         });
         const addUser = await Users.findOne({
-          where: { userIdx: userIdx },
+          where: { userIdx: ele.userIdx },
         });
         const postCommentCount = await Comment.findAll({
-          where: { postIdx: postIdx },
+          where: { postIdx: ele.postIdx },
         });
 
         return {
@@ -92,7 +87,7 @@ class CardpostsRepository {
           nickname: addUser.nickname,
           postViewCount: ele.viewCount,
           commentCount: postCommentCount.length || 0,
-          isImg: imgUrl ? true : false,
+          isImg: ele.imgUrl ? true : false,
         };
       })
     );
@@ -100,14 +95,17 @@ class CardpostsRepository {
     const postsWithIndex = await Promise.all(
       renameSplitCards.map(async (post) => {
         const index = await calculatePostIndex(post.postIdx);
-        return { ...post.toJSON(), index };
+        return { post, index };
       })
     );
 
     const top3Posts = postsWithIndex
       .sort((a, b) => b.index - a.index)
       .slice(0, 3);
-    return top3Posts;
+
+    const top3PostObjects = top3Posts.map((item) => item.post);
+
+    return top3PostObjects;
   };
 
   // postIdx로 지정한 카드를 불러들입니다.
@@ -126,52 +124,49 @@ class CardpostsRepository {
         "tag",
       ],
     });
+    const addUserInfo = await UserInfo.findOne({
+      where: { userIdx: findOnePost.userIdx },
+    });
+    const addUser = await Users.findOne({
+      where: { userIdx: findOnePost.userIdx },
+    });
+    const postCommentCount = await Comment.findAll({
+      where: { postIdx: findOnePost.postIdx },
+    });
+    const PreferlikeCounts = await Prefer.count({
+      where: { postIdx: findOnePost.postIdx, selectprefer: "1" },
+    });
 
-    const renamePost = Promise.all(
-      findOnePost.map(async (ele) => {
-        const addUserInfo = await UserInfo.findOne({
-          where: { userIdx: userIdx },
-        });
-        const addUser = await Users.findOne({
-          where: { userIdx: userIdx },
-        });
-        const postCommentCount = await Comment.findAll({
-          where: { postIdx: postIdx },
-        });
-        const likesCounts = await Likes.findAll({
-          where: { postIdx: postIdx },
-        });
-        const disLikesCounts = await DisLikes.findAll({
-          where: { postIdx: postIdx },
-        });
-        return {
-          postIdx: ele.postIdx,
-          title: ele.title,
-          userLevel: addUserInfo.level,
-          category: ele.category,
-          desc: ele.desc,
-          createdAt: ele.createdAt,
-          nickname: addUser.nickname,
-          postViewCount: ele.viewCount,
-          commentCount: postCommentCount.length || 0,
-          likesCount: likesCounts.length || 0,
-          disLikesCount: disLikesCounts.length || 0,
-          imgUrl: !ele.imgUrl
-            ? ""
-            : ele.imgUrl.replace(/\s/g, "").substring(0, 4) == "http"
-            ? ele.imgUrl.replace(/\s/g, "").split(",")
-            : [
-                ele.imgUrl
-                  .replace(/\s/g, "")
-                  .split(",")
-                  .slice(0, 2)
-                  .trim()
-                  .join(","),
-              ],
-          tag: !ele.tag ? "" : ele.tag.trim().split(","),
-        };
-      })
-    );
+    const PreferdisLikesCounts = await Prefer.count({
+      where: { postIdx: findOnePost.postIdx, selectprefer: "2" },
+    });
+
+    const renamePost = {
+      postIdx: findOnePost.postIdx,
+      title: findOnePost.title,
+      userLevel: addUserInfo.level,
+      category: findOnePost.category,
+      desc: findOnePost.desc,
+      createdAt: findOnePost.createdAt,
+      nickname: addUser.nickname,
+      postViewCount: findOnePost.viewCount,
+      commentCount: postCommentCount.length || 0,
+      likesCount: PreferlikeCounts || 0,
+      disLikesCount: PreferdisLikesCounts || 0,
+      imgUrl: !findOnePost.imgUrl
+        ? ""
+        : findOnePost.imgUrl.replace(/\s/g, "").substring(0, 4) == "http"
+        ? findOnePost.imgUrl.replace(/\s/g, "").split(",")
+        : [
+            findOnePost.imgUrl
+              .replace(/\s/g, "")
+              .split(",")
+              .slice(0, 2)
+              .trim()
+              .join(","),
+          ],
+      tag: !findOnePost.tag ? "" : findOnePost.tag.trim().split(","),
+    };
 
     return renamePost;
   };
@@ -226,12 +221,18 @@ function getRandomIntInclusive(min, max) {
 async function calculatePostIndex(postId) {
   const post = await CardPost.findByPk(postId);
   const daysElapsed = moment().diff(post.createdAt, "days");
+
   const index =
-    (post.postViewCount +
-      (await Likes.findAll(post.postIdx).length) * getRandomIntInclusive(3, 5) +
-      (await Comment.findAll(post.postIdx).length) *
+    (post.viewCount +
+      ((await Prefer.findAll({
+        where: { postIdx: post.postIdx, selectprefer: "1" },
+      }).length) || 0) *
+        getRandomIntInclusive(3, 5) +
+      ((await Comment.count({ where: { postIdx: post.postIdx } }).length) ||
+        0) *
         getRandomIntInclusive(5, 10)) /
     Math.pow(daysElapsed, 0.8);
+
   return index;
 }
 

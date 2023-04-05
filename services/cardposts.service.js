@@ -1,20 +1,22 @@
 const CardpostsRepository = require("../repositories/cardposts.repository");
 const UserRepository = require("../repositories/users.repository");
-const LikesRepository = require("../repositories/likes.repository");
-const DisLikesRepository = require("../repositories/dislikes.repository");
+const PreferRepository = require("../repositories/prefer.repository");
+const Boom = require("boom");
 class CardpostsService {
   constructor() {
     this.cardpostsRepository = new CardpostsRepository();
-    this.likesRepository = new LikesRepository();
     this.userRepository = new UserRepository();
-    this.disLikesRepository = new DisLikesRepository();
+    this.preferRepository = new PreferRepository();
   }
 
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
   findSplitCards = async (splitNumber, splitPageNumber) => {
+    const changesplitNumber = Number(splitNumber);
+    const changesplitPageNumber = Number(splitPageNumber);
+
     const findSplitCards = await this.cardpostsRepository.findSplitCards(
-      splitNumber,
-      splitPageNumber
+      changesplitNumber,
+      changesplitPageNumber
     );
 
     return findSplitCards;
@@ -78,15 +80,15 @@ class CardpostsService {
 
   postPoll = async (userIdx, postIdx, proInputValue, conInputValue) => {
     if (proInputValue == true && conInputValue == true) {
-      throw error;
+      throw Boom.badRequest("값을 둘다 true로 줄 수 없습니다.");
     }
 
     if (proInputValue == true) {
-      await this.likesRepository.postProInput(userIdx, postIdx);
+      await this.preferRepository.postProInput(userIdx, postIdx);
 
       return PostPollCount(postIdx);
     } else if (conInputValue == true) {
-      await this.disLikesRepository.postConInput(userIdx, postIdx);
+      await this.preferRepository.postConInput(userIdx, postIdx);
 
       return PostPollCount(postIdx);
     }
@@ -98,8 +100,8 @@ class CardpostsService {
 }
 
 async function PostPollCount(postIdx) {
-  const postProCount = await this.likesRepository.postProCount(postIdx);
-  const postConCount = await this.disLikesRepository.postConCount(postIdx);
+  const postProCount = await this.preferRepository.postProCount(postIdx);
+  const postConCount = await this.preferRepository.postConCount(postIdx);
 
   return { proCount: postProCount, conCount: postConCount };
 }
