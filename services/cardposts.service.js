@@ -10,11 +10,17 @@ class CardpostsService {
   }
 
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
-  findSplitCards = async (splitNumber, splitPageNumber) => {
+  findSplitCards = async (category, splitNumber, splitPageNumber) => {
+    switch (category) {
+      case "전체":
+        category = null;
+        break;
+    }
     const changesplitNumber = Number(splitNumber);
     const changesplitPageNumber = Number(splitPageNumber);
 
     const findSplitCards = await this.cardpostsRepository.findSplitCards(
+      category,
       changesplitNumber,
       changesplitPageNumber
     );
@@ -86,24 +92,24 @@ class CardpostsService {
     if (proInputValue == true) {
       await this.preferRepository.postProInput(userIdx, postIdx);
 
-      return PostPollCount(postIdx);
+      return this.PostPollCount(postIdx);
     } else if (conInputValue == true) {
       await this.preferRepository.postConInput(userIdx, postIdx);
 
-      return PostPollCount(postIdx);
+      return this.PostPollCount(postIdx);
     }
   };
 
   postPollResult = async (postIdx) => {
-    return PostPollCount(postIdx);
+    return this.PostPollCount(postIdx);
   };
-}
 
-async function PostPollCount(postIdx) {
-  const postProCount = await this.preferRepository.postProCount(postIdx);
-  const postConCount = await this.preferRepository.postConCount(postIdx);
+  PostPollCount = async (postIdx) => {
+    const postProCount = await this.preferRepository.postProCount(postIdx);
+    const postConCount = await this.preferRepository.postConCount(postIdx);
 
-  return { proCount: postProCount, conCount: postConCount };
+    return { proCount: postProCount, conCount: postConCount };
+  };
 }
 
 module.exports = CardpostsService;
