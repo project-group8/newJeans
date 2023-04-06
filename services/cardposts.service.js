@@ -28,7 +28,7 @@ class CardpostsService {
     return findSplitCards;
   };
 
-  // [테스트 필요] 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.
+  // 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.
   findHotCards = async () => {
     const findHotCards = await this.cardpostsRepository.findHotCards();
 

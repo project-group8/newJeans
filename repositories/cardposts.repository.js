@@ -4,96 +4,22 @@ const moment = require("moment");
 class CardpostsRepository {
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다. [작동하는지 확인하고 수정하기]
   findSplitCards = async (category, splitNumber, splitPageNumber) => {
-    const findCardPosts = await CardPost.findAll({
-      where: category ? { category: category } : {},
-      order: [["createdAt", "DESC"]], // createdAt 역순으로 정렬
-      offset: splitNumber * (splitPageNumber - 1), // * (page - 1) 페이지당 게시글 수만큼 건너뛰기
-      limit: splitNumber, // 페이지당 게시글 수만큼 가져오기
-      attributes: [
-        "postIdx",
-        "userIdx",
-        "category",
-        "title",
-        "desc",
-        "createdAt",
-        "viewCount",
-        "imgUrl",
-      ],
-    });
-
-    const renameSplitCards = await Promise.all(
-      findCardPosts.map(async (ele) => {
-        const addUserInfo = await UserInfo.findOne({
-          where: { userIdx: ele.userIdx },
-        });
-        const addUser = await Users.findOne({
-          where: { userIdx: ele.userIdx },
-        });
-        const postCommentCount = await Comment.findAll({
-          where: { postIdx: ele.postIdx },
-        });
-
-        return {
-          postIdx: ele.postIdx,
-          category: ele.category,
-          userLevel: addUserInfo.level,
-          title: ele.title,
-          desc: ele.desc,
-          createdAt: ele.createdAt,
-          nickname: addUser.nickname,
-          postViewCount: ele.viewCount,
-          commentCount: postCommentCount.length || 0,
-          isImg: ele.imgUrl ? true : false,
-        };
-      })
+    const findCardPosts = await this.cardfindAll(
+      splitNumber,
+      splitPageNumber,
+      category
     );
+
+    const renameSplitCards = await this.renameSplitCards(findCardPosts);
 
     return renameSplitCards;
   };
 
   // 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.
   findHotCards = async () => {
-    const findCardPosts = await CardPost.findAll({
-      attributes: [
-        "postIdx",
-        "userIdx",
-        "category",
-        "title",
-        "desc",
-        "createdAt",
-        "viewCount",
-        "imgUrl",
-      ],
-    });
+    const findCardPosts = await this.cardfindAll();
 
-    const renameSplitCards = await Promise.all(
-      findCardPosts.map(async (ele) => {
-        const addUserInfo = await UserInfo.findOne({
-          where: { userIdx: ele.userIdx },
-        });
-        const addUser = await Users.findOne({
-          where: { userIdx: ele.userIdx },
-        });
-        const postCommentCount = await Comment.findAll({
-          where: { postIdx: ele.postIdx },
-        });
-
-        console.log("testetset", addUserInfo);
-
-        return {
-          postIdx: ele.postIdx,
-          category: ele.category,
-          userLevel: addUserInfo.level,
-          title: ele.title,
-          desc: ele.desc,
-          createdAt: ele.createdAt,
-          nickname: addUser.nickname,
-          postViewCount: ele.viewCount,
-          commentCount: postCommentCount.length || 0,
-          isImg: ele.imgUrl ? true : false,
-        };
-      })
-    );
+    const renameSplitCards = await this.renameSplitCards(findCardPosts);
 
     const postsWithIndex = await Promise.all(
       renameSplitCards.map(async (post) => {
@@ -216,6 +142,59 @@ class CardpostsRepository {
 
     return;
   };
+
+  // 인자값을 모두 넣게 되면 페이지네이션으로 작동합니다. 인자값이 없다면 모든 값을 찾아오는 기능을 합니다.
+  cardfindAll = async (splitNumber, splitPageNumber, category) => {
+    return await CardPost.findAll({
+      where: category ? { category: category } : null,
+      order: [["createdAt", "DESC"]], // createdAt 역순으로 정렬
+      offset:
+        splitNumber && splitPageNumber
+          ? splitNumber * (splitPageNumber - 1)
+          : null, // * (page - 1) 페이지당 게시글 수만큼 건너뛰기
+      limit: splitNumber ? splitNumber : null, // 페이지당 게시글 수만큼 가져오기
+      attributes: [
+        "postIdx",
+        "userIdx",
+        "category",
+        "title",
+        "desc",
+        "createdAt",
+        "viewCount",
+        "imgUrl",
+      ],
+    });
+  };
+
+  // 다른 테이블의 값을 추가하고 key를 바꿔줍니다.
+  renameSplitCards = async (findCardPosts) => {
+    return await Promise.all(
+      findCardPosts.map(async (ele) => {
+        const addUserInfo = await UserInfo.findOne({
+          where: { userIdx: ele.userIdx },
+        });
+        const addUser = await Users.findOne({
+          where: { userIdx: ele.userIdx },
+        });
+        const postCommentCount = await Comment.findAll({
+          where: { postIdx: ele.postIdx },
+        });
+
+        return {
+          postIdx: ele.postIdx,
+          category: ele.category,
+          userLevel: addUserInfo.level,
+          title: ele.title,
+          desc: ele.desc,
+          createdAt: ele.createdAt,
+          nickname: addUser.nickname,
+          postViewCount: ele.viewCount,
+          commentCount: postCommentCount.length || 0,
+          isImg: ele.imgUrl ? true : false,
+        };
+      })
+    );
+  };
 }
 
 function getRandomIntInclusive(min, max) {
@@ -224,18 +203,17 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+// index = 조회수 + (좋아요 * 3~5) + (댓글 수 * 5~10)
 async function calculatePostIndex(postId) {
   const post = await CardPost.findByPk(postId);
   const daysElapsed = moment().diff(post.createdAt, "days");
-
   const index =
     (post.viewCount +
-      ((await Prefer.findAll({
+      ((await Prefer.count({
         where: { postIdx: post.postIdx, selectprefer: "1" },
-      }).length) || 0) *
+      })) || 0) *
         getRandomIntInclusive(3, 5) +
-      ((await Comment.count({ where: { postIdx: post.postIdx } }).length) ||
-        0) *
+      ((await Comment.count({ where: { postIdx: post.postIdx } })) || 0) *
         getRandomIntInclusive(5, 10)) /
     Math.pow(daysElapsed, 0.8);
 
