@@ -16,16 +16,17 @@ class CardpostsService {
     splitNumber,
     splitPageNumber
   ) => {
+    switch (maincategory) {
+      case "전체":
+        maincategory = null;
+        break;
+    }
     switch (category) {
       case "전체":
         category = null;
         break;
     }
-    switch (maincategory) {
-      case "전체":
-        category = null;
-        break;
-    }
+
     const changesplitNumber = Number(splitNumber);
     const changesplitPageNumber = Number(splitPageNumber);
 

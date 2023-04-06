@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 const moment = require("moment");
 
 class CardpostsRepository {
-  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다. [작동하는지 확인하고 수정하기]
+  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
   findSplitCards = async (
     maincategory,
     category,
@@ -178,8 +178,18 @@ class CardpostsRepository {
     splitPageNumber,
     category
   ) => {
+    // 1. 메인카테고리 = 전체 AND 카테고리 = 전체.
+    // 2. 메인카테고리 = 전체 AND 카테고리 = 선택카테고리
+    // 3. 메인카테고리 = 유머, 진지 AND 카테고리 = 전체
+    // 4. 메인카테고리 = 유머, 진지 AND 카테고리 = 선택카테고리
+
     return await CardPost.findAll({
-      where: maincategory && category ? { maincategory, category } : null,
+      where: {
+        [Op.and]: [
+          !maincategory ? {} : { maincategory },
+          !category ? {} : { category },
+        ],
+      },
       order: [["createdAt", "DESC"]], // createdAt 역순으로 정렬
       offset:
         splitNumber && splitPageNumber
