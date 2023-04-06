@@ -53,11 +53,15 @@ class UserService {
    */
   //토큰 생성
   generateToken = async (email) => {
-    const token = jwt.sign({ email }, process.env.SECRET_KEY, {
-      // expiresIn: "12h",
+    const access_token = jwt.sign({ email }, process.env.SECRET_KEY, {
+      expiresIn: "1h",
     });
 
-    return token;
+    const refresh_token = jwt.sign({email}, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+
+    return {access_token, refresh_token};
   };
 
   /**
@@ -86,6 +90,11 @@ class UserService {
         throw Boom.conflict("중복된 이메일 주소 입니다");
       }
 
+      const existingNickname = await this.userRepository.findByNickname(nickname);
+      if (existingNickname) {
+        throw Boom.conflict("중복된 닉네임 입니다");
+      }
+
       const hashedPassword = await createHashPassword(password);
 
       await this.userRepository.userSignup(email, hashedPassword, nickname);
@@ -111,6 +120,11 @@ class UserService {
         updatedAt: user.updatedAt,
       };
     });
+  };
+
+  findNickname = async (email) => {
+    const nickname = await this.userRepository.findNickname(email);
+    return nickname
   };
 }
 module.exports = UserService;

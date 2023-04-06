@@ -14,12 +14,18 @@ class UserController {
   userLogin = async (req, res, next) => {
     try {
       const { email, password } = req.body;
+      const {nickname} = await this.userService.findNickname(email);
       await this.userService.userLogin(email, password);
 
-      const token = await this.userService.generateToken(email);
-      res.set("Authorization", `Bearer ${token}`);
+      const {access_token, refresh_token} = await this.userService.generateToken(email);
+      res.set("Authorization", `Bearer ${access_token}`);
+      res.set("X-Refresh-Token",`Bearer ${refresh_token}`)
 
-      return res.status(201).json({ message: "로그인에 성공했습니다" });
+      return res.status(201).json({ message: "로그인에 성공했습니다",
+      access_token: access_token,
+      refresh_token: refresh_token,
+      nickname,
+       });
     } catch (error) {
       next(error);
     }
