@@ -1,10 +1,17 @@
 const { CardPost, Users, UserInfo, Comment, Prefer } = require("../models");
+const { Op } = require("sequelize");
 const moment = require("moment");
 
 class CardpostsRepository {
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다. [작동하는지 확인하고 수정하기]
-  findSplitCards = async (category, splitNumber, splitPageNumber) => {
+  findSplitCards = async (
+    maincategory,
+    category,
+    splitNumber,
+    splitPageNumber
+  ) => {
     const findCardPosts = await this.cardfindAll(
+      maincategory,
       splitNumber,
       splitPageNumber,
       category
@@ -44,6 +51,7 @@ class CardpostsRepository {
       attibutes: [
         "postIdx",
         "userIdx",
+        "maincategory",
         "category",
         "title",
         "desc",
@@ -74,6 +82,7 @@ class CardpostsRepository {
       postIdx: findOnePost.postIdx,
       title: findOnePost.title,
       userLevel: addUserInfo.level,
+      maincategory: ele.maincategory,
       category: findOnePost.category,
       desc: findOnePost.desc,
       createdAt: findOnePost.createdAt,
@@ -101,9 +110,18 @@ class CardpostsRepository {
   };
 
   // 포스트를 작성합니다.
-  postCard = async (title, category, desc, tag, imgUrl, userIdx) => {
+  postCard = async (
+    title,
+    maincategory,
+    category,
+    desc,
+    tag,
+    imgUrl,
+    userIdx
+  ) => {
     await CardPost.create({
       title,
+      maincategory,
       category,
       desc,
       tag: tag || "",
@@ -116,37 +134,52 @@ class CardpostsRepository {
   };
 
   // 포스트를 수정합니다.
-  updatePost = async (postIdx, title, category, desc, tag, imgUrl) => {
+  updatePost = async (
+    userIdx,
+    postIdx,
+    title,
+    maincategory,
+    category,
+    desc,
+    tag,
+    imgUrl
+  ) => {
     await CardPost.update(
-      { title, category, desc, tag, imgUrl },
-      { where: { postIdx: postIdx } }
+      { title, maincategory, category, desc, tag, imgUrl },
+      { where: { postIdx, userIdx } }
     );
 
     return;
   };
 
   // title, category, desc값이 비워져있다면 포스트 수정하기 전의 값을 반환합니다.
-  nullCheck = async (postIdx, title, category, desc) => {
+  nullCheck = async (postIdx, title, maincategory, category, desc) => {
     const checkTitle = nullFill(title, CardPost, postIdx);
     const checkCategory = nullFill(category, CardPost, postIdx);
+    const checkMainCategory = nullFill(maincategory, CardPost, postIdx);
     const checkDesc = nullFill(desc, CardPost, postIdx);
 
-    return { checkTitle, checkCategory, checkDesc };
+    return { checkTitle, checkMainCategory, checkCategory, checkDesc };
   };
 
   // 포스트를 삭제합니다.
-  deletePost = async (postIdx) => {
+  deletePost = async (userIdx, postIdx) => {
     await CardPost.destroy({
-      where: { postIdx: postIdx },
+      where: { postIdx, userIdx },
     });
 
     return;
   };
 
   // 인자값을 모두 넣게 되면 페이지네이션으로 작동합니다. 인자값이 없다면 모든 값을 찾아오는 기능을 합니다.
-  cardfindAll = async (splitNumber, splitPageNumber, category) => {
+  cardfindAll = async (
+    maincategory,
+    splitNumber,
+    splitPageNumber,
+    category
+  ) => {
     return await CardPost.findAll({
-      where: category ? { category: category } : null,
+      where: maincategory && category ? { maincategory, category } : null,
       order: [["createdAt", "DESC"]], // createdAt 역순으로 정렬
       offset:
         splitNumber && splitPageNumber
@@ -156,6 +189,7 @@ class CardpostsRepository {
       attributes: [
         "postIdx",
         "userIdx",
+        "maincategory",
         "category",
         "title",
         "desc",
@@ -166,7 +200,7 @@ class CardpostsRepository {
     });
   };
 
-  // 다른 테이블의 값을 추가하고 key를 바꿔줍니다.
+  // 다른 테이블의 프로퍼티를 가져오고 더합니다. 프로퍼티 이름을 바꿔줍니다.
   renameSplitCards = async (findCardPosts) => {
     return await Promise.all(
       findCardPosts.map(async (ele) => {
@@ -182,6 +216,7 @@ class CardpostsRepository {
 
         return {
           postIdx: ele.postIdx,
+          maincategory: ele.maincategory,
           category: ele.category,
           userLevel: addUserInfo.level,
           title: ele.title,
