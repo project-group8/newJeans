@@ -16,6 +16,16 @@ class UserRepository extends Users {
     return findEmail;
   };
 
+  findNickname = async (email) => {
+    const nickname = await Users.findOne({
+      attributes: [
+        "nickname",
+      ],
+      where: { email },
+    });
+    return nickname;
+  };
+
 
   /**
    * @param {String} email
