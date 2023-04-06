@@ -9,10 +9,11 @@ class CardpostsController {
 
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
   findSplitCards = async (req, res, next) => {
-    const { splitNumber, splitPageNumber } = req.query;
+    const { category, splitNumber, splitPageNumber } = req.query;
 
     try {
       const findSplitCards = await this.cardpostsService.findSplitCards(
+        category,
         splitNumber,
         splitPageNumber
       );

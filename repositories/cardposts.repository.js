@@ -3,8 +3,9 @@ const moment = require("moment");
 
 class CardpostsRepository {
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다. [작동하는지 확인하고 수정하기]
-  findSplitCards = async (splitNumber, splitPageNumber) => {
+  findSplitCards = async (category, splitNumber, splitPageNumber) => {
     const findCardPosts = await CardPost.findAll({
+      where: category ? { category: category } : {},
       order: [["createdAt", "DESC"]], // createdAt 역순으로 정렬
       offset: splitNumber * (splitPageNumber - 1), // * (page - 1) 페이지당 게시글 수만큼 건너뛰기
       limit: splitNumber, // 페이지당 게시글 수만큼 가져오기
@@ -76,6 +77,8 @@ class CardpostsRepository {
         const postCommentCount = await Comment.findAll({
           where: { postIdx: ele.postIdx },
         });
+
+        console.log("testetset", addUserInfo);
 
         return {
           postIdx: ele.postIdx,
@@ -171,6 +174,7 @@ class CardpostsRepository {
     return renamePost;
   };
 
+  // 포스트를 작성합니다.
   postCard = async (title, category, desc, tag, imgUrl, userIdx) => {
     await CardPost.create({
       title,
@@ -185,6 +189,7 @@ class CardpostsRepository {
     return;
   };
 
+  // 포스트를 수정합니다.
   updatePost = async (postIdx, title, category, desc, tag, imgUrl) => {
     await CardPost.update(
       { title, category, desc, tag, imgUrl },
@@ -203,6 +208,7 @@ class CardpostsRepository {
     return { checkTitle, checkCategory, checkDesc };
   };
 
+  // 포스트를 삭제합니다.
   deletePost = async (postIdx) => {
     await CardPost.destroy({
       where: { postIdx: postIdx },

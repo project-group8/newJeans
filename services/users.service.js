@@ -12,7 +12,7 @@ const logger = require("../middlewares/logger.js");
 
 const re_email = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 // const re_password = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,12})/; //특수문자 필수
-const re_password = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,12}$/
+const re_password = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,12}$/;
 
 const userSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -82,7 +82,7 @@ class UserService {
       }
 
       if (password !== passwordConfirm) {
-        throw Boom.badRequest('패스워드 확인과 일치 하지 않습니다.');
+        throw Boom.badRequest("패스워드 확인과 일치 하지 않습니다.");
       }
 
       const existingUser = await this.userRepository.findByID(email);
