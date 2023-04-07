@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+// const fetch = require("node-fetch");
 const Joi = require("joi");
 const UserRepository = require("../repositories/users.repository");
 const jwt = require("jsonwebtoken");
@@ -108,7 +109,19 @@ class UserService {
       expiresIn: "1h",
     });
 
-    const refresh_token = jwt.sign({email}, process.env.SECRET_KEY, {
+    const refresh_token = jwt.sign({}, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+
+    return {access_token, refresh_token};
+  };
+
+  kakaoGenerateToken = async (email) => {
+    const access_token = jwt.sign({ email }, process.env.SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    const refresh_token = jwt.sign({}, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
 
