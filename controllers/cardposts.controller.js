@@ -9,10 +9,10 @@ class CardpostsController {
 
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
   findSplitCards = async (req, res, next) => {
-    const { category, splitNumber, splitPageNumber } = req.query;
-
+    const { maincategory, category, splitNumber, splitPageNumber } = req.query;
     try {
       const findSplitCards = await this.cardpostsService.findSplitCards(
+        maincategory,
         category,
         splitNumber,
         splitPageNumber
@@ -68,8 +68,10 @@ class CardpostsController {
 
   // 새로운 post를 등록합니다.
   postCard = async (req, res, next) => {
-    const { title, category, desc, tag, imgUrl } = req.body;
+    const { title, maincategory, category, desc, tag } = req.body;
     const { email } = res.locals.user;
+    const uploadUrlArray = req.files;
+    const imgUrl = await uploadUrlArray.map((x) => x.location);
 
     const messages = {
       "string.base": "이 필드는 문자열로 이루어져야 합니다.",
@@ -107,12 +109,13 @@ class CardpostsController {
       }
 
       await this.cardpostsService.postCard(
+        email,
         title,
+        maincategory,
         category,
         desc,
         tag,
-        imgUrl,
-        email
+        imgUrl
       );
       return res.status(200).json({ msg: "게시글 작성에 성공했습니다." });
     } catch (error) {
@@ -122,8 +125,11 @@ class CardpostsController {
 
   // 포스트를 업데이트 합니다.
   updatePost = async (req, res, next) => {
+    const { email } = res.locals.user;
     const { postIdx } = req.params;
-    const { title, category, desc, tag, imgUrl } = req.body;
+    const { title, maincategory, category, desc, tag } = req.body;
+    const uploadUrlArray = req.files;
+    const imgUrl = await uploadUrlArray.map((x) => x.location);
 
     try {
       if (!postIdx) {
@@ -133,8 +139,10 @@ class CardpostsController {
       }
 
       await this.cardpostsService.updatePost(
+        email,
         postIdx,
         title,
+        maincategory,
         category,
         desc,
         tag,
@@ -148,6 +156,7 @@ class CardpostsController {
 
   // 포스트를 삭제합니다.
   deletePost = async (req, res, next) => {
+    const { email } = res.locals.user;
     const { postIdx } = req.params;
 
     try {
@@ -157,7 +166,7 @@ class CardpostsController {
         );
       }
 
-      await this.cardpostsService.deletePost(postIdx);
+      await this.cardpostsService.deletePost(email, postIdx);
       res.status(200).json({ msg: "게시글 삭제에 성공했습니다." });
     } catch (error) {
       throw error;
@@ -168,7 +177,7 @@ class CardpostsController {
   postPoll = async (req, res, next) => {
     const { postIdx } = req.params;
     const { proInputValue, conInputValue } = req.body;
-    const { userIdx } = res.locals.user;
+    const { email } = res.locals.user;
 
     try {
       if (!postIdx) {
@@ -178,7 +187,7 @@ class CardpostsController {
       }
 
       const pollResult = await this.cardpostsService.postPoll(
-        userIdx,
+        email,
         postIdx,
         proInputValue,
         conInputValue

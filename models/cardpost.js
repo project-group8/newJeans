@@ -54,6 +54,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false, // NOT NULL
         type: DataTypes.STRING,
       },
+      maincategory: {
+        allowNull: false, // NOT NULL
+        type: DataTypes.STRING,
+        //진지
+        //유머
+      },
       category: {
         allowNull: false, // NOT NULL
         type: DataTypes.STRING,
@@ -83,6 +89,10 @@ module.exports = (sequelize, DataTypes) => {
       viewCount: {
         allowNull: false, // NOT NULL
         type: DataTypes.INTEGER,
+      },
+      pollTitle: {
+        allowNull: true,
+        type: DataTypes.STRING,
       },
       createdAt: {
         allowNull: false, // NOT NULL
