@@ -59,6 +59,7 @@ class CardpostsRepository {
         "viewCount",
         "imgUrl",
         "tag",
+        "pollTitle",
       ],
     });
     const addUserInfo = await UserInfo.findOne({
@@ -91,6 +92,7 @@ class CardpostsRepository {
       commentCount: postCommentCount.length || 0,
       likesCount: PreferlikeCounts || 0,
       disLikesCount: PreferdisLikesCounts || 0,
+      pollTitle: findOnePost.pollTitle || "",
       imgUrl: !findOnePost.imgUrl
         ? ""
         : findOnePost.imgUrl.replace(/\s/g, "").substring(0, 4) == "http"
@@ -117,7 +119,8 @@ class CardpostsRepository {
     desc,
     tag,
     imgUrl,
-    userIdx
+    userIdx,
+    pollTitle
   ) => {
     await CardPost.create({
       title,
@@ -128,6 +131,7 @@ class CardpostsRepository {
       imgUrl: imgUrl || "",
       userIdx,
       viewCount: 0,
+      pollTitle,
     });
 
     return;
@@ -142,10 +146,11 @@ class CardpostsRepository {
     category,
     desc,
     tag,
-    imgUrl
+    imgUrl,
+    pollTitle
   ) => {
     await CardPost.update(
-      { title, maincategory, category, desc, tag, imgUrl },
+      { title, maincategory, category, desc, tag, imgUrl, pollTitle },
       { where: { postIdx, userIdx } }
     );
 

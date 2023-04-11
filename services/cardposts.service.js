@@ -62,7 +62,8 @@ class CardpostsService {
     category,
     desc,
     tag,
-    imgUrl
+    imgUrl,
+    pollTitle
   ) => {
     const findByID = await this.userRepository.findByID(email);
     const userIdx = findByID.userIdx;
@@ -73,7 +74,8 @@ class CardpostsService {
       desc,
       tag,
       imgUrl,
-      userIdx
+      userIdx,
+      pollTitle
     );
 
     return;
@@ -88,7 +90,8 @@ class CardpostsService {
     category,
     desc,
     tag,
-    imgUrl
+    imgUrl,
+    pollTitle
   ) => {
     const findByID = await this.userRepository.findByID(email);
     const userIdx = findByID.userIdx;
@@ -112,7 +115,8 @@ class CardpostsService {
       checkCategory,
       checkDesc,
       tag,
-      imgUrl
+      imgUrl,
+      pollTitle
     );
 
     return;

@@ -68,7 +68,7 @@ class CardpostsController {
 
   // 새로운 post를 등록합니다.
   postCard = async (req, res, next) => {
-    const { title, maincategory, category, desc, tag } = req.body;
+    const { title, maincategory, category, desc, tag, pollTitle } = req.body;
     const { email } = res.locals.user;
     const uploadUrlArray = req.files;
     const imgUrl = await uploadUrlArray.map((x) => x.location);
@@ -115,7 +115,8 @@ class CardpostsController {
         category,
         desc,
         tag,
-        imgUrl
+        imgUrl,
+        pollTitle
       );
       return res.status(200).json({ msg: "게시글 작성에 성공했습니다." });
     } catch (error) {
@@ -127,7 +128,7 @@ class CardpostsController {
   updatePost = async (req, res, next) => {
     const { email } = res.locals.user;
     const { postIdx } = req.params;
-    const { title, maincategory, category, desc, tag } = req.body;
+    const { title, maincategory, category, desc, tag, pollTitle } = req.body;
     const uploadUrlArray = req.files;
     const imgUrl = await uploadUrlArray.map((x) => x.location);
 
@@ -146,7 +147,8 @@ class CardpostsController {
         category,
         desc,
         tag,
-        imgUrl
+        imgUrl,
+        pollTitle
       );
       return res.status(200).json({ msg: "게시글 수정에 성공했습니다." });
     } catch (error) {
