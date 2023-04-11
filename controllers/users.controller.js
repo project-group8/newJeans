@@ -22,14 +22,29 @@ class UserController {
       res.set("X-Refresh-Token",`Bearer ${refresh_token}`)
 
       return res.status(201).json({ message: "로그인에 성공했습니다",
-      access_token: access_token,
-      refresh_token: refresh_token,
       nickname,
-       });
+      });
     } catch (error) {
       next(error);
     }
   };
+
+  //카카오 로그인
+  kakaoLogin = async (req, res) => {
+    const {code} = req.body;
+    const authToken = await this.userService.getKakaoToken(code)
+    const userData = await this.userService.getKakaoUser(authToken)
+    console.log(userData.email)
+    // const {email, nickname} = userData
+    const {access_token, refresh_token} = await this.userService.generateToken(userData.email);
+    res.set("Authorization", `Bearer ${access_token}`);
+    res.set("X-Refresh-Token",`Bearer ${refresh_token}`)
+    // res.send(JSON.stringify(userData)); // 프론트엔드에서 확인하려고
+    return res.status(201).json({ message: "로그인에 성공했습니다",
+      nickname: userData.nickname,
+      });
+    };
+
 
   /**
    * @param {import("express").Request} req - express Request
