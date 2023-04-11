@@ -90,6 +90,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false, // NOT NULL
         type: DataTypes.INTEGER,
       },
+      pollTitle: {
+        allowNull: true,
+        type: DataTypes.STRING,
+      },
       createdAt: {
         allowNull: false, // NOT NULL
         type: DataTypes.DATE,
