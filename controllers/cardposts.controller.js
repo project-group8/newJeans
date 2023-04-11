@@ -10,7 +10,6 @@ class CardpostsController {
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
   findSplitCards = async (req, res, next) => {
     const { maincategory, category, splitNumber, splitPageNumber } = req.query;
-
     try {
       const findSplitCards = await this.cardpostsService.findSplitCards(
         maincategory,
@@ -69,8 +68,9 @@ class CardpostsController {
 
   // 새로운 post를 등록합니다.
   postCard = async (req, res, next) => {
-    const { title, maincategory, category, desc, tag, imgUrl } = req.body;
+    const { title, maincategory, category, desc, tag } = req.body;
     const { email } = res.locals.user;
+    const imgUrl = req.file.location;
 
     const messages = {
       "string.base": "이 필드는 문자열로 이루어져야 합니다.",

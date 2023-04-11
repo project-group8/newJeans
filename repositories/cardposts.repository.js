@@ -82,7 +82,7 @@ class CardpostsRepository {
       postIdx: findOnePost.postIdx,
       title: findOnePost.title,
       userLevel: addUserInfo.level,
-      maincategory: ele.maincategory,
+      maincategory: findOnePost.maincategory,
       category: findOnePost.category,
       desc: findOnePost.desc,
       createdAt: findOnePost.createdAt,
