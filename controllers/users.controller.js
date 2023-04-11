@@ -34,9 +34,10 @@ class UserController {
     const {code} = req.body;
     const authToken = await this.userService.getKakaoToken(code)
     const userData = await this.userService.getKakaoUser(authToken)
-    console.log(userData.email)
+    const email = userData.email
+    // console.log(email)
     // const {email, nickname} = userData
-    const {access_token, refresh_token} = await this.userService.generateToken(userData.email);
+    const {access_token, refresh_token} = await this.userService.generateToken(email);
     res.set("Authorization", `Bearer ${access_token}`);
     res.set("X-Refresh-Token",`Bearer ${refresh_token}`)
     // res.send(JSON.stringify(userData)); // 프론트엔드에서 확인하려고
