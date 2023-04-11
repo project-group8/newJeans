@@ -116,17 +116,17 @@ class UserService {
     return {access_token, refresh_token};
   };
 
-  kakaoGenerateToken = async (email) => {
-    const access_token = jwt.sign({ email }, process.env.SECRET_KEY, {
-      expiresIn: "1h",
-    });
+  // kakaoGenerateToken = async (email) => {
+  //   const access_token = jwt.sign({ email }, process.env.SECRET_KEY, {
+  //     expiresIn: "1h",
+  //   });
 
-    const refresh_token = jwt.sign({}, process.env.SECRET_KEY, {
-      expiresIn: "1d",
-    });
+  //   const refresh_token = jwt.sign({}, process.env.SECRET_KEY, {
+  //     expiresIn: "1d",
+  //   });
 
-    return {access_token, refresh_token};
-  };
+  //   return {access_token, refresh_token};
+  // };
 
   /**
    * @param {String} email
