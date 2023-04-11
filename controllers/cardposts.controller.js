@@ -70,7 +70,8 @@ class CardpostsController {
   postCard = async (req, res, next) => {
     const { title, maincategory, category, desc, tag } = req.body;
     const { email } = res.locals.user;
-    const imgUrl = req.file.location;
+    const uploadUrlArray = req.files;
+    const imgUrl = await uploadUrlArray.map((x) => x.location);
 
     const messages = {
       "string.base": "이 필드는 문자열로 이루어져야 합니다.",
@@ -126,7 +127,9 @@ class CardpostsController {
   updatePost = async (req, res, next) => {
     const { email } = res.locals.user;
     const { postIdx } = req.params;
-    const { title, maincategory, category, desc, tag, imgUrl } = req.body;
+    const { title, maincategory, category, desc, tag } = req.body;
+    const uploadUrlArray = req.files;
+    const imgUrl = await uploadUrlArray.map((x) => x.location);
 
     try {
       if (!postIdx) {

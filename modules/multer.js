@@ -5,8 +5,8 @@ const path = require("path");
 AWS.config.loadFromPath(__dirname + "/../config/s3.json");
 
 const key = function (req, file, cb) {
-  let extension = path.extname(file.originalname);
-  cb(null, Date.now().toString() + extension);
+  let extension = file.originalname;
+  cb(null, Date.now().toString() + "." + extension);
 };
 
 const upload = multer({
