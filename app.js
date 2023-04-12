@@ -4,7 +4,6 @@ const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
 const logger = require("./middlewares/logger.js");
-// const errorhandler = require("./middlewares/errorhandler.js");
 const cookieParser = require("cookie-parser");
 app.use(morgan("dev"));
 
