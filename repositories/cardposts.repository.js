@@ -37,7 +37,7 @@ class CardpostsRepository {
 
     const top3Posts = postsWithIndex
       .sort((a, b) => b.index - a.index)
-      .slice(0, 3);
+      .slice(0, 5);
 
     const top3PostObjects = top3Posts.map((item) => item.post);
 
