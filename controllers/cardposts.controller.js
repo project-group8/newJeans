@@ -13,6 +13,15 @@ class CardpostsController {
   findSplitCards = async (req, res, next) => {
     const { maincategory, category, splitNumber, splitPageNumber } = req.query;
     try {
+      if (!maincategory || !category || !splitNumber || !splitPageNumber) {
+        res.json({
+          err: "maincategory, category, splitNumber, splitPageNumber는 비어 있을 수 없습니다.",
+        });
+        throw Boom.badRequest(
+          "maincategory, category, splitNumber, splitPageNumber는 비어 있을 수 없습니다."
+        );
+      }
+
       const findSplitCards = await this.cardpostsService.findSplitCards(
         maincategory,
         category,
@@ -77,9 +86,15 @@ class CardpostsController {
 
     try {
       if (!email) {
+        res.json({ err: "email 값이 존재하지 않습니다." });
         throw Boom.badRequest(
           "res.locals.user에 email 값이 존재하지 않습니다."
         );
+      }
+
+      if (!maincategory) {
+        res.json({ err: "maincategory 값이 존재하지 않습니다." });
+        throw Boom.badRequest("maincategory 값이 존재하지 않습니다.");
       }
 
       if (!title || !category || !desc) {
