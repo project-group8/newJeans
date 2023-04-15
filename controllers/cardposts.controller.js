@@ -63,6 +63,16 @@ class CardpostsController {
         throw Boom.badRequest("postIdx가 입력되지 않았습니다.");
       }
 
+      // 로그인 한 유저일 경우에 IsLike를 판별합니다.
+      if (res.locals.user) {
+        const { email } = res.locals.user;
+        const findOneUserLike = await this.cardpostsService.findOneUserLike(
+          email,
+          postIdx
+        );
+        return res.status(200).json({ post: findOneUserLike });
+      }
+
       const findOnePost = await this.cardpostsService.findOnePost(postIdx);
 
       if (!findOnePost) {

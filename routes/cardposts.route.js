@@ -1,5 +1,6 @@
 const express = require("express");
 const authMiddleware = require("../middlewares/authMiddleware");
+const allusersMiddleware = require("../middlewares/allusersMiddleware");
 const router = express.Router();
 const upload = require("../modules/multer");
 const CardpostsController = require("../controllers/cardposts.controller");
@@ -12,7 +13,11 @@ router.get("/", cardpostsController.findSplitCards);
 router.get("/hotPostCard", cardpostsController.findHotCards);
 
 // 게시글 하나 가져오기
-router.get("/post/:postIdx", cardpostsController.findOnePost);
+router.get(
+  "/post/:postIdx",
+  allusersMiddleware,
+  cardpostsController.findOnePost
+);
 
 // 게시글 투표 가져오기
 router.get("/post/:postIdx/getPoll", cardpostsController.postPollResult);

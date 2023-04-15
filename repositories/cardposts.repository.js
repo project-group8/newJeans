@@ -3,7 +3,75 @@ const { Op } = require("sequelize");
 const moment = require("moment");
 
 class CardpostsRepository {
-  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
+  //로그인 한 유저라면 IsLike의 상태를 볼 수 있습니다.
+  findOneIogInPost = async (userIdx, postIdx) => {
+    const findOnePost = await CardPost.findOne({
+      where: { postIdx: postIdx },
+      attibutes: [
+        "postIdx",
+        "userIdx",
+        "maincategory",
+        "category",
+        "title",
+        "desc",
+        "createdAt",
+        "viewCount",
+        "imgUrl",
+        "tag",
+        "pollTitle",
+      ],
+    });
+    // const addUserInfo = await UserInfo.findOne({
+    //   where: { userIdx: findOnePost.userIdx },
+    // });
+    const addUser = await Users.findOne({
+      where: { userIdx: findOnePost.userIdx },
+    });
+    const postCommentCount = await Comment.findAll({
+      where: { postIdx: findOnePost.postIdx },
+    });
+    const PreferlikeCounts = await Prefer.count({
+      where: { postIdx: findOnePost.postIdx, selectprefer: "1" },
+    });
+    const PreferdisLikesCounts = await Prefer.count({
+      where: { postIdx: findOnePost.postIdx, selectprefer: "2" },
+    });
+    const PreferUserSelete = await Prefer.findOne({
+      where: { [Op.and]: [{ userIdx }, { selectprefer: "1" }] },
+    });
+
+    const renamePost = {
+      postIdx: findOnePost.postIdx,
+      title: findOnePost.title,
+      // userLevel: addUserInfo.level, 추후에 해제
+      maincategory: findOnePost.maincategory,
+      category: findOnePost.category,
+      desc: findOnePost.desc,
+      createdAt: findOnePost.createdAt,
+      nickname: addUser.nickname,
+      IsLike: PreferUserSelete ? true : false,
+      postViewCount: findOnePost.viewCount,
+      commentCount: postCommentCount.length || 0,
+      likesCount: PreferlikeCounts || 0,
+      disLikesCount: PreferdisLikesCounts || 0,
+      pollTitle: findOnePost.pollTitle || "",
+      imgUrl: !findOnePost.imgUrl
+        ? ""
+        : findOnePost.imgUrl.replace(/\s/g, "").substring(0, 4) == "http"
+        ? findOnePost.imgUrl.replace(/\s/g, "").split(",")
+        : [
+            findOnePost.imgUrl
+              .replace(/\s/g, "")
+              .split(",")
+              .slice(0, 2)
+              .trim()
+              .join(","),
+          ],
+      tag: !findOnePost.tag ? "" : findOnePost.tag.trim().split(","),
+    };
+
+    return renamePost;
+  };
 
   findOneUser = async (email) => {
     const findOneUser = await Users.findOne({ where: { email } });
@@ -11,6 +79,7 @@ class CardpostsRepository {
     return findOneUser;
   };
 
+  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
   findSplitCards = async (
     maincategory,
     category,
@@ -51,7 +120,7 @@ class CardpostsRepository {
     return top3PostObjects;
   };
 
-  // postIdx로 지정한 카드를 불러들입니다.
+  // postIdx로 지정한 카드를 불러들입니다. 비로그인 유저이기 떄문에 IsLike는 false.
   findOnePost = async (postIdx) => {
     const findOnePost = await CardPost.findOne({
       where: { postIdx: postIdx },
@@ -81,7 +150,6 @@ class CardpostsRepository {
     const PreferlikeCounts = await Prefer.count({
       where: { postIdx: findOnePost.postIdx, selectprefer: "1" },
     });
-
     const PreferdisLikesCounts = await Prefer.count({
       where: { postIdx: findOnePost.postIdx, selectprefer: "2" },
     });
@@ -95,6 +163,7 @@ class CardpostsRepository {
       desc: findOnePost.desc,
       createdAt: findOnePost.createdAt,
       nickname: addUser.nickname,
+      IsLike: false,
       postViewCount: findOnePost.viewCount,
       commentCount: postCommentCount.length || 0,
       likesCount: PreferlikeCounts || 0,

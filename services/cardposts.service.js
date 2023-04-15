@@ -47,7 +47,19 @@ class CardpostsService {
     return findHotCards;
   };
 
-  // postIdx로 지정한 카드를 불러들입니다.
+  //로그인 한 유저일 경우에 상세페이지의 isLike를 판별합니다.
+  findOneUserLike = async (email, postIdx) => {
+    const findOneUser = await this.cardpostsRepository.findOneUser(email);
+    const userIdx = findOneUser.userIdx;
+    const findOneUserLike = await this.cardpostsRepository.findOneIogInPost(
+      userIdx,
+      postIdx
+    );
+
+    return findOneUserLike;
+  };
+
+  // postIdx로 지정한 카드를 불러들입니다. 비로그인 유저이기 때문에 isLike는 false입니다.
   findOnePost = async (postIdx) => {
     const findOnePost = await this.cardpostsRepository.findOnePost(postIdx);
 
