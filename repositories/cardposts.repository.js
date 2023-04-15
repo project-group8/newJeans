@@ -89,7 +89,7 @@ class CardpostsRepository {
     const renamePost = {
       postIdx: findOnePost.postIdx,
       title: findOnePost.title,
-      userLevel: addUserInfo.level,
+      // userLevel: addUserInfo.level, 추후에 해제
       maincategory: findOnePost.maincategory,
       category: findOnePost.category,
       desc: findOnePost.desc,
@@ -240,7 +240,7 @@ class CardpostsRepository {
           postIdx: ele.postIdx,
           maincategory: ele.maincategory,
           category: ele.category,
-          userLevel: addUserInfo.level,
+          // userLevel: addUserInfo.level, 추후에 해제
           title: ele.title,
           desc: ele.desc,
           createdAt: ele.createdAt,
