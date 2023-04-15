@@ -71,41 +71,15 @@ class CardpostsController {
     const { title, maincategory, category, desc, tag, pollTitle } = req.body;
     const { email } = res.locals.user;
     const uploadUrlArray = req.files;
-    const imgUrl = await uploadUrlArray.map((x) => x.location);
-
-    const messages = {
-      "string.base": "이 필드는 문자열로 이루어져야 합니다.",
-      "string.empty": "이 필드는 비어 있을 수 없습니다.",
-      "any.required": "이 필드는 필수입니다.",
-    };
-
-    const Schema = Joi.object({
-      title: Joi.string()
-        .required()
-        .message({
-          ...messages,
-        }),
-      category: Joi.string()
-        .required()
-        .message({
-          ...messages,
-        }),
-      desc: Joi.string()
-        .required()
-        .message({
-          ...messages,
-        }),
-    });
-
-    const validate = Schema.validate({
-      title: title,
-      category: category,
-      desc: desc,
-    });
+    const imgUrl = "";
 
     try {
-      if (validate.error) {
+      if (!title || !category || !desc) {
         throw Boom.badRequest("title, category, desc는 비어있을 수 없습니다.");
+      }
+
+      if (uploadUrlArray) {
+        imgUrl = await uploadUrlArray.map((x) => x.location);
       }
 
       await this.cardpostsService.postCard(
@@ -130,13 +104,17 @@ class CardpostsController {
     const { postIdx } = req.params;
     const { title, maincategory, category, desc, tag, pollTitle } = req.body;
     const uploadUrlArray = req.files;
-    const imgUrl = await uploadUrlArray.map((x) => x.location);
+    const imgUrl = "";
 
     try {
       if (!postIdx) {
         throw Boom.notFound(
           `postIdx : [${postIdx}] 게시글이 존재하지 않습니다.`
         );
+      }
+
+      if (uploadUrlArray) {
+        imgUrl = await uploadUrlArray.map((x) => x.location);
       }
 
       await this.cardpostsService.updatePost(
