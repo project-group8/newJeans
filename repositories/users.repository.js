@@ -9,9 +9,9 @@ class UserRepository extends Users {
    * @param {String} email
    */
   //email 매칭 (로그인, 회원가입)
-  findByID = async (userIdx) => {
+  findByID = async (email) => {
     const findUser = await Users.findOne({
-      where: { userIdx },
+      where: { email },
     });
     return findUser;
   };
