@@ -73,6 +73,7 @@ class CardpostsRepository {
     // const addUserInfo = await UserInfo.findOne({
     //   where: { userIdx: findOnePost.userIdx },
     // });
+
     console.log(
       "파인트 원 포스트(findOnePost.userId) 테스트 : ",
       findOnePost.userIdx
