@@ -53,7 +53,6 @@ class CardpostsRepository {
 
   // postIdx로 지정한 카드를 불러들입니다.
   findOnePost = async (postIdx) => {
-    console.log("포스트 아이디 엑스 테스트 입니다 : ", postIdx);
     const findOnePost = await CardPost.findOne({
       where: { postIdx: postIdx },
       attibutes: [
@@ -73,13 +72,7 @@ class CardpostsRepository {
     // const addUserInfo = await UserInfo.findOne({
     //   where: { userIdx: findOnePost.userIdx },
     // });
-
-    console.log(
-      "파인트 원 포스트(findOnePost.userId) 테스트 : ",
-      findOnePost.userIdx
-    );
-    console.log("파인트 원 포스트(findOnePost) 테스트 : ", findOnePost);
-    const addUser = await Users.findAll({
+    const addUser = await Users.findOne({
       where: { userIdx: findOnePost.userIdx },
     });
     const postCommentCount = await Comment.findAll({
@@ -101,7 +94,7 @@ class CardpostsRepository {
       category: findOnePost.category,
       desc: findOnePost.desc,
       createdAt: findOnePost.createdAt,
-      nickname: addUser[0].nickname,
+      nickname: addUser.nickname,
       postViewCount: findOnePost.viewCount,
       commentCount: postCommentCount.length || 0,
       likesCount: PreferlikeCounts || 0,
