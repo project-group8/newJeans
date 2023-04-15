@@ -95,6 +95,7 @@ class CardpostsRepository {
       desc: findOnePost.desc,
       createdAt: findOnePost.createdAt,
       nickname: addUser.nickname,
+      userIdx: addUser.userIdx,
       postViewCount: findOnePost.viewCount,
       commentCount: postCommentCount.length || 0,
       likesCount: PreferlikeCounts || 0,
