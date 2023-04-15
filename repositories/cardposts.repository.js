@@ -53,6 +53,7 @@ class CardpostsRepository {
 
   // postIdx로 지정한 카드를 불러들입니다.
   findOnePost = async (postIdx) => {
+    console.log("포스트 아이디 엑스 테스트 입니다 : ", postIdx);
     const findOnePost = await CardPost.findOne({
       where: { postIdx: postIdx },
       attibutes: [
