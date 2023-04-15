@@ -1,10 +1,12 @@
 const Boom = require("boom");
 const Joi = require("joi");
 const CardpostsService = require("../services/cardposts.service");
+const CardpostsRepository = require("../repositories/cardposts.repository");
 
 class CardpostsController {
   constructor() {
     this.cardpostsService = new CardpostsService();
+    this.cardpostsRepository = new CardpostsRepository();
   }
 
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
@@ -69,7 +71,7 @@ class CardpostsController {
   // 새로운 post를 등록합니다..
   postCard = async (req, res, next) => {
     const { title, maincategory, category, desc, tag, pollTitle } = req.body;
-    const { userIdx } = res.locals.user;
+    const { email } = res.locals.user;
     const uploadUrlArray = req.files;
     const imgUrl = "";
 
@@ -88,6 +90,8 @@ class CardpostsController {
         imgUrl = await uploadUrlArray.map((x) => x.location);
       }
 
+      const findOneUser = await this.cardpostsRepository.findOneUser(email);
+      const userIdx = findOneUser.userIdx;
       await this.cardpostsService.postCard(
         userIdx,
         title,

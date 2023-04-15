@@ -4,6 +4,13 @@ const moment = require("moment");
 
 class CardpostsRepository {
   // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
+
+  findOneUser = async (email) => {
+    const findOneUser = await Users.findOne({ where: { email } });
+
+    return findOneUser;
+  };
+
   findSplitCards = async (
     maincategory,
     category,
