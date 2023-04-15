@@ -69,11 +69,17 @@ class CardpostsController {
   // 새로운 post를 등록합니다.
   postCard = async (req, res, next) => {
     const { title, maincategory, category, desc, tag, pollTitle } = req.body;
-    const { email } = res.locals.user;
+    const { userIdx } = res.locals.user;
     const uploadUrlArray = req.files;
     const imgUrl = "";
 
     try {
+      if (userIdx) {
+        throw Boom.badRequest(
+          "res.locals.user에 userIdx 값이 존재하지 않습니다."
+        );
+      }
+
       if (!title || !category || !desc) {
         throw Boom.badRequest("title, category, desc는 비어있을 수 없습니다.");
       }
@@ -83,7 +89,7 @@ class CardpostsController {
       }
 
       await this.cardpostsService.postCard(
-        email,
+        userIdx,
         title,
         maincategory,
         category,
@@ -100,13 +106,19 @@ class CardpostsController {
 
   // 포스트를 업데이트 합니다.
   updatePost = async (req, res, next) => {
-    const { email } = res.locals.user;
+    const { userIdx } = res.locals.user;
     const { postIdx } = req.params;
     const { title, maincategory, category, desc, tag, pollTitle } = req.body;
     const uploadUrlArray = req.files;
     const imgUrl = "";
 
     try {
+      if (userIdx) {
+        throw Boom.badRequest(
+          "res.locals.user에 userIdx 값이 존재하지 않습니다."
+        );
+      }
+
       if (!postIdx) {
         throw Boom.notFound(
           `postIdx : [${postIdx}] 게시글이 존재하지 않습니다.`
@@ -118,7 +130,7 @@ class CardpostsController {
       }
 
       await this.cardpostsService.updatePost(
-        email,
+        userIdx,
         postIdx,
         title,
         maincategory,
@@ -136,17 +148,23 @@ class CardpostsController {
 
   // 포스트를 삭제합니다.
   deletePost = async (req, res, next) => {
-    const { email } = res.locals.user;
+    const { userIdx } = res.locals.user;
     const { postIdx } = req.params;
 
     try {
+      if (userIdx) {
+        throw Boom.badRequest(
+          "res.locals.user에 userIdx 값이 존재하지 않습니다."
+        );
+      }
+
       if (!postIdx) {
         throw Boom.notFound(
           `postIdx : [${postIdx}] 게시글이 존재하지 않습니다.`
         );
       }
 
-      await this.cardpostsService.deletePost(email, postIdx);
+      await this.cardpostsService.deletePost(userIdx, postIdx);
       res.status(200).json({ msg: "게시글 삭제에 성공했습니다." });
     } catch (error) {
       throw error;
@@ -157,9 +175,15 @@ class CardpostsController {
   postPoll = async (req, res, next) => {
     const { postIdx } = req.params;
     const { proInputValue, conInputValue } = req.body;
-    const { email } = res.locals.user;
+    const { userIdx } = res.locals.user;
 
     try {
+      if (userIdx) {
+        throw Boom.badRequest(
+          "res.locals.user에 userIdx 값이 존재하지 않습니다."
+        );
+      }
+
       if (!postIdx) {
         throw Boom.notFound(
           `postIdx : [${postIdx}] 게시글이 존재하지 않습니다.`
@@ -167,7 +191,7 @@ class CardpostsController {
       }
 
       const pollResult = await this.cardpostsService.postPoll(
-        email,
+        userIdx,
         postIdx,
         proInputValue,
         conInputValue

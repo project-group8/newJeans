@@ -56,7 +56,7 @@ class CardpostsService {
 
   // 포스트를 작성합니다.
   postCard = async (
-    email,
+    userIdx,
     title,
     maincategory,
     category,
@@ -65,8 +65,6 @@ class CardpostsService {
     imgUrl,
     pollTitle
   ) => {
-    const findByID = await this.userRepository.findByID(email);
-    const userIdx = findByID.userIdx;
     await this.cardpostsRepository.postCard(
       title,
       maincategory,
@@ -83,7 +81,7 @@ class CardpostsService {
 
   // 포스트를 수정합니다.
   updatePost = async (
-    email,
+    userIdx,
     postIdx,
     title,
     maincategory,
@@ -93,9 +91,6 @@ class CardpostsService {
     imgUrl,
     pollTitle
   ) => {
-    const findByID = await this.userRepository.findByID(email);
-    const userIdx = findByID.userIdx;
-
     const nullCheck = await cardpostsRepository.nullCheck(
       postIdx,
       title,
@@ -123,17 +118,13 @@ class CardpostsService {
   };
 
   // 포스트를 삭제합니다.
-  deletePost = async (email, postIdx) => {
-    const findByID = await this.userRepository.findByID(email);
-    const userIdx = findByID.userIdx;
+  deletePost = async (userIdx, postIdx) => {
     await this.cardpostsRepository.deletePost(userIdx, postIdx);
     return;
   };
 
   // 포스트에 투표합니다.
-  postPoll = async (email, postIdx, proInputValue, conInputValue) => {
-    const findByID = await this.userRepository.findByID(email);
-    const userIdx = findByID.userIdx;
+  postPoll = async (userIdx, postIdx, proInputValue, conInputValue) => {
     if (proInputValue == true && conInputValue == true) {
       throw Boom.badRequest("값을 둘다 true로 줄 수 없습니다.");
     }
