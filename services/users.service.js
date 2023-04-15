@@ -3,7 +3,7 @@ require("dotenv").config();
 // const fetch = require("node-fetch");
 const Joi = require("joi");
 const UserRepository = require("../repositories/users.repository");
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken"); // redis 추가 시 주석처리 해야됨
 const axios = require('axios');
 const {
   createHashPassword,
@@ -11,8 +11,8 @@ const {
 } = require("../modules/cryptoUtils.js");
 const Boom = require("boom");
 const logger = require("../middlewares/logger.js");
-const jwt = require('../utils/jwt-util');
-const redisClient = require('../utils/redis');
+// const jwt = require('../utils/jwt-util');
+// const redisClient = require('../utils/redis');
 const re_email = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 // const re_password = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,12})/; //특수문자 필수
 const re_password = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,12}$/;
@@ -106,16 +106,16 @@ class UserService {
    */
   //토큰 생성
   generateToken = async (email) => {
-    // const access_token = jwt.sign({ email }, process.env.SECRET_KEY, {
-    //   expiresIn: "1h",
-    // });
+    const access_token = jwt.sign({ email }, process.env.SECRET_KEY, {
+      expiresIn: "1h",
+    });
 
-    // const refresh_token = jwt.sign({}, process.env.SECRET_KEY, {
-    //   expiresIn: "1d",
-    // });
-    const access_token = jwt.sign(email);
-    const refresh_token = jwt.refresh();
-    redisClient.set(email, refresh_token);
+    const refresh_token = jwt.sign({}, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+    // const access_token = jwt.sign(email);
+    // const refresh_token = jwt.refresh();
+    // redisClient.set(email, refresh_token);
     return {access_token, refresh_token};
   };
 
