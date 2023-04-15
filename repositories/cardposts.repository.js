@@ -1,4 +1,4 @@
-const { CardPost, Users, UserInfo, Comment, Prefer } = require("../models");
+const { CardPost, Users, Comment, Prefer } = require("../models");
 const { Op } = require("sequelize");
 const moment = require("moment");
 
@@ -69,9 +69,9 @@ class CardpostsRepository {
         "pollTitle",
       ],
     });
-    const addUserInfo = await UserInfo.findOne({
-      where: { userIdx: findOnePost.userIdx },
-    });
+    // const addUserInfo = await UserInfo.findOne({
+    //   where: { userIdx: findOnePost.userIdx },
+    // });
     const addUser = await Users.findOne({
       where: { userIdx: findOnePost.userIdx },
     });
@@ -226,9 +226,9 @@ class CardpostsRepository {
   renameSplitCards = async (findCardPosts) => {
     return await Promise.all(
       findCardPosts.map(async (ele) => {
-        const addUserInfo = await UserInfo.findOne({
-          where: { userIdx: ele.userIdx },
-        });
+        // const addUserInfo = await UserInfo.findOne({
+        //   where: { userIdx: ele.userIdx },
+        // });
         const addUser = await Users.findOne({
           where: { userIdx: ele.userIdx },
         });
