@@ -66,7 +66,7 @@ class CardpostsController {
     }
   };
 
-  // 새로운 post를 등록합니다.
+  // 새로운 post를 등록합니다..
   postCard = async (req, res, next) => {
     const { title, maincategory, category, desc, tag, pollTitle } = req.body;
     const { userIdx } = res.locals.user;
