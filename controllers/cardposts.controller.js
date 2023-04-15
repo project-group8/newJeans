@@ -76,7 +76,7 @@ class CardpostsController {
     const imgUrl = "";
 
     try {
-      if (userIdx) {
+      if (email) {
         throw Boom.badRequest(
           "res.locals.user에 userIdx 값이 존재하지 않습니다."
         );
