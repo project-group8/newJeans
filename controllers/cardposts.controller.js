@@ -76,9 +76,9 @@ class CardpostsController {
     const imgUrl = "";
 
     try {
-      if (email) {
+      if (!email) {
         throw Boom.badRequest(
-          "res.locals.user에 userIdx 값이 존재하지 않습니다."
+          "res.locals.user에 email 값이 존재하지 않습니다."
         );
       }
 
@@ -110,16 +110,16 @@ class CardpostsController {
 
   // 포스트를 업데이트 합니다.
   updatePost = async (req, res, next) => {
-    const { userIdx } = res.locals.user;
+    const { email } = res.locals.user;
     const { postIdx } = req.params;
     const { title, maincategory, category, desc, tag, pollTitle } = req.body;
     const uploadUrlArray = req.files;
     const imgUrl = "";
 
     try {
-      if (userIdx) {
+      if (!email) {
         throw Boom.badRequest(
-          "res.locals.user에 userIdx 값이 존재하지 않습니다."
+          "res.locals.user에 email 값이 존재하지 않습니다."
         );
       }
 
@@ -133,6 +133,8 @@ class CardpostsController {
         imgUrl = await uploadUrlArray.map((x) => x.location);
       }
 
+      const findOneUser = await this.cardpostsRepository.findOneUser(email);
+      const userIdx = findOneUser.userIdx;
       await this.cardpostsService.updatePost(
         userIdx,
         postIdx,
@@ -152,13 +154,13 @@ class CardpostsController {
 
   // 포스트를 삭제합니다.
   deletePost = async (req, res, next) => {
-    const { userIdx } = res.locals.user;
+    const { email } = res.locals.user;
     const { postIdx } = req.params;
 
     try {
-      if (userIdx) {
+      if (!email) {
         throw Boom.badRequest(
-          "res.locals.user에 userIdx 값이 존재하지 않습니다."
+          "res.locals.user에 email 값이 존재하지 않습니다."
         );
       }
 
@@ -168,6 +170,8 @@ class CardpostsController {
         );
       }
 
+      const findOneUser = await this.cardpostsRepository.findOneUser(email);
+      const userIdx = findOneUser.userIdx;
       await this.cardpostsService.deletePost(userIdx, postIdx);
       res.status(200).json({ msg: "게시글 삭제에 성공했습니다." });
     } catch (error) {
@@ -179,10 +183,10 @@ class CardpostsController {
   postPoll = async (req, res, next) => {
     const { postIdx } = req.params;
     const { proInputValue, conInputValue } = req.body;
-    const { userIdx } = res.locals.user;
+    const { email } = res.locals.user;
 
     try {
-      if (userIdx) {
+      if (!email) {
         throw Boom.badRequest(
           "res.locals.user에 userIdx 값이 존재하지 않습니다."
         );
@@ -194,6 +198,8 @@ class CardpostsController {
         );
       }
 
+      const findOneUser = await this.cardpostsRepository.findOneUser(email);
+      const userIdx = findOneUser.userIdx;
       const pollResult = await this.cardpostsService.postPoll(
         userIdx,
         postIdx,
