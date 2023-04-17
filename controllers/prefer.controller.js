@@ -1,38 +1,75 @@
 const PreferService = require("../services/prefer.service");
+const CardpostsRepository = require("../repositories/cardposts.repository");
 const Boom = require("boom");
 class PreferController {
   constructor() {
     this.preferService = new PreferService();
+    this.cardpostsRepository = new CardpostsRepository();
   }
 
-  // 좋아요 등록 및 취소
-  postToggleLike = async (req, res, next) => {
-    const { property, prefer } = req.query;
-    const { userIdx } = res.locals.user;
+  /**
+   * 포스트에 투표합니다.
+   *
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @returns
+   */
+  postPoll = async (req, res, next) => {
+    const { postIdx } = req.params;
+    const { proInputValue, conInputValue } = req.body;
+    const { email } = res.locals.user;
+
+    try {
+      if (!email) {
+        throw Boom.badRequest(
+          "res.locals.user에 userIdx 값이 존재하지 않습니다."
+        );
+      }
+
+      if (!postIdx) {
+        throw Boom.notFound(
+          `postIdx : [${postIdx}] 게시글이 존재하지 않습니다.`
+        );
+      }
+
+      const findOneUser = await this.cardpostsRepository.findOneUser(email);
+      const userIdx = findOneUser.userIdx;
+      const pollResult = await this.preferService.postPoll(
+        userIdx,
+        postIdx,
+        proInputValue,
+        conInputValue
+      );
+
+      return res.status(200).json({ pollResult });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * 포스트에 투표 결과를 봅니다.
+   *
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @returns
+   */
+  postPollResult = async (req, res, next) => {
     const { postIdx } = req.params;
 
     try {
-      // 좋아요 토글 실행 코드
-      if (prefer == "like") {
-        const toggle = await this.preferService.postToggleLike(
-          userIdx,
-          postIdx,
-          property
+      if (!postIdx) {
+        throw Boom.notFound(
+          `postIdx : [${postIdx}] 게시글이 존재하지 않습니다.`
         );
-
-        return res.status(200).json({ message: toggle });
-      } else if (prefer == "dislike") {
-        // 싫어요 토글 실행 코드
-        const toggle = await this.preferService.postToggleDisLike(
-          userIdx,
-          postIdx,
-          property
-        );
-
-        return res.status(200).json({ message: toggle });
       }
+
+      const pollResult = await this.preferService.postPollResult(postIdx);
+      return res.status(200).json({ pollResult });
     } catch (error) {
-      throw error;
+      next(error);
     }
   };
 }

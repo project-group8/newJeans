@@ -19,22 +19,12 @@ router.get(
   cardpostsController.findOnePost
 );
 
-// 게시글 투표 가져오기
-router.get("/post/:postIdx/getPoll", cardpostsController.postPollResult);
-
 // 게시글 작성하기
 router.post(
   "/post/createPost",
   authMiddleware,
   upload.array("img", 4),
   cardpostsController.postCard
-);
-
-// 게시글에 투표하기
-router.post(
-  "/post/:postIdx/createPoll",
-  authMiddleware,
-  cardpostsController.postPoll
 );
 
 // 게시글 수정하기
