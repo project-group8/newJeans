@@ -36,12 +36,10 @@ module.exports = (sequelize, DataTypes) => {
       userIdx: {
         allowNull: false, // NOT NULL
         type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
       },
       commentIdx: {
         allowNull: false,
         type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
       },
       createdAt: {
         allowNull: false,

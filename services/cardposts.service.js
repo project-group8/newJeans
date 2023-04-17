@@ -9,7 +9,15 @@ class CardpostsService {
     this.preferRepository = new PreferRepository();
   }
 
-  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
+  /**
+   * splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
+   *
+   * @param {*} maincategory
+   * @param {*} category
+   * @param {*} splitNumber
+   * @param {*} splitPageNumber
+   * @returns
+   */
   findSplitCards = async (
     maincategory,
     category,
@@ -47,7 +55,13 @@ class CardpostsService {
     return findHotCards;
   };
 
-  //로그인 한 유저일 경우에 상세페이지의 isLike를 판별합니다.
+  /**
+   * 로그인 한 유저일 경우에 상세페이지의 isLike를 판별합니다.
+   *
+   * @param {string} email
+   * @param {UUID} postIdx
+   * @returns
+   */
   findOneUserLike = async (email, postIdx) => {
     const findOneUser = await this.cardpostsRepository.findOneUser(email);
     const userIdx = findOneUser.userIdx;
@@ -66,7 +80,19 @@ class CardpostsService {
     return findOnePost;
   };
 
-  // 포스트를 작성합니다.
+  /**
+   * 포스트를 작성합니다.
+   *
+   * @param {UUID} userIdx
+   * @param {string} title
+   * @param {string} maincategory
+   * @param {string} category
+   * @param {string} desc
+   * @param {string} tag
+   * @param {string} imgUrl
+   * @param {string} pollTitle
+   * @returns
+   */
   postCard = async (
     userIdx,
     title,
@@ -91,7 +117,20 @@ class CardpostsService {
     return;
   };
 
-  // 포스트를 수정합니다.
+  /**
+   * 포스트를 수정합니다.
+   *
+   * @param {UUID} userIdx
+   * @param {UUID} postIdx
+   * @param {string} title
+   * @param {string} maincategory
+   * @param {string} category
+   * @param {string} desc
+   * @param {string} tag
+   * @param {string} imgUrl
+   * @param {string} pollTitle
+   * @returns
+   */
   updatePost = async (
     userIdx,
     postIdx,
@@ -133,36 +172,6 @@ class CardpostsService {
   deletePost = async (userIdx, postIdx) => {
     await this.cardpostsRepository.deletePost(userIdx, postIdx);
     return;
-  };
-
-  // 포스트에 투표합니다.
-  postPoll = async (userIdx, postIdx, proInputValue, conInputValue) => {
-    if (proInputValue == true && conInputValue == true) {
-      throw Boom.badRequest("값을 둘다 true로 줄 수 없습니다.");
-    }
-
-    if (proInputValue == true) {
-      await this.preferRepository.postProInput(userIdx, postIdx);
-
-      return this.PostPollCount(postIdx);
-    } else if (conInputValue == true) {
-      await this.preferRepository.postConInput(userIdx, postIdx);
-
-      return this.PostPollCount(postIdx);
-    }
-  };
-
-  // 포스트의 결과를 봅니다.
-  postPollResult = async (postIdx) => {
-    return this.PostPollCount(postIdx);
-  };
-
-  // 포스트 좋아요와 싫어요의 카운트를 봅니다.
-  PostPollCount = async (postIdx) => {
-    const postProCount = await this.preferRepository.postProCount(postIdx);
-    const postConCount = await this.preferRepository.postConCount(postIdx);
-
-    return { proCount: postProCount, conCount: postConCount };
   };
 }
 

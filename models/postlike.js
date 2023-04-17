@@ -35,12 +35,10 @@ module.exports = (sequelize, DataTypes) => {
       userIdx: {
         allowNull: false, // NOT NULL
         type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
       },
       postIdx: {
         allowNull: false,
         type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
       },
       createdAt: {
         allowNull: false,

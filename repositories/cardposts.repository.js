@@ -1,4 +1,4 @@
-const { CardPost, Users, Comment, Prefer } = require("../models");
+const { CardPost, Users, Comment, Prefer, PostLike } = require("../models");
 const { Op } = require("sequelize");
 const moment = require("moment");
 
@@ -30,14 +30,11 @@ class CardpostsRepository {
     const postCommentCount = await Comment.findAll({
       where: { postIdx: findOnePost.postIdx },
     });
-    const PreferlikeCounts = await Prefer.count({
-      where: { postIdx: findOnePost.postIdx, selectprefer: "1" },
+    const PreferlikeCounts = await PostLike.count({
+      where: { postIdx: findOnePost.postIdx },
     });
-    const PreferdisLikesCounts = await Prefer.count({
-      where: { postIdx: findOnePost.postIdx, selectprefer: "2" },
-    });
-    const PreferUserSelete = await Prefer.findOne({
-      where: { [Op.and]: [{ userIdx }, { selectprefer: "1" }] },
+    const PreferUserSelete = await PostLike.findOne({
+      where: { userIdx },
     });
 
     const renamePost = {
@@ -53,7 +50,6 @@ class CardpostsRepository {
       postViewCount: findOnePost.viewCount,
       commentCount: postCommentCount.length || 0,
       likesCount: PreferlikeCounts || 0,
-      disLikesCount: PreferdisLikesCounts || 0,
       pollTitle: findOnePost.pollTitle || "",
       imgUrl: !findOnePost.imgUrl
         ? ""
@@ -147,11 +143,8 @@ class CardpostsRepository {
     const postCommentCount = await Comment.findAll({
       where: { postIdx: findOnePost.postIdx },
     });
-    const PreferlikeCounts = await Prefer.count({
-      where: { postIdx: findOnePost.postIdx, selectprefer: "1" },
-    });
-    const PreferdisLikesCounts = await Prefer.count({
-      where: { postIdx: findOnePost.postIdx, selectprefer: "2" },
+    const PreferlikeCounts = await PostLike.count({
+      where: { postIdx: findOnePost.postIdx },
     });
 
     const renamePost = {
@@ -167,7 +160,6 @@ class CardpostsRepository {
       postViewCount: findOnePost.viewCount,
       commentCount: postCommentCount.length || 0,
       likesCount: PreferlikeCounts || 0,
-      disLikesCount: PreferdisLikesCounts || 0,
       pollTitle: findOnePost.pollTitle || "",
       imgUrl: !findOnePost.imgUrl
         ? ""
@@ -335,8 +327,8 @@ async function calculatePostIndex(postId) {
   const daysElapsed = moment().diff(post.createdAt, "days");
   const index =
     (post.viewCount +
-      ((await Prefer.count({
-        where: { postIdx: post.postIdx, selectprefer: "1" },
+      ((await PostLike.count({
+        where: { postIdx: post.postIdx },
       })) || 0) *
         getRandomIntInclusive(3, 5) +
       ((await Comment.count({ where: { postIdx: post.postIdx } })) || 0) *
