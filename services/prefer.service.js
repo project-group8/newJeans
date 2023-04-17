@@ -8,97 +8,51 @@ class PreferService {
     this.cardpostsRepository = new CardpostsRepository();
   }
 
-  // 좋아요 등록 및 취소
-  postToggleLike = async (userIdx, postIdx, property) => {
-    // 쿼리스트링으로 들어온 property를 Model에 맞게 변환 합니다.
-    switch (property) {
-      case "post":
-        property = "1";
-        break;
-      case "comment":
-        property = "3";
-        break;
-      case "replycomment":
-        property = "5";
-        break;
-      default:
-        throw Boom.badRequest(`${property}가 올바르지 않습니다.`);
-    }
-
-    const existsPosts = await this.cardpostsRepository.findOnePost(postIdx);
-
-    if (!existsPosts) {
-      throw Boom.notFound("게시글이 존재하지 않습니다.");
-    }
-
+  // 포스트에 투표합니다.
+  postPoll = async (userIdx, postIdx, proInputValue, conInputValue) => {
     try {
-      const isLike = await this.preferRepository.findPostUserCheck(
-        userIdx,
-        postIdx
-      );
+      if (proInputValue == true && conInputValue == true) {
+        throw Boom.badRequest("값을 둘다 true로 줄 수 없습니다.");
+      }
 
-      if (!isLike) {
-        await this.preferRepository.AddLike(postIdx, userIdx, property);
-        const message = "좋아요를 등록하였습니다.";
+      if (proInputValue == true) {
+        await this.preferRepository.postProInput(userIdx, postIdx);
 
-        return message;
-      } else if (isLike.selectprefer == property) {
-        await this.preferRepository.DeleteLike(postIdx, userIdx, property);
-        const message = "좋아요를 취소하였습니다.";
+        return this.PostPollCount(postIdx);
+      } else if (conInputValue == true) {
+        await this.preferRepository.postConInput(userIdx, postIdx);
 
-        return message;
+        return this.PostPollCount(postIdx);
       }
     } catch (error) {
-      throw Boom.badRequest(
-        "좋아요 토글 과정에서 알 수없는 에러가 발생 했습니다."
-      );
+      next(error);
     }
   };
 
-  // 싫어요 등록 및 취소
-  postToggleDisLike = async (userIdx, postIdx, property) => {
-    // 쿼리스트링으로 들어온 property를 Model에 맞게 변환 합니다.
-    switch (property) {
-      case "post":
-        property = "2";
-        break;
-      case "comment":
-        property = "4";
-        break;
-      case "replycomment":
-        property = "6";
-        break;
-      default:
-        throw Boom.badRequest(`${property}가 올바르지 않습니다.`);
+  // 포스트의 결과를 봅니다.
+  postPollResult = async (postIdx) => {
+    try {
+      return this.PostPollCount(postIdx);
+    } catch (error) {
+      next(error);
     }
+  };
 
-    const existsPosts = await this.cardpostsRepository.findOnePost(postIdx);
-
-    if (!existsPosts) {
-      throw Boom.notFound("게시글이 존재하지 않습니다.");
-    }
+  // 포스트 좋아요와 싫어요의 카운트를 봅니다.
+  PostPollCount = async (postIdx) => {
+    const findOnepost = await this.cardpostsRepository.findOnePost(postIdx);
 
     try {
-      const isLike = await this.preferRepository.findPostUserCheck(
-        userIdx,
-        postIdx
-      );
-
-      if (!isLike) {
-        await this.preferRepository.AddDisLike(postIdx, userIdx, property);
-        const message = "싫어요를 등록하였습니다.";
-
-        return message;
-      } else if (isLike.selectprefer == property) {
-        await this.preferRepository.DeleteDisLike(postIdx, userIdx, property);
-        const message = "싫어요를 취소하였습니다.";
-
-        return message;
+      if (!findOnepost) {
+        throw Boom.badData("postIdx 값의 포스트가 존재하지 않습니다.");
       }
+
+      const postProCount = await this.preferRepository.postProCount(postIdx);
+      const postConCount = await this.preferRepository.postConCount(postIdx);
+
+      return { proCount: postProCount, conCount: postConCount };
     } catch (error) {
-      throw Boom.badRequest(
-        "싫어요 토글 과정에서 알 수없는 에러가 발생 했습니다."
-      );
+      next(error);
     }
   };
 }
