@@ -23,18 +23,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "postIdx", // 현재 모델의 userId가 외래키로 가진다.
         onDelete: "CASCADE",
       });
-
-      this.belongsTo(models.Comment, {
-        targetKey: "commentIdx", // Users 모델의 userId 컬럼을
-        foreignKey: "commentIdx", // 현재 모델의 userId가 외래키로 가진다.
-        onDelete: "CASCADE",
-      });
-
-      this.belongsTo(models.ReplyComment, {
-        targetKey: "replyIdx", // Users 모델의 userId 컬럼을
-        foreignKey: "replyIdx", // 현재 모델의 userId가 외래키로 가진다.
-        onDelete: "CASCADE",
-      });
     }
   }
   Prefer.init(
@@ -48,17 +36,9 @@ module.exports = (sequelize, DataTypes) => {
       userIdx: {
         allowNull: false, // NOT NULL
         type: DataTypes.UUID,
-      },
-      postIdx: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
-      commentIdx: {
-        allowNull: false,
-        type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
       },
-      replyIdx: {
+      postIdx: {
         allowNull: false,
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -68,9 +48,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         defaultValue: "0",
         // 0 디폴트
-        // 1. 포스트에 대한 좋아요 2. 포스트에 대한 싫어요.
-        // 3. 댓글에 대한 좋아요. 4 댓글에 대한 싫어요.
-        // 5. 대댓글에 대한 좋아요 6. 대댓글에 대한 싫어요.
+        // 1. 포스트에 대한 좋아요 2. 포스트에 대한 싫어요. // 분리 예정
         // 7. 포스트 찬성 8. 포스트 반대.
       },
       createdAt: {

@@ -41,10 +41,7 @@ module.exports = async (req, res, next) => {
           const myNewToken = jwt.sign({ email }, process.env.SECRET_KEY, {
             expiresIn: "1h",
           });
-          res.send({
-            msg: "new Access Token",
-            myNewToken: `Bearer ${myNewToken}`,
-          });
+          res.set("Authorization", `Bearer ${myNewToken}`);
         }
       });
     } else {
