@@ -58,12 +58,19 @@ class PreferRepository {
 
   // 좋아요를 생성 합니다.
   AddLike = async (postIdx, userIdx, property) => {
+    console.log(
+      "postIdx :",
+      postIdx,
+      "userIdx :",
+      userIdx,
+      "property :",
+      property
+    );
     const addLike = await Prefer.create({
-      postIdx: postIdx,
       userIdx: userIdx,
+      postIdx: postIdx,
       selectprefer: property,
     });
-
     return await addLike.save();
   };
 
