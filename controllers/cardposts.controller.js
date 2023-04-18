@@ -87,9 +87,60 @@ class CardpostsController {
     }
   };
 
+  // 지정한 카드의 contents를 불러들입니다.
+  findOnePostContents = async (req, res, next) => {
+    const { postIdx } = req.params;
+
+    try {
+      if (!postIdx) {
+        throw Boom.badRequest("postIdx가 입력되지 않았습니다.");
+      }
+
+      const findOnePostContents =
+        await this.cardpostsService.findOnePostContents(postIdx);
+
+      if (!findOnePostContents) {
+        throw Boom.notFound(
+          `postIdx : [${postIdx}] 게시글이 존재하지 않습니다.`
+        );
+      }
+
+      return res.status(200).json({ contents: findOnePostContents });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // 지정한 카드의 category 정보를 불러들입니다.
+  findOnePostCategorys = async (req, res, next) => {
+    const { postIdx } = req.params;
+
+    try {
+      if (!postIdx) {
+        throw Boom.badRequest("postIdx가 입력되지 않았습니다.");
+      }
+
+      const findOnePostCategorys =
+        await this.cardpostsService.findOnePostCategorys(postIdx);
+
+      if (!findOnePostCategorys) {
+        throw Boom.notFound(
+          `postIdx : [${postIdx}] 게시글이 존재하지 않습니다.`
+        );
+      }
+
+      const { maincategory, category } = findOnePostCategorys;
+
+      return res.status(200).json({ maincategory, category });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   // 새로운 post를 등록합니다..
   postCard = async (req, res, next) => {
-    const { title, maincategory, category, desc, tag, pollTitle } = req.body;
+    const { title, maincategory, category, desc, tag, pollTitle, pollType } =
+      req.body;
     const { email } = res.locals.user;
     const uploadUrlArray = req.files;
     const imgUrl = "";
@@ -107,8 +158,10 @@ class CardpostsController {
         throw Boom.badRequest("maincategory 값이 존재하지 않습니다.");
       }
 
-      if (!title || !category || !desc) {
-        throw Boom.badRequest("title, category, desc는 비어있을 수 없습니다.");
+      if (!title || !category || !desc || !pollType) {
+        throw Boom.badRequest(
+          "title, category, desc, pollType은 비어있을 수 없습니다."
+        );
       }
 
       if (uploadUrlArray) {
@@ -125,7 +178,8 @@ class CardpostsController {
         desc,
         tag,
         imgUrl,
-        pollTitle
+        pollTitle,
+        pollType
       );
       return res.status(200).json({ msg: "게시글 작성에 성공했습니다." });
     } catch (error) {

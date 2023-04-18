@@ -81,6 +81,32 @@ class CardpostsService {
   };
 
   /**
+   * 지정한 카드의 content를 불러들입니다.
+   *
+   * @param {UUID} postIdx
+   * @returns
+   */
+  findOnePostContents = async (postIdx) => {
+    const findContents = await this.cardpostsRepository.findOnePostContents(
+      postIdx
+    );
+    findContents.conCount = await this.preferRepository.postConCount(postIdx);
+    findContents.proCount = await this.preferRepository.postProCount(postIdx);
+
+    return findContents;
+  };
+
+  /**
+   * 지정한 카드의 category 정보를 불러들입니다.
+   *
+   * @param {UUID} postIdx
+   * @returns
+   */
+  findOnePostCategorys = async (postIdx) => {
+    return await this.cardpostsRepository.findOnePostCategorys(postIdx);
+  };
+
+  /**
    * 포스트를 작성합니다.
    *
    * @param {UUID} userIdx
@@ -91,6 +117,7 @@ class CardpostsService {
    * @param {string} tag
    * @param {string} imgUrl
    * @param {string} pollTitle
+   * @param {string} pollType
    * @returns
    */
   postCard = async (
@@ -101,7 +128,8 @@ class CardpostsService {
     desc,
     tag,
     imgUrl,
-    pollTitle
+    pollTitle,
+    pollType
   ) => {
     await this.cardpostsRepository.postCard(
       title,
@@ -111,7 +139,8 @@ class CardpostsService {
       tag,
       imgUrl,
       userIdx,
-      pollTitle
+      pollTitle,
+      pollType
     );
 
     return;
