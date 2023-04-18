@@ -1,4 +1,4 @@
-const { CardPost, Users, Comment, Prefer, PostLike } = require("../models");
+const { CardPost, Users, Comment, PostLike } = require("../models");
 const { Op } = require("sequelize");
 const moment = require("moment");
 
@@ -34,7 +34,7 @@ class CardpostsRepository {
       where: { postIdx: findOnePost.postIdx },
     });
     const PreferUserSelete = await PostLike.findOne({
-      where: { userIdx },
+      where: { userIdx, postIdx },
     });
 
     const renamePost = {
@@ -94,7 +94,7 @@ class CardpostsRepository {
     return renameSplitCards;
   };
 
-  // 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.
+  // 특정 로직을 세우고 가장 인기있는 게시물 5개를 가져옵니다.
   findHotCards = async () => {
     const findCardPosts = await this.cardfindAll();
 
@@ -296,12 +296,16 @@ class CardpostsRepository {
         const postCommentCount = await Comment.findAll({
           where: { postIdx: ele.postIdx },
         });
+        const PreferlikeCounts = await PostLike.count({
+          where: { postIdx: ele.postIdx },
+        });
 
         return {
           postIdx: ele.postIdx,
           maincategory: ele.maincategory,
           category: ele.category,
           // userLevel: addUserInfo.level, 추후에 해제
+          likesCount: PreferlikeCounts || 0,
           title: ele.title,
           desc: ele.desc,
           createdAt: ele.createdAt,
