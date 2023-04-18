@@ -4,7 +4,7 @@ require("dotenv").config();
 const Joi = require("joi");
 const UserRepository = require("../repositories/users.repository");
 const jwt = require("jsonwebtoken"); // redis 추가 시 주석처리 해야됨
-const axios = require('axios');
+const axios = require("axios");
 const {
   createHashPassword,
   comparePassword,
@@ -56,24 +56,24 @@ class UserService {
     try {
       const baseUrl = "https://kauth.kakao.com/oauth/token";
       const config = {
-      client_id: process.env.KAKAO_REST_API_KEY,
-      grant_type: "authorization_code",
-      redirect_uri: process.env.KAKAO_REDIRECT_URI,
-      client_secret: process.env.KAKAO_REST_SECRET,
-      code: code
+        client_id: process.env.KAKAO_REST_API_KEY,
+        grant_type: "authorization_code",
+        redirect_uri: process.env.KAKAO_REDIRECT_URI,
+        client_secret: process.env.KAKAO_REST_SECRET,
+        code: code,
       };
       const params = new URLSearchParams(config).toString();
-      
+
       const finalUrl = `${baseUrl}?${params}`;
-      console.log(finalUrl)
+      console.log(finalUrl);
       const kakaoTokenRequest = await fetch(finalUrl, {
-      method: "POST",
-      headers: {
-      "Content-type": "application/json", // 이 부분을 명시하지않으면 text로 응답을 받게됨
-      },
+        method: "POST",
+        headers: {
+          "Content-type": "application/json", // 이 부분을 명시하지않으면 text로 응답을 받게됨
+        },
       });
       const authToken = await kakaoTokenRequest.json();
-      return authToken
+      return authToken;
     } catch (error) {
       logger.error(error.message);
       throw error;
@@ -81,25 +81,23 @@ class UserService {
   };
   //카카오 로그인 회원정보
   getKakaoUser = async (authToken) => {
-    const baseUrl = "https://kapi.kakao.com/v2/user/me"
+    const baseUrl = "https://kapi.kakao.com/v2/user/me";
     const kakaoTokenRequest = await fetch(baseUrl, {
       method: "GET",
       headers: {
-      "Content-type": "application/x-www-form-urlencoded", // 이 부분을 명시하지않으면 text로 응답을 받게됨
-      Authorization: `Bearer ${authToken.access_token}`
+        "Content-type": "application/x-www-form-urlencoded", // 이 부분을 명시하지않으면 text로 응답을 받게됨
+        Authorization: `Bearer ${authToken.access_token}`,
       },
-      });
-      const userData = await kakaoTokenRequest.json();
-      // console.log(userData.properties.nickname)
-      const email = userData.kakao_account.email
-      const nickname = userData.kakao_account.profile.nickname
+    });
+    const userData = await kakaoTokenRequest.json();
+    // console.log(userData.properties.nickname)
+    const email = userData.kakao_account.email;
+    const nickname = userData.kakao_account.profile.nickname;
 
-      // console.log(userData.kakao_account.profile.nickname)
-      // console.log(userData.kakao_account.email)
-      return {email: email,
-              nickname: nickname
-      }
-  }
+    // console.log(userData.kakao_account.profile.nickname)
+    // console.log(userData.kakao_account.email)
+    return { email: email, nickname: nickname };
+  };
 
   /**
    * @param {String} email
@@ -107,7 +105,7 @@ class UserService {
   //토큰 생성
   generateToken = async (email) => {
     const access_token = jwt.sign({ email }, process.env.SECRET_KEY, {
-      expiresIn: "1h",
+      expiresIn: "7d",
     });
 
     const refresh_token = jwt.sign({}, process.env.SECRET_KEY, {
@@ -116,9 +114,8 @@ class UserService {
     // const access_token = jwt.sign(email);
     // const refresh_token = jwt.refresh();
     // redisClient.set(email, refresh_token);
-    return {access_token, refresh_token};
+    return { access_token, refresh_token };
   };
-
 
   /**
    * @param {String} email
@@ -180,7 +177,7 @@ class UserService {
 
   findNickname = async (email) => {
     const nickname = await this.userRepository.findNickname(email);
-    return nickname
+    return nickname;
   };
 }
 module.exports = UserService;
