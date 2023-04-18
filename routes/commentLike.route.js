@@ -6,8 +6,7 @@ const authMiddlewareLike = require('../middlewares/authMiddlewareLike');
 const CommentLikeController = require('../controllers/commentLike.controller');
 const commentLikeController = new CommentLikeController();
 
-router.get('/:commentIdx', authMiddlewareLike, commentLikeController.getAllLike);
+router.get('/:commentIdx', commentLikeController.getAllLike);
 router.put('/:commentIdx', authMiddleware, commentLikeController.updateLike);
-
 
 module.exports = router;
