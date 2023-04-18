@@ -12,22 +12,6 @@ const { Op } = require("sequelize");
 
 class PreferRepository {
   /**
-   * property 테이블에 조건에 맞는 데이터가 존재하는지 검색합니다.
-   */
-  findUserLike = async (tableIdx, property) => {
-    switch (property) {
-      case "PostLike":
-        return await CardPost.findOne({
-          where: { postIdx: tableIdx },
-        });
-      case "CommentLike":
-        return await Comment.findOne({
-          where: { commentIdx: tableIdx },
-        });
-    }
-  };
-
-  /**
    * 포스트에 대해서 찬성표를 던집니다.
    */
   postProInput = async (userIdx, postIdx) => {
