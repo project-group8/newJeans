@@ -11,7 +11,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(models.UserInfo, {
+
+      this.hasMany(models.PostLike, {
+        sourceKey: "userIdx",
+        foreignKey: "userIdx",
+      });
+
+      this.hasMany(models.CommentLike, {
+        sourceKey: "userIdx",
+        foreignKey: "userIdx",
+      });
+
+      this.hasOne(models.UserInfo, {
         sourceKey: "userIdx",
         foreignKey: "userIdx",
       });
@@ -19,19 +30,17 @@ module.exports = (sequelize, DataTypes) => {
         sourceKey: "userIdx",
         foreignKey: "userIdx",
       });
-      this.hasMany(models.Likes, {
-        sourceKey: "userIdx",
-        foreignKey: "userIdx",
-      });
-      this.hasMany(models.DisLikes, {
-        sourceKey: "userIdx",
-        foreignKey: "userIdx",
-      });
+
       this.hasMany(models.Comment, {
         sourceKey: "userIdx",
         foreignKey: "userIdx",
       });
       this.hasMany(models.ReplyComment, {
+        sourceKey: "userIdx",
+        foreignKey: "userIdx",
+      });
+
+      this.hasMany(models.Prefer, {
         sourceKey: "userIdx",
         foreignKey: "userIdx",
       });

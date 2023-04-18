@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 const { Model } = require("sequelize");
 
 const Sequelize = require("sequelize");
@@ -18,45 +18,51 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  UserInfo.init({
-    userInfoIdx: {
-      allowNull: false, // NOT NULL
-      primaryKey: true, // Primary Key (기본키)
-      type: DataTypes.UUID,
-      defaultValue: Sequelize.UUIDV4,
+  UserInfo.init(
+    {
+      userInfoIdx: {
+        allowNull: false, // NOT NULL
+        primaryKey: true, // Primary Key (기본키)
+        type: DataTypes.UUID,
+        defaultValue: Sequelize.UUIDV4,
+      },
+      userIdx: {
+        allowNull: false, // NOT NULL
+        type: DataTypes.UUID,
+      },
+      status: {
+        allowNull: false,
+        type: DataTypes.STRING(8),
+        defaultValue: "US000001",
+      },
+      refreshToken: {
+        allowNull: true,
+        type: DataTypes.STRING,
+      },
+      userImg: {
+        allowNull: true,
+        type: DataTypes.STRING,
+      },
+      level: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        defaultValue: "Lv1",
+      },
+      createdAt: {
+        allowNull: false, // NOT NULL
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        allowNull: false, // NOT NULL
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
-    status: {
-      allowNull: false, 
-      type: DataTypes.STRING(8),
-      defaultValue:
-      'US000001'
-    },
-    refreshToken: {
-      allowNull: true, 
-      type: DataTypes.STRING,
-    },
-    userImg: {
-      allowNull: true, 
-      type: DataTypes.STRING,
-    },
-    level: {
-      allowNull: false, 
-      type: DataTypes.STRING,
-      defaultValue:'Lv1'
-    },
-    createdAt: {
-      allowNull: false, // NOT NULL
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-      allowNull: false, // NOT NULL
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-  }, {
-    sequelize,
-    modelName: 'UserInfo',
-  });
+    {
+      sequelize,
+      modelName: "UserInfo",
+    }
+  );
   return UserInfo;
 };

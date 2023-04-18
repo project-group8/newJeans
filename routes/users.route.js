@@ -13,4 +13,9 @@ router.get("/allUsers", userController.getAllusers);
 router.post("/login", authLoginMiddleware, userController.userLogin);
 // 로그 아웃
 router.get("/logout", userController.userlogout);
+// 카카오 로그인
+router.post("/kakaoLogin", userController.kakaoLogin);
+
+router.get('/refresh', userController.refresh);
+
 module.exports = router;
