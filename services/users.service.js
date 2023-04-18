@@ -109,7 +109,7 @@ class UserService {
     });
 
     const refresh_token = jwt.sign({}, process.env.SECRET_KEY, {
-      expiresIn: "1d",
+      expiresIn: "30d",
     });
     // const access_token = jwt.sign(email);
     // const refresh_token = jwt.refresh();
