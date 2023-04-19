@@ -1,8 +1,14 @@
-const { CardPost, Users, Comment, PostLike } = require("../models");
+const { CardPost, Users, Comment, PostLike, Prefer } = require("../models");
 const { Op } = require("sequelize");
 const moment = require("moment");
 
+const PreferRepository = require("./prefer.repository");
+
 class CardpostsRepository {
+  constructor() {
+    this.preferRepository = new PreferRepository();
+  }
+
   //로그인 한 유저라면 IsLike의 상태를 볼 수 있습니다.
   findOneIogInPost = async (userIdx, postIdx) => {
     const findOnePost = await CardPost.findOne({
@@ -10,15 +16,10 @@ class CardpostsRepository {
       attibutes: [
         "postIdx",
         "userIdx",
-        "maincategory",
-        "category",
         "title",
         "desc",
         "createdAt",
         "viewCount",
-        "imgUrl",
-        "tag",
-        "pollTitle",
       ],
     });
     // const addUserInfo = await UserInfo.findOne({
@@ -41,8 +42,6 @@ class CardpostsRepository {
       postIdx: findOnePost.postIdx,
       title: findOnePost.title,
       // userLevel: addUserInfo.level, 추후에 해제
-      maincategory: findOnePost.maincategory,
-      category: findOnePost.category,
       desc: findOnePost.desc,
       createdAt: findOnePost.createdAt,
       nickname: addUser.nickname,
@@ -50,25 +49,17 @@ class CardpostsRepository {
       postViewCount: findOnePost.viewCount,
       commentCount: postCommentCount.length || 0,
       likesCount: PreferlikeCounts || 0,
-      pollTitle: findOnePost.pollTitle || "",
-      imgUrl: !findOnePost.imgUrl
-        ? ""
-        : findOnePost.imgUrl.replace(/\s/g, "").substring(0, 4) == "http"
-        ? findOnePost.imgUrl.replace(/\s/g, "").split(",")
-        : [
-            findOnePost.imgUrl
-              .replace(/\s/g, "")
-              .split(",")
-              .slice(0, 2)
-              .trim()
-              .join(","),
-          ],
-      tag: !findOnePost.tag ? "" : findOnePost.tag.trim().split(","),
     };
 
     return renamePost;
   };
 
+  /**
+   * email을 대조해서 유저를 찾습니다.
+   *
+   * @param {string} email
+   * @returns
+   */
   findOneUser = async (email) => {
     const findOneUser = await Users.findOne({ where: { email } });
 
@@ -116,6 +107,42 @@ class CardpostsRepository {
     return top3PostObjects;
   };
 
+  // 지정한 카드의 contents를 불러들입니다.
+  findOnePostContents = async (postIdx) => {
+    const findPost = await CardPost.findOne({
+      where: { postIdx: postIdx },
+      attibutes: ["postIdx", "imgUrl", "tag", "pollTitle", "pollType"],
+    });
+
+    const findPostRename = {
+      pollTitle: findPost.pollTitle,
+      pollType: findPost.pollType,
+      imgUrl: !findPost.imgUrl
+        ? ""
+        : findPost.imgUrl.replace(/\s/g, "").substring(0, 4) == "http"
+        ? findPost.imgUrl.replace(/\s/g, "").split(",")
+        : [
+            findPost.imgUrl
+              .replace(/\s/g, "")
+              .split(",")
+              .slice(0, 2)
+              .trim()
+              .join(","),
+          ],
+      tag: !findPost.tag ? "" : findPost.tag.trim().split(","),
+    };
+
+    return findPostRename;
+  };
+
+  // 지정한 카드의 category 정보를 불러들입니다.
+  findOnePostCategorys = async (postIdx) => {
+    return await CardPost.findOne({
+      where: { postIdx: postIdx },
+      attibutes: ["maincategory", "category"],
+    });
+  };
+
   // postIdx로 지정한 카드를 불러들입니다. 비로그인 유저이기 떄문에 IsLike는 false.
   findOnePost = async (postIdx) => {
     const findOnePost = await CardPost.findOne({
@@ -123,15 +150,10 @@ class CardpostsRepository {
       attibutes: [
         "postIdx",
         "userIdx",
-        "maincategory",
-        "category",
         "title",
         "desc",
         "createdAt",
         "viewCount",
-        "imgUrl",
-        "tag",
-        "pollTitle",
       ],
     });
     // const addUserInfo = await UserInfo.findOne({
@@ -151,8 +173,6 @@ class CardpostsRepository {
       postIdx: findOnePost.postIdx,
       title: findOnePost.title,
       // userLevel: addUserInfo.level, 추후에 해제
-      maincategory: findOnePost.maincategory,
-      category: findOnePost.category,
       desc: findOnePost.desc,
       createdAt: findOnePost.createdAt,
       nickname: addUser.nickname,
@@ -160,20 +180,6 @@ class CardpostsRepository {
       postViewCount: findOnePost.viewCount,
       commentCount: postCommentCount.length || 0,
       likesCount: PreferlikeCounts || 0,
-      pollTitle: findOnePost.pollTitle || "",
-      imgUrl: !findOnePost.imgUrl
-        ? ""
-        : findOnePost.imgUrl.replace(/\s/g, "").substring(0, 4) == "http"
-        ? findOnePost.imgUrl.replace(/\s/g, "").split(",")
-        : [
-            findOnePost.imgUrl
-              .replace(/\s/g, "")
-              .split(",")
-              .slice(0, 2)
-              .trim()
-              .join(","),
-          ],
-      tag: !findOnePost.tag ? "" : findOnePost.tag.trim().split(","),
     };
 
     return renamePost;
@@ -188,7 +194,8 @@ class CardpostsRepository {
     tag,
     imgUrl,
     userIdx,
-    pollTitle
+    pollTitle,
+    pollType
   ) => {
     await CardPost.create({
       title,
@@ -200,6 +207,7 @@ class CardpostsRepository {
       userIdx,
       viewCount: 0,
       pollTitle,
+      pollType: pollType || "",
     });
 
     return;
