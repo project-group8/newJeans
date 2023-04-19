@@ -158,10 +158,8 @@ class CardpostsController {
         throw Boom.badRequest("maincategory 값이 존재하지 않습니다.");
       }
 
-      if (!title || !category || !desc || !pollType) {
-        throw Boom.badRequest(
-          "title, category, desc, pollType은 비어있을 수 없습니다."
-        );
+      if (!title || !category || !desc) {
+        throw Boom.badRequest("title, category, desc는 비어있을 수 없습니다.");
       }
 
       if (uploadUrlArray) {
