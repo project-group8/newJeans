@@ -88,16 +88,15 @@ class UserService {
         "Content-type": "application/x-www-form-urlencoded", // 이 부분을 명시하지않으면 text로 응답을 받게됨
         Authorization: `Bearer ${authToken.access_token}`,
       },
-    });
-    const userData = await kakaoTokenRequest.json();
-    // console.log(userData.properties.nickname)
-    const email = userData.kakao_account.email;
-    const nickname = userData.kakao_account.profile.nickname;
 
-    // console.log(userData.kakao_account.profile.nickname)
-    // console.log(userData.kakao_account.email)
-    return { email: email, nickname: nickname };
-  };
+      });
+      const userData = await kakaoTokenRequest.json();
+      const email = userData.kakao_account.email
+      const nickname = userData.kakao_account.profile.nickname
+      return {email: email,
+              nickname: nickname
+      }
+  }
 
   /**
    * @param {String} email
@@ -109,7 +108,9 @@ class UserService {
     });
 
     const refresh_token = jwt.sign({}, process.env.SECRET_KEY, {
+
       expiresIn: "30d",
+
     });
     // const access_token = jwt.sign(email);
     // const refresh_token = jwt.refresh();

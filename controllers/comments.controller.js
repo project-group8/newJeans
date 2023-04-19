@@ -13,7 +13,7 @@ class CommentController {
   createComment = async (req, res, next) => {
     try {
       const { postIdx } = req.params;
-      const { comment } = req.body;
+      const { comment, selectedTag } = req.body;
       const { userIdx } = res.locals.user;
 
       const resultSchema = await commentSchema.validate({ comment });
@@ -29,7 +29,8 @@ class CommentController {
       await this.commentService.createComment(
         postIdx,
         userIdx,
-        comment
+        comment,
+        selectedTag
       );
 
       return res.status(200).json({
@@ -64,7 +65,7 @@ class CommentController {
    //댓글 수정
   updateComment = async (req, res, next) => {
     try {
-      const { commentIdx, postIdx } = req.params;
+      const { commentIdx, postIdx} = req.params;
       const { comment } = req.body;
       const { userIdx } = res.locals.user;
 
@@ -109,14 +110,13 @@ class CommentController {
         throw Boom.notFound('해당 게시글은 존재하지 않습니다.');
       }
 
-      const chkAuthComment = await this.commentService.findeAuth( commentIdx, userIdx );
+      const chkAuthComment = await this.commentService.findAuth( commentIdx, userIdx );
       if (!chkAuthComment) {
         throw Boom.forbidden('댓글의 삭제 권한이 없습니다.');
       }
 
       await this.commentService.deleteComment(
         commentIdx,
-        userIdx
       );
 
       return res.status(200).json({

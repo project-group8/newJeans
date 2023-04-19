@@ -51,7 +51,7 @@ class ReplyCommentRepository extends ReplyComment {
    * @param {String} comment
    */
   //댓글 수정
-  updateReComment = async (replyIdx, userIdx, comment) => {
+  updateReComment = async (replyIdx, comment, userIdx) => {
     const modifyReComment = await ReplyComment.update(
       { comment },
       { where: { replyIdx, userIdx } }
@@ -100,7 +100,7 @@ class ReplyCommentRepository extends ReplyComment {
    * @param {UUID} commentIdx
    */
   //권한 확인
-  findeAuth = async (replyIdx, userIdx) => {
+  findAuth = async (replyIdx, userIdx) => {
     const chkAuth = await ReplyComment.findOne({
       where: { replyIdx, userIdx },
     });
