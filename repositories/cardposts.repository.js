@@ -207,7 +207,7 @@ class CardpostsRepository {
       userIdx,
       viewCount: 0,
       pollTitle,
-      pollType,
+      pollType: pollType || "",
     });
 
     return;
