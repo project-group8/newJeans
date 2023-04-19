@@ -38,13 +38,13 @@ class UserController {
     const authToken = await this.userService.getKakaoToken(code);
     const userData = await this.userService.getKakaoUser(authToken);
     const email = userData.email;
-    // console.log(email)
-    // const {email, nickname} = userData
+
     const { access_token, refresh_token } =
       await this.userService.generateToken(email);
+      
     res.set("Authorization", `Bearer ${access_token}`);
     res.set("refreshtoken", refresh_token);
-    // res.send(JSON.stringify(userData)); // 프론트엔드에서 확인하려고
+
     return res
       .status(201)
       .json({ message: "로그인에 성공했습니다", nickname: userData.nickname });
