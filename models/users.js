@@ -22,10 +22,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userIdx",
       });
 
-      this.hasOne(models.UserInfo, {
-        sourceKey: "userIdx",
-        foreignKey: "userIdx",
-      });
       this.hasMany(models.CardPost, {
         sourceKey: "userIdx",
         foreignKey: "userIdx",
@@ -60,13 +56,23 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       password: {
-        allowNull: false, // NOT NULL
+        allowNull: true,
         type: DataTypes.STRING,
       },
       nickname: {
         allowNull: false, // NOT NULL
         unique: true,
         type: DataTypes.STRING,
+      },
+      level: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        defaultValue: "훈수 초보",
+      },
+      status: {
+        allowNull: false,
+        type: DataTypes.STRING(8),
+        defaultValue: "US000001",
       },
       createdAt: {
         allowNull: false, // NOT NULL

@@ -45,7 +45,6 @@ class ReplyCommentService {
         };
     });
   };
-
   /**
    * @param {UUID} commentIdx
    * @param {String} comment
