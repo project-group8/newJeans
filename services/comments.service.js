@@ -10,13 +10,14 @@ class CommentService {
    * @return 생성된 댓글
    */
   //댓글 생성
-  createComment = async (postIdx, userIdx, comment) => {
+  createComment = async (postIdx, userIdx, comment, selectedTag) => {
     await this.commentRepository.findPost(postIdx);
 
     const writeComment = await this.commentRepository.createComment(
       postIdx,
       userIdx,
-      comment
+      comment,
+      selectedTag
     );
     return writeComment;
   };
@@ -39,6 +40,7 @@ class CommentService {
         postIdx: comment.postIdx,
         nickname: comment.nickname,
         comment: comment.comment,
+        selectedTag: comment.selectedTag,
         createdAt: comment.createdAt,
         updatedAt: comment.updatedAt,
         };
@@ -52,13 +54,7 @@ class CommentService {
    * @return 수정된 행의 수
    */
   //댓글 수정
-  updateComment = async (commentIdx, comment, userIdx, postIdx) => {
-    await this.commentRepository.findPost(postIdx);
-
-    await this.commentRepository.findeAuth(
-        commentIdx,
-        userIdx
-    );
+  updateComment = async (commentIdx, comment, userIdx) => {
 
     const modifyComment = await this.commentRepository.updateComment(
       commentIdx,
@@ -74,25 +70,21 @@ class CommentService {
    * @return 삭제된 행의 수
    */
   //댓글 삭제
-  deleteComment = async (commentIdx, userIdx, postIdx) => {
-    await this.commentRepository.findPost(postIdx);
-
-    await this.commentRepository.findeAuth(
-        commentIdx,
-        userIdx
-    );
+  deleteComment = async (commentIdx) => {
 
     const removeComment = await this.commentRepository.deleteComment(commentIdx);
     return removeComment;
   };
 
+  //게시글 확인
   findPost = async (postIdx) => {
     const selectPost = await this.commentRepository.findPost(postIdx);
     return selectPost;
   };
 
-  findAuth = async (postIdx) => {
-    const selectPost = await this.commentRepository.findPost(postIdx);
+  //권한 확인
+  findAuth = async (commentIdx, userIdx) => {
+    const selectPost = await this.commentRepository.findAuth(commentIdx, userIdx);
     return selectPost;
   };
 }

@@ -90,12 +90,8 @@ class UserService {
       },
       });
       const userData = await kakaoTokenRequest.json();
-      // console.log(userData.properties.nickname)
       const email = userData.kakao_account.email
       const nickname = userData.kakao_account.profile.nickname
-
-      // console.log(userData.kakao_account.profile.nickname)
-      // console.log(userData.kakao_account.email)
       return {email: email,
               nickname: nickname
       }
@@ -107,11 +103,11 @@ class UserService {
   //토큰 생성
   generateToken = async (email) => {
     const access_token = jwt.sign({ email }, process.env.SECRET_KEY, {
-      expiresIn: "1h",
+      expiresIn: "7d",
     });
 
     const refresh_token = jwt.sign({}, process.env.SECRET_KEY, {
-      expiresIn: "1d",
+      expiresIn: "7d",
     });
     // const access_token = jwt.sign(email);
     // const refresh_token = jwt.refresh();
