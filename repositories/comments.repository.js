@@ -1,4 +1,4 @@
-const { CardPost, Comment, Users } = require('../models');
+const { CardPost, Comment, Users, ReplyComment } = require('../models');
 const { parseModelToFlatObject } = require('../helpers/sequelize.helper');
 class CommentRepository extends Comment {
   

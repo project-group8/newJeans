@@ -10,7 +10,7 @@ class ReplyCommentRepository extends ReplyComment {
    * @param {UUID} userIdx
    * @param {String} comment
    */
-  //댓글 생성
+  //답글 생성
   createReComment = async (commentIdx, postIdx, userIdx, comment) => {
     const writeReComment = await ReplyComment.create({
       commentIdx,
@@ -24,7 +24,7 @@ class ReplyCommentRepository extends ReplyComment {
   /**
    * @param {UUID} commentIdx
    */
-  //댓글 조회
+  //답글 조회
   getReComments = async (commentIdx) => {
     const selectReComments = await ReplyComment.findAll({
       where: {
@@ -50,7 +50,7 @@ class ReplyCommentRepository extends ReplyComment {
    * @param {UUID} userIdx
    * @param {String} comment
    */
-  //댓글 수정
+  //답글 수정
   updateReComment = async (replyIdx, comment, userIdx) => {
     const modifyReComment = await ReplyComment.update(
       { comment },
@@ -62,7 +62,7 @@ class ReplyCommentRepository extends ReplyComment {
   /**
    * @param {UUID} replyIdx
    */
-  //댓글 삭제
+  //답글 삭제
   deleteReComment = async (replyIdx) => {
     const removeReComment = ReplyComment.destroy({
       where: { replyIdx },

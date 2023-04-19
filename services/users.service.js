@@ -79,6 +79,7 @@ class UserService {
       throw error;
     }
   };
+  
   //카카오 로그인 회원정보
   getKakaoUser = async (authToken) => {
     const baseUrl = "https://kapi.kakao.com/v2/user/me"

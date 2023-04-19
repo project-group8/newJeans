@@ -65,7 +65,7 @@ class ReplyCommentController {
       const seletReComments = await this.replycommentService.getReComments(commentIdx);
 
       return res.status(200).json({
-        replys: seletReComments,
+        replys : seletReComments
       });
     } catch (error) {
       next(error)
