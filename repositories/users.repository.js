@@ -33,7 +33,11 @@ class UserRepository extends Users {
     const createUser = await Users.create({ email, password, nickname });
     return createUser;
   };
-
+  
+  snsUserSignup = async (email, nickname) => {
+    const createUser = await Users.create({ email, nickname });
+    return createUser;
+  };
   //user정보 조회
   getAllusers = async () => {
     const user = await Users.findAll({

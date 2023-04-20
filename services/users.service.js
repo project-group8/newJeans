@@ -158,6 +158,15 @@ class UserService {
       throw error;
     }
   };
+  snsUserSignup = async (email, nickname) => {
+    try {
+
+      await this.userRepository.snsUserSignup(email, nickname);
+    } catch (error) {
+      logger.error(error.message);
+      throw error;
+    }
+  };
 
   //모든 유저 조회
   getAllusers = async () => {

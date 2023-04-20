@@ -38,12 +38,17 @@ class UserController {
     const authToken = await this.userService.getKakaoToken(code);
     const userData = await this.userService.getKakaoUser(authToken);
     const email = userData.email;
-
+    const nickname = userData.nickname
     const { access_token, refresh_token } =
       await this.userService.generateToken(email);
       
     res.set("Authorization", `Bearer ${access_token}`);
     res.set("refreshtoken", refresh_token);
+    
+    await this.userService.snsUserSignup(
+      email,
+      nickname
+    );
 
     return res
       .status(201)
