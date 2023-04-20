@@ -41,14 +41,19 @@ class UserController {
     const nickname = userData.nickname
     const { access_token, refresh_token } =
       await this.userService.generateToken(email);
-      
+    
     res.set("Authorization", `Bearer ${access_token}`);
     res.set("refreshtoken", refresh_token);
-    
-    await this.userService.snsUserSignup(
-      email,
-      nickname
-    );
+    console.log(email)
+    console.log(nickname)
+    const selectEmail = await this.userService.findEmail(email);
+    console.log(selectEmail)
+    if (!selectEmail){
+      await this.userService.snsUserSignup(
+        email,
+        nickname
+      );
+    }
 
     return res
       .status(201)
@@ -106,6 +111,7 @@ class UserController {
       next(error);
     }
   };
+
   refresh = async (req, res) => {
     // access token과 refresh token의 존재 유무를 체크합니다.
     if (req.headers.authorization && req.headers.refreshtoken) {
