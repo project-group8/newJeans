@@ -49,7 +49,7 @@ app.use((err, req, res, next) => {
 
 // 슬렉 서버
 (async () => {
-  await slack.start(process.env.PORT || 3001);
+  await slack.start(process.env.SLACK_PORT);
   console.log("⚡️ Bolt app is running!");
 })();
 

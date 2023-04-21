@@ -7,6 +7,6 @@ const CommentLikeController = require('../controllers/commentLike.controller');
 const commentLikeController = new CommentLikeController();
 
 router.get('/:commentIdx', commentLikeController.getAllLike);
-router.put('/:commentIdx', authMiddleware, commentLikeController.updateLike);
+router.put('/:postIdx/:commentIdx', authMiddleware, commentLikeController.updateLike);
 
 module.exports = router;
