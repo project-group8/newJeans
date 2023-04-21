@@ -6,34 +6,37 @@ class LikesRepository extends CommentLike {
   constructor() {
     super();
   }
-  findLike = async (userIdx, commentIdx) => {
+  findLike = async (userIdx, postIdx, commentIdx) => {
     const checklike = 
       await CommentLike.findOne({
         where: {
-            userIdx,
-            commentIdx,
+          userIdx,
+          postIdx,
+          commentIdx,
         },
       });
 
     return checklike
   };
 
-  likeUpdate = async (userIdx, commentIdx) => {
+  likeUpdate = async (userIdx, postIdx, commentIdx) => {
     const checklike = 
       await CommentLike.create({
         userIdx,
+        postIdx,
         commentIdx,
       });
 
     return checklike
   };
 
-  likeUndo = async (userIdx, commentIdx) => {
+  likeUndo = async (userIdx, postIdx, commentIdx) => {
     const checklike = 
       await CommentLike.destroy({
         where: {
-            userIdx,
-            commentIdx,
+          userIdx,
+          postIdx,
+          commentIdx,
         },
       });
 
