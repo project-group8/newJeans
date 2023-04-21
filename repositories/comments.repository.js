@@ -1,4 +1,5 @@
-const { CardPost, Comment, Users, ReplyComment } = require('../models');
+const { CardPost, Comment, Users, CommentLike } = require('../models');
+const { Sequelize } = require("sequelize");
 const { parseModelToFlatObject } = require('../helpers/sequelize.helper');
 class CommentRepository extends Comment {
   
@@ -23,7 +24,7 @@ class CommentRepository extends Comment {
   /**
    * @param {UUID} postIdx
    */
-  //댓글 조회
+  //댓글 전체 조회
   getComments = async (postIdx) => {
     const selectComments = await Comment.findAll({
       where: {
@@ -34,6 +35,12 @@ class CommentRepository extends Comment {
         {
           model: Users,
           attributes: ['nickname'],
+        },
+        {
+          model: CommentLike,
+          attributes: [
+            [Sequelize.fn('COUNT', Sequelize.col('commentLikeIdx')),'likesCount']
+          ]
         },
       ],
       group: ['Comment.commentIdx'],

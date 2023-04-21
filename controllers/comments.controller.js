@@ -41,7 +41,7 @@ class CommentController {
     }
   };
 
-   //댓글 조회
+   //댓글 전체 조회
   getComments = async (req, res, next) => {
     try {
       const { postIdx } = req.params;
@@ -60,7 +60,6 @@ class CommentController {
         next(error)
     }
   };
-
 
    //댓글 수정
   updateComment = async (req, res, next) => {

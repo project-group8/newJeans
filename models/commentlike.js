@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "commentIdx", // 현재 모델의 userId가 외래키로 가진다.
         onDelete: "CASCADE",
       });
+
+      this.belongsTo(models.CardPost, {
+        targetKey: "postIdx", // Users 모델의 userId 컬럼을
+        foreignKey: "postIdx", // 현재 모델의 userId가 외래키로 가진다.
+        onDelete: "CASCADE",
+      });
     }
   }
   CommentLike.init(
@@ -35,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       userIdx: {
         allowNull: false, // NOT NULL
+        type: DataTypes.UUID,
+      },
+      postIdx: {
+        allowNull: false,
         type: DataTypes.UUID,
       },
       commentIdx: {

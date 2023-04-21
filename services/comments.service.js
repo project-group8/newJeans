@@ -26,9 +26,9 @@ class CommentService {
    * @param {UUID} postIdx
    * @return 조회한 댓글 목록
    */
-  //댓글 조회
+  //댓글 전체 조회
   getComments = async (postIdx) => {
-    await this.commentRepository.findPost(postIdx);
+    // await this.commentRepository.findPost(postIdx);
 
     const comments = await this.commentRepository.getComments(postIdx);
     comments.sort((a, b) => {
@@ -41,6 +41,7 @@ class CommentService {
         nickname: comment.nickname,
         comment: comment.comment,
         selectedTag: comment.selectedTag,
+        likesCount: comment.likesCount,
         createdAt: comment.createdAt,
         updatedAt: comment.updatedAt,
         };
