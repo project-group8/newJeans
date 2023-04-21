@@ -107,10 +107,14 @@ class CardpostsRepository {
 
   // 지정한 카드의 contents를 불러들입니다.
   findOnePostContents = async (postIdx) => {
-    const findPost = await CardPost.findOne({
-      where: { postIdx: postIdx },
-      attibutes: ["postIdx", "imgUrl", "tag", "pollTitle", "pollType"],
-    });
+    const [findPost, conCount, proCount] = await Promise.all([
+      await CardPost.findOne({
+        where: { postIdx: postIdx },
+        attibutes: ["postIdx", "imgUrl", "tag", "pollTitle", "pollType"],
+      }),
+      await this.preferRepository.postConCount(postIdx),
+      await this.preferRepository.postProCount(postIdx),
+    ]);
 
     const findPostRename = {
       pollTitle: findPost.pollTitle,
@@ -128,6 +132,10 @@ class CardpostsRepository {
               .join(","),
           ],
       tag: !findPost.tag ? "" : findPost.tag.trim().split(","),
+      proInputValue: false,
+      conInputValue: false,
+      conCount: conCount,
+      proCount: proCount,
     };
 
     return findPostRename;

@@ -115,12 +115,6 @@ class CardpostsService {
     const findContents = await this.cardpostsRepository.findOnePostContents(
       postIdx
     );
-    findContents.conCount = await this.preferRepository.postConCount(postIdx);
-    findContents.proCount = await this.preferRepository.postProCount(postIdx);
-
-    // 투표를 하지 않았다면 모두 false한다.
-    findContents.proInputValue = false;
-    findContents.conInputValue = false;
 
     // 현재 포스트에서 user가 투표를 했는지 알아본다.
     const findPollUserCheckValue =
@@ -137,10 +131,11 @@ class CardpostsService {
       } else if (selectprefer == "8") {
         findContents.proInputValue = true;
         findContents.conInputValue = false;
-
         return findContents;
       }
     }
+
+    console.log("만ㅇ허;ㅣㅁ나ㅓㅎ;ㅣㅁ나ㅓㅎ;ㅣㅁㄴ아", findContents);
 
     return findContents;
   };
