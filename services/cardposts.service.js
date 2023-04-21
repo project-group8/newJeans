@@ -171,24 +171,13 @@ class CardpostsService {
     imgUrl,
     pollTitle
   ) => {
-    const nullCheck = await cardpostsRepository.nullCheck(
+    await this.cardpostsRepository.updatePost(
+      userIdx,
       postIdx,
       title,
       maincategory,
       category,
-      desc
-    );
-
-    const { checkTitle, checkMainCategory, checkCategory, checkDesc } =
-      nullCheck;
-
-    await this.cardpostsRepository.updatePost(
-      userIdx,
-      postIdx,
-      checkTitle,
-      checkMainCategory,
-      checkCategory,
-      checkDesc,
+      desc,
       tag,
       imgUrl,
       pollTitle

@@ -33,6 +33,10 @@ class PreferController {
         );
       }
 
+      if (proInputValue == true && conInputValue == true) {
+        throw Boom.badRequest("값을 둘다 true로 줄 수 없습니다.");
+      }
+
       const findOneUser = await this.cardpostsRepository.findOneUser(email);
       const userIdx = findOneUser.userIdx;
       const pollResult = await this.preferService.postPoll(

@@ -43,9 +43,7 @@ class PostLikeService {
         return message;
       }
     } catch (error) {
-      throw Boom.badRequest(
-        "좋아요 토글 과정에서 알 수없는 에러가 발생 했습니다."
-      );
+      next(error);
     }
   };
 }
