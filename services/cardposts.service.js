@@ -129,8 +129,8 @@ class CardpostsService {
         findContents.conInputValue = false;
         return findContents;
       } else if (selectprefer == "8") {
-        findContents.proInputValue = true;
-        findContents.conInputValue = false;
+        findContents.proInputValue = false;
+        findContents.conInputValue = true;
         return findContents;
       }
     }
