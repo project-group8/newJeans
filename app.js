@@ -24,7 +24,8 @@ app.use(
     origin: "*",
     credentials: true,
     optionsSuccessStatus: 200,
-    exposedHeaders: ["Authorization"],
+    exposedHeaders: ["Authorization","refreshtoken"],
+    // exposedHeaders: [],
   })
 );
 

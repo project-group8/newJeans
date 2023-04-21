@@ -73,6 +73,7 @@ class UserService {
         },
       });
       const authToken = await kakaoTokenRequest.json();
+      console.log(authToken)
       return authToken;
     } catch (error) {
       logger.error(error.message);
@@ -92,6 +93,7 @@ class UserService {
 
       });
       const userData = await kakaoTokenRequest.json();
+      console.log(userData)
       const email = userData.kakao_account.email
       const nickname = userData.kakao_account.profile.nickname
       return {email: email,
@@ -153,6 +155,25 @@ class UserService {
       const hashedPassword = await createHashPassword(password);
 
       await this.userRepository.userSignup(email, hashedPassword, nickname);
+    } catch (error) {
+      logger.error(error.message);
+      throw error;
+    }
+  };
+  snsUserSignup = async (email, nickname) => {
+    try {
+
+      await this.userRepository.snsUserSignup(email, nickname);
+    } catch (error) {
+      logger.error(error.message);
+      throw error;
+    }
+  };
+
+  findEmail = async (email) => {
+    try {
+      const selectEmail = await this.userRepository.findByID(email);
+      return selectEmail;
     } catch (error) {
       logger.error(error.message);
       throw error;
