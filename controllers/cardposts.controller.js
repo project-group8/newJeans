@@ -96,6 +96,23 @@ class CardpostsController {
         throw Boom.badRequest("postIdx가 입력되지 않았습니다.");
       }
 
+      // 로그인 한 유저일 경우에 어디에 투표했는지 판별합니다.
+      if (res.locals.user) {
+        const { email } = res.locals.user;
+        const findOneUser = await this.cardpostsRepository.findOneUser(email);
+        const userIdx = findOneUser.userIdx;
+        const findOnePostContents =
+          await this.cardpostsService.userFindOnePostContents(userIdx, postIdx);
+
+        if (!findOnePostContents) {
+          throw Boom.notFound(
+            `postIdx : [${postIdx}] 게시글이 존재하지 않습니다.`
+          );
+        }
+
+        return res.status(200).json({ contents: findOnePostContents });
+      }
+
       const findOnePostContents =
         await this.cardpostsService.findOnePostContents(postIdx);
 

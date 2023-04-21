@@ -71,6 +71,15 @@ class PreferRepository {
       where: { postIdx, userIdx, selectprefer }, // 포스트 찬성 '7' , 반대 '8'
     });
   };
+
+  // 포스트에 투표 값을 불러들입니다.
+  findPollUserCheckValue = async (userIdx, postIdx) => {
+    const findPollUserCheckValue = await Prefer.findOne({
+      where: { postIdx, userIdx },
+    });
+
+    return findPollUserCheckValue ? findPollUserCheckValue : null;
+  };
 }
 
 module.exports = PreferRepository;
