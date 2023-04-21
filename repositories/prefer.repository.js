@@ -15,24 +15,20 @@ class PreferRepository {
    * 포스트에 대해서 찬성표를 던집니다.
    */
   postProInput = async (userIdx, postIdx) => {
-    await Prefer.create({
+    return await Prefer.create({
       userIdx: userIdx,
       postIdx: postIdx,
       selectprefer: "7", // 포스트 찬성
     });
-
-    return;
   };
 
   // 포스트에 대해서 반대표를 던집니다.
   postConInput = async (userIdx, postIdx) => {
-    await Prefer.create({
+    return await Prefer.create({
       userIdx: userIdx,
       postIdx: postIdx,
       selectprefer: "8", // 포스트 반대
     });
-
-    return;
   };
 
   /**
@@ -66,9 +62,9 @@ class PreferRepository {
   };
 
   // 포스트에 찬성 혹은 반대 했는지 알아봅니다.
-  findPollUserCheck = async (userIdx, postIdx, selectprefer) => {
+  findPollUserCheck = async (userIdx, postIdx, postNum) => {
     return await Prefer.findOne({
-      where: { postIdx, userIdx, selectprefer }, // 포스트 찬성 '7' , 반대 '8'
+      where: { userIdx, postIdx, selectprefer: postNum }, // 포스트 찬성 '7' , 반대 '8'
     });
   };
 
@@ -78,7 +74,7 @@ class PreferRepository {
       where: { postIdx, userIdx },
     });
 
-    return findPollUserCheckValue ? findPollUserCheckValue : null;
+    return findPollUserCheckValue;
   };
 }
 

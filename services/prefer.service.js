@@ -11,6 +11,10 @@ class PreferService {
   // 포스트에 투표합니다.
   postPoll = async (userIdx, postIdx, proInputValue, conInputValue) => {
     try {
+      if (proInputValue == false && conInputValue == false) {
+        return "proInputValue과 conInputValue이 둘다 false입니다. 값이 반영되지 않습니다.";
+      }
+
       // proInputValue는 포스트에 찬성, conInputValue는 반대
 
       const findPollUserCheckValue =
@@ -64,6 +68,8 @@ class PreferService {
           return this.PostPollCount(postIdx);
         }
       }
+
+      return "정상적인 작동이 아닙니다.";
     } catch (error) {
       error;
     }
