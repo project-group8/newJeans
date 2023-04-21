@@ -11,18 +11,40 @@ class PreferService {
   // 포스트에 투표합니다.
   postPoll = async (userIdx, postIdx, proInputValue, conInputValue) => {
     try {
-      if (proInputValue == true && conInputValue == true) {
-        throw Boom.badRequest("값을 둘다 true로 줄 수 없습니다.");
-      }
+      // proInputValue는 포스트에 찬성, conInputValue는 반대
 
       if (proInputValue == true) {
-        await this.preferRepository.postProInput(userIdx, postIdx);
+        const isPoll = await this.preferRepository.findPollUserCheck(
+          userIdx,
+          postIdx,
+          "7"
+        );
 
-        return this.PostPollCount(postIdx);
+        if (!isPoll) {
+          await this.preferRepository.postProInput(userIdx, postIdx);
+
+          return this.PostPollCount(postIdx);
+        } else {
+          await this.preferRepository.postProDelete(userIdx, postIdx);
+
+          return this.PostPollCount(postIdx);
+        }
       } else if (conInputValue == true) {
-        await this.preferRepository.postConInput(userIdx, postIdx);
+        const isPoll = await this.preferRepository.findPollUserCheck(
+          userIdx,
+          postIdx,
+          "8"
+        );
 
-        return this.PostPollCount(postIdx);
+        if (!isPoll) {
+          await this.preferRepository.postConInput(userIdx, postIdx);
+
+          return this.PostPollCount(postIdx);
+        } else {
+          await this.preferRepository.postConDelete(userIdx, postIdx);
+
+          return this.PostPollCount(postIdx);
+        }
       }
     } catch (error) {
       next(error);
