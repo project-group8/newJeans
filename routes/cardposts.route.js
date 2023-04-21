@@ -21,10 +21,14 @@ router.get(
   cardpostsController.findOnePost
 );
 
-// 게시글 상세 가져오기 2.
-router.get("/post/contents/:postIdx", cardpostsController.findOnePostContents);
+// 게시글 상세 가져오기 2.Contents
+router.get(
+  "/post/contents/:postIdx",
+  allusersMiddleware,
+  cardpostsController.findOnePostContents
+);
 
-// 게시글 상세 가져오기 3.
+// 게시글 상세 가져오기 3. Categorys
 router.get("/post/category/:postIdx", cardpostsController.findOnePostCategorys);
 
 // 게시글 작성하기

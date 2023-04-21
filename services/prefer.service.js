@@ -13,6 +13,24 @@ class PreferService {
     try {
       // proInputValue는 포스트에 찬성, conInputValue는 반대
 
+      const findPollUserCheckValue =
+        await this.preferRepository.findPollUserCheckValue(userIdx, postIdx);
+
+      if (findPollUserCheckValue) {
+        const { selectprefer } = findPollUserCheckValue;
+
+        // 1. 이미 찬성에 투표를 했다.
+        // 2. 찬성을 거두지 않고 반대에 투표를 한다.
+        // 그렇다면 한쪽을 눌렀을 때 값이 있는지 확인한다.
+        // 그 값이 지금 누르는 값과 다르다면 오류를 내야한다.
+
+        if (selectprefer == "7" && conInputValue == true) {
+          return "이미 찬성에 투표 했습니다.";
+        } else if (selectprefer == "8" && proInputValue == true) {
+          return "이미 반대에 투표 했습니다.";
+        }
+      }
+
       if (proInputValue == true) {
         const isPoll = await this.preferRepository.findPollUserCheck(
           userIdx,
@@ -47,7 +65,7 @@ class PreferService {
         }
       }
     } catch (error) {
-      next(error);
+      error;
     }
   };
 
@@ -74,7 +92,7 @@ class PreferService {
 
       return { proCount: postProCount, conCount: postConCount };
     } catch (error) {
-      next(error);
+      error;
     }
   };
 }

@@ -92,6 +92,55 @@ class CardpostsService {
     );
     findContents.conCount = await this.preferRepository.postConCount(postIdx);
     findContents.proCount = await this.preferRepository.postProCount(postIdx);
+    findContents.proInputValue = false;
+    findContents.conInputValue = false;
+
+    return findContents;
+  };
+
+  /**
+   * 로그인 유저가 지정한 카드의 content를 불러들이고 어디에 투표했는지 봅니다.
+   *
+   * @param {UUID} postIdx
+   * @returns
+   */
+  userFindOnePostContents = async (userIdx, postIdx) => {
+    // 0. user가 투표 했는지 여부를 검증한다.
+    // 1. user가 투표를 하지 않았다. false false
+    // 2. user가 찬성에 투표했다.
+    // 3. user가 반대에 투표했다.
+    // final. 투표 결과는 모든 데이터가 공유해도 된다.
+
+    // 현재 포스트를 검색한다 그리고 count를 측정한다.
+    const findContents = await this.cardpostsRepository.findOnePostContents(
+      postIdx
+    );
+    findContents.conCount = await this.preferRepository.postConCount(postIdx);
+    findContents.proCount = await this.preferRepository.postProCount(postIdx);
+
+    // 투표를 하지 않았다면 모두 false한다.
+    findContents.proInputValue = false;
+    findContents.conInputValue = false;
+
+    // 현재 포스트에서 user가 투표를 했는지 알아본다.
+    const findPollUserCheckValue =
+      await this.preferRepository.findPollUserCheckValue(userIdx, postIdx);
+
+    // 투표를 했다면 어디에 했는지 검증한다.
+    if (findPollUserCheckValue) {
+      const { selectprefer } = findPollUserCheckValue;
+
+      if (selectprefer == "7") {
+        findContents.proInputValue = true;
+        findContents.conInputValue = false;
+        return findContents;
+      } else if (selectprefer == "8") {
+        findContents.proInputValue = true;
+        findContents.conInputValue = false;
+
+        return findContents;
+      }
+    }
 
     return findContents;
   };
