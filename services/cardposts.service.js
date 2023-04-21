@@ -135,8 +135,6 @@ class CardpostsService {
       }
     }
 
-    console.log("만ㅇ허;ㅣㅁ나ㅓㅎ;ㅣㅁ나ㅓㅎ;ㅣㅁㄴ아", findContents);
-
     return findContents;
   };
 
