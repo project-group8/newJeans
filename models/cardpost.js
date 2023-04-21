@@ -27,6 +27,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "postIdx",
       });
 
+      this.hasMany(models.CommentLike, {
+        sourceKey: "postIdx",
+        foreignKey: "postIdx",
+      });
+
       this.hasMany(models.ReplyComment, {
         sourceKey: "postIdx",
         foreignKey: "postIdx",
