@@ -15,12 +15,17 @@ class CardpostsRepository {
   findOneIogInPost = async (userIdx, postIdx) => {
     const findOnePost = await CardPost.findOne({
       where: { postIdx: postIdx },
-      attibutes: [
+      attributes: [
         "postIdx",
         "userIdx",
         "title",
         "desc",
-        "createdAt",
+        [
+          Sequelize.literal(
+            `DATE_FORMAT(CONVERT_TZ(CardPost.createdAt, '+00:00', '+09:00'), '%Y-%m-%d %H:%i:%s')`
+          ),
+          "createdAt",
+        ],
         "viewCount",
       ],
     });
@@ -153,15 +158,23 @@ class CardpostsRepository {
   findOnePost = async (postIdx) => {
     const findOnePost = await CardPost.findOne({
       where: { postIdx: postIdx },
-      attibutes: [
+      attributes: [
         "postIdx",
         "userIdx",
         "title",
         "desc",
-        "createdAt",
+        [
+          Sequelize.literal(
+            `DATE_FORMAT(CONVERT_TZ(CardPost.createdAt, '+00:00', '+09:00'), '%Y-%m-%d %H:%i:%s')`
+          ),
+          "createdAt",
+        ],
         "viewCount",
       ],
     });
+
+    console.log(findOnePost);
+
     // const addUserInfo = await UserInfo.findOne({
     //   where: { userIdx: findOnePost.userIdx },
     // });
@@ -277,7 +290,12 @@ class CardpostsRepository {
         "category",
         "title",
         "desc",
-        "createdAt",
+        [
+          Sequelize.literal(
+            `DATE_FORMAT(CONVERT_TZ(CardPost.createdAt, '+00:00', '+09:00'), '%Y-%m-%d %H:%i:%s')`
+          ),
+          "createdAt",
+        ],
         [Sequelize.col("viewCount"), "postViewCount"],
         "imgUrl",
       ],
@@ -302,6 +320,7 @@ class CardpostsRepository {
       group: ["CardPost.postIdx"],
       raw: true,
     });
+
     const findCardPosts = CardfindAll.map(parseModelToFlatObject);
 
     return findCardPosts;
@@ -340,7 +359,12 @@ class CardpostsRepository {
         "category",
         "title",
         "desc",
-        "createdAt",
+        [
+          Sequelize.literal(
+            `DATE_FORMAT(CONVERT_TZ(CardPost.createdAt, '+00:00', '+09:00'), '%Y-%m-%d %H:%i:%s')`
+          ),
+          "createdAt",
+        ],
         [Sequelize.col("viewCount"), "postViewCount"],
         [
           Sequelize.literal("CASE WHEN imgUrl = '' THEN false ELSE true END"),
