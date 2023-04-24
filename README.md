@@ -1,71 +1,73 @@
-# project
-- git commit message type
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+</p>
 
-!BREAKING CHANGE : 커다란 API 변경의 경우
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-!HOTFIX : 급하게 치명적인 버그를 고쳐야 하는 경우
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-feat : 새로운 기능 추가
+## Description
 
-fix : 버그 수정
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-style : 코드 formatting, 코드 변경이 없는 경우
+## Installation
 
-comment : 필요한 주석 추가 및 변경
+```bash
+$ npm install
+```
 
-test : 테스트 코드, 리팩터링 테스트 코드 추가
+## Running the app
 
-refactor : 코드 리팩터링
+```bash
+# development
+$ npm run start
 
-rename : 파일 혹은 폴더명을 수정하거나 옮기는 작업만인 경우
+# watch mode
+$ npm run start:dev
 
-remove : 파일을 삭제하는 작업만 수행한 경우
+# production mode
+$ npm run start:prod
+```
 
-❓ 기술 스택 사용이유
+## Test
 
-1️⃣ JWT vs Session
+```bash
+# unit tests
+$ npm run test
 
-JWT 특징
+# e2e tests
+$ npm run test:e2e
 
+# test coverage
+$ npm run test:cov
+```
 
-1. Stateless, Scalability
+## Support
 
-- 상태를 유지하지 않기 때문에 서버 확장성이 높다.
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-2. 네트워크 대역폭 절약
+## Stay in touch
 
-- 클라이언트와 서버 간의 데이터 전송량이 적어 resource 절약에 유리하다.
+- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-3. 보안성
+## License
 
-- JWT는 한번 발급되면 만료되기 전까지 계속 유효하기 떄문에 탈취 될 시 계속해서 해당 JWT를 사용하여 인증 할 수 있다.
-
-- 클라이언트 측에서 저장되기 떄문에 XSS 공격에 취약하다.
-
-
-Session 특징
-
-
-1. 간단하고 쉬운 구현
-
-- JWT에 비해 상대적으로 구현이 쉽다.
-
-2. 보안성
-
-- 세션을 서버 측에서 관리하기 떄문에 보안에 취약한 쿠키에 대한 우려가 없다.
-
-3. 네트워크 대역폭 낭비
-
-- 매 요청마다 세션 정보를 전송해야 하기 떄문에 데이터 전송량이 많아져 네트워크 대역폭을 낭비할 수 있다.
-
-
-JWT 선택 이유
-
-
-Stateless, 표준화된 토큰 구격으로 다양한 언어와 프레임워크에서 사용하기 쉽다. 여러 서비스 간의 인증을 공유하기 용이하다.
-
-HTTPS 프로토콜 사용으로 중간자 공격을 방지하고, RefreshToken을 redisDB에 저장하여 보안 취약점을 보완할 수 있다고 판단.
-
-
-
-
+Nest is [MIT licensed](LICENSE).
