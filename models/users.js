@@ -40,6 +40,11 @@ module.exports = (sequelize, DataTypes) => {
         sourceKey: "userIdx",
         foreignKey: "userIdx",
       });
+
+      this.hasMany(models.Chat, {
+        sourceKey: "userIdx",
+        foreignKey: "userIdx",
+      });
     }
   }
   Users.init(
