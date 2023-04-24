@@ -11,21 +11,21 @@ import { CommentLikeModule } from './comment-like/comment-like.module';
 import { PostLikeModule } from './post-like/post-like.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
-
+import { MySqlConfigService } from '../config/db.config';
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: ['src/entities/**/*.ts'],
-      synchronize: false, // false로 해두는 게 안전하다.
-      timezone: 'Asia/Seoul',
-      migrations: ['src/migration/**/*.ts'],
-    }),
+    // TypeOrmModule.forRoot({
+    //   type: 'mysql',
+    //   host: process.env.DB_HOST,
+    //   port: +process.env.DB_PORT,
+    //   username: process.env.DB_USERNAME,
+    //   password: process.env.DB_PASSWORD,
+    //   database: process.env.DB_NAME,
+    //   entities: ['src/entities/**/*.ts'],
+    //   synchronize: false, // false로 해두는 게 안전하다.
+    //   timezone: 'Asia/Seoul',
+    //   migrations: ['src/migration/**/*.ts'],
+    // }),
     ConfigModule.forRoot(),
     CardpostsModule,
     CommentsModule,
@@ -36,6 +36,6 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
   ],
   controllers: [AppController, CardpostsController],
-  providers: [AppService],
+  providers: [AppService, MySqlConfigService],
 })
 export class AppModule {}
