@@ -3,7 +3,7 @@ const { Model } = require("sequelize");
 
 const Sequelize = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Chat extends Model {
+  class ChatSaves extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,35 +11,37 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+
       this.belongsTo(models.Users, {
         targetKey: "userIdx", // Users 모델의 userId 컬럼을
         foreignKey: "userIdx", // 현재 모델의 userId가 외래키로 가진다.
         onDelete: "CASCADE",
       });
 
-      this.hasMany(models.ChatSaves, {
-        sourceKey: "chatIdx",
-        foreignKey: "chatIdx",
+      this.belongsTo(models.Chat, {
+        targetKey: "chatIdx", // Users 모델의 userId 컬럼을
+        foreignKey: "chatIdx", // 현재 모델의 userId가 외래키로 가진다.
+        onDelete: "CASCADE",
       });
     }
   }
-  Chat.init(
+  ChatSaves.init(
     {
-      chatIdx: {
+      chatSaveIdx: {
         allowNull: false, // NOT NULL
         primaryKey: true, // Primary Key (기본키)
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
       },
+      chatIdx: {
+        allowNull: false, // NOT NULL
+        type: DataTypes.UUID,
+      },
       userIdx: {
         allowNull: false, // NOT NULL
         type: DataTypes.UUID,
       },
-      maxParty: {
-        allowNull: false, // NOT NULL
-        type: DataTypes.INTEGER,
-      },
-      roomName: {
+      saveData: {
         allowNull: false, // NOT NULL
         type: DataTypes.STRING,
       },
@@ -56,8 +58,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Chat",
+      modelName: "ChatSaves",
     }
   );
-  return Chat;
+  return ChatSaves;
 };
