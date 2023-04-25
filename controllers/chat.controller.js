@@ -27,9 +27,7 @@ class ChatController {
       }
 
       if (!maxParty || !roomName) {
-        throw Boom.notFound(
-          `title, maxParty,  roomName은 비어있을 수 없습니다.`
-        );
+        throw Boom.notFound(` maxParty,  roomName은 비어있을 수 없습니다.`);
       }
 
       const findOneUser = await this.cardpostsRepository.findOneUser(email);
