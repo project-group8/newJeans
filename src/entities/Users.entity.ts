@@ -9,14 +9,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { CommentLikes } from './CommentLikes';
-import { Prefers } from './Prefers';
-import { PostLikes } from './PostLikes';
-import { Comments } from './Comments';
-import { CardPosts } from './CardPosts';
-import { ReplyComments } from './ReplyComments';
-import { Chats } from './Chats';
-import { ChatSaves } from './ChatSaves';
+import { CommentLikes } from './CommentLikes.entity';
+import { Prefers } from './Prefers.entity';
+import { PostLikes } from './PostLikes.entity';
+import { Comments } from './Comments.entity';
+import { CardPosts } from './CardPosts.entity';
+import { ReplyComments } from './ReplyComments.entity';
+import { Chats } from './Chats.entity';
+import { ChatSaves } from './ChatSaves.entity';
 
 @Entity({ name: 'Users' })
 export class Users {
