@@ -9,10 +9,14 @@ class ChatService {
   // 채팅방을 개설합니다.
   createUserChat = async (userIdx, maxParty, roomName) => {
     try {
+      const userIdxtest1 = String(userIdx);
+      const maxPartytest2 = Number(maxParty);
+      const roomNametest3 = String(roomName);
+
       return await this.chatRepository.createUserChat(
-        userIdx,
-        maxParty,
-        roomName
+        userIdxtest1,
+        maxPartytest2,
+        roomNametest3
       );
     } catch (error) {
       error;
