@@ -30,10 +30,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false, // NOT NULL
         type: DataTypes.UUID,
       },
-      title: {
-        allowNull: false, // NOT NULL
-        type: DataTypes.STRING,
-      },
       maxParty: {
         allowNull: false, // NOT NULL
         type: DataTypes.INTEGER,
