@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CardpostsController } from './cardposts/cardposts.controller';
 import { CardpostsModule } from './cardposts/cardposts.module';
 import { CommentsModule } from './comments/comments.module';
 import { ReplycommentsModule } from './replycomments/replycomments.module';
@@ -10,23 +9,25 @@ import { PreferModule } from './prefer/prefer.module';
 import { CommentLikeModule } from './comment-like/comment-like.module';
 import { PostLikeModule } from './post-like/post-like.module';
 import { UsersModule } from './users/users.module';
-import { ConfigModule } from '@nestjs/config';
-import { MySqlConfigService } from '../config/db.config';
+import { ChatModule } from './chat/chat.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
 @Module({
   imports: [
-    // TypeOrmModule.forRoot({
-    //   type: 'mysql',
-    //   host: process.env.DB_HOST,
-    //   port: +process.env.DB_PORT,
-    //   username: process.env.DB_USERNAME,
-    //   password: process.env.DB_PASSWORD,
-    //   database: process.env.DB_NAME,
-    //   entities: ['src/entities/**/*.ts'],
-    //   synchronize: false, // false로 해두는 게 안전하다.
-    //   timezone: 'Asia/Seoul',
-    //   migrations: ['src/migration/**/*.ts'],
-    // }),
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
+        entities: ['src/entities/*.ts'],
+        synchronize: false, // !!! true 절대 금지 꼭 팀적으로 상의할 것 !!!
+      }),
+    }),
     CardpostsModule,
     CommentsModule,
     ReplycommentsModule,
@@ -34,8 +35,9 @@ import { MySqlConfigService } from '../config/db.config';
     CommentLikeModule,
     PostLikeModule,
     UsersModule,
+    ChatModule,
   ],
-  controllers: [AppController, CardpostsController],
-  providers: [AppService, MySqlConfigService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

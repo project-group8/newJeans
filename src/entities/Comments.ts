@@ -1,58 +1,73 @@
-// import {
-//     Column,
-//     CreateDateColumn,
-//     DeleteDateColumn,
-//     Entity,
-//     JoinColumn,
-//     ManyToOne,
-//     OneToMany,
-//     PrimaryGeneratedColumn,
-//     UpdateDateColumn,
-//   } from 'typeorm';
-//   import { CommentLikes } from './CommentsLikes';
-//   import { Posts } from './Posts';
-//   import { Users } from './Users';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Users } from './Users';
+import { CardPosts } from './CardPosts';
+import { ReplyComments } from './ReplyComments';
+import { CommentLikes } from './CommentLikes';
 
-//   @Entity({ name: 'comments' })
-//   export class Comments {
-//     @PrimaryGeneratedColumn('uuid')
-//     id: string;
+@Entity({ name: 'Comments' })
+export class Comments {
+  @PrimaryGeneratedColumn('uuid')
+  commentIdx: string;
 
-//     @Column({ type: 'int' })
-//     target: number | null;
+  @Column({ type: 'uuid', nullable: false })
+  userIdx: string;
 
-//     @Column({ type: 'text' })
-//     comment: string;
+  @Column({ type: 'uuid', nullable: false })
+  postIdx: string;
 
-//     @CreateDateColumn({ type: 'timestamp' })
-//     createdAt: Date;
+  @Column({ type: 'varchar', nullable: false })
+  comment: string;
 
-//     @UpdateDateColumn({ type: 'timestamp' })
-//     updatedAt: Date;
+  @Column({ type: 'varchar', nullable: true })
+  selectedTag: string = '';
 
-//     @DeleteDateColumn({ type: 'timestamp' })
-//     deletedAt: Date | null;
+  @CreateDateColumn({ type: 'datetime', nullable: false })
+  createdAt: Date;
 
-//     // * Foreign Key * /
+  @UpdateDateColumn({ type: 'datetime', nullable: false })
+  updatedAt: Date;
 
-//     @Column({ type: 'int' })
-//     UserId: number;
+  //   // * Foreign Key * /
 
-//     @Column({ type: 'int' })
-//     PostId: number;
-//     // * Relation * /
+  //
 
-//     // *  Users | 1 : M | CommentsLikes
-//     @OneToMany(() => CommentLikes, (commentLikes) => commentLikes.Comment)
-//     CommentLikes: CommentLikes[];
+  //   // * Relation * /
 
-//     // *  PostLikes | M : 1 | Users
-//     @ManyToOne(() => Users, (users) => users.Comments, { onDelete: 'CASCADE' })
-//     @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
-//     User: Users;
+  // *  Comments | 1 : M | CommentLikes
+  @OneToMany(() => CommentLikes, (commentLikes) => commentLikes.commentIdx, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  CommentLikes: CommentLikes[];
 
-//     // *  PostLikes | M : 1 | Posts
-//     @ManyToOne(() => Posts, (posts) => posts.Comments, { onDelete: 'CASCADE' })
-//     @JoinColumn([{ name: 'PostId', referencedColumnName: 'id' }])
-//     Post: Posts;
-//   }
+  // *  Comments | 1 : M | ReplyComments
+  @OneToMany(() => ReplyComments, (replyComments) => replyComments.commentIdx, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  ReplyComments: ReplyComments[];
+
+  // *  Comments | M : 1 | Users
+  @ManyToOne(() => Users, (users) => users.Comments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
+  Users: Users;
+
+  // *  Comments | M : 1 | CardPosts
+  @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.Comments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn([{ name: 'postIdx', referencedColumnName: 'postIdx' }])
+  CardPosts: CardPosts;
+}

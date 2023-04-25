@@ -12,16 +12,19 @@ import {
 import { Users } from './Users';
 import { CardPosts } from './CardPosts';
 
-@Entity({ name: 'PostLikes' })
-export class PostLikes {
+@Entity({ name: 'Prefers' })
+export class Prefers {
   @PrimaryGeneratedColumn('uuid')
-  postLikeIdx: string;
+  preferIdx: string;
 
   @Column({ type: 'uuid', nullable: false })
   userIdx: string;
 
   @Column({ type: 'uuid', nullable: false })
   postIdx: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  selectprefer: string; // 1. 디폴트 값이 존재해야함 2. 어떤식으로 저장할지 정해햐함
 
   @CreateDateColumn({ type: 'datetime', nullable: false })
   createdAt: Date;
@@ -31,22 +34,18 @@ export class PostLikes {
 
   //   // * Foreign Key * /
 
-  //   @Column({ type: 'int' })
-  //   UserId: number;
-
-  //   @Column({ type: 'int' })
-  //   PostId: number;
+  //
 
   //   // * Relation * /
 
-  // *  PostLikes | M : 1 | Users
+  // *  Prefers | M : 1 | Users
   @ManyToOne(() => Users, (users) => users.Prefers, {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
   Users: Users;
 
-  // *  PostLikes | M : 1 | CardPosts
+  // *  Prefers | M : 1 | CardPosts
   @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.Prefers, {
     onDelete: 'CASCADE',
   })
