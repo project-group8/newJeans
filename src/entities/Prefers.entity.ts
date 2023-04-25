@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Users } from './Users';
-import { CardPosts } from './CardPosts';
+import { Users } from './Users.entity';
+import { CardPosts } from './CardPosts.entity';
 
 @Entity({ name: 'Prefers' })
 export class Prefers {

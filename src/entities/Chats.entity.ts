@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Users } from './Users';
-import { ChatSaves } from './ChatSaves';
+import { Users } from './Users.entity';
+import { ChatSaves } from './ChatSaves.entity';
 
 @Entity({ name: 'Chats' })
 export class Chats {

@@ -9,9 +9,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Users } from './Users';
-import { CardPosts } from './CardPosts';
-import { Comments } from './Comments';
+import { Users } from './Users.entity';
+import { CardPosts } from './CardPosts.entity';
+import { Comments } from './Comments.entity';
 
 @Entity({ name: 'CommentLikes' })
 export class CommentLikes {

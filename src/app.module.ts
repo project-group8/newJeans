@@ -11,6 +11,15 @@ import { PostLikeModule } from './post-like/post-like.module';
 import { UsersModule } from './users/users.module';
 import { ChatModule } from './chat/chat.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Users } from 'src/entities/Users.entity';
+import { CardPosts } from 'src/entities/CardPosts.entity';
+import { Chats } from 'src/entities/Chats.entity';
+import { ChatSaves } from 'src/entities/ChatSaves.entity';
+import { CommentLikes } from 'src/entities/CommentLikes.entity';
+import { Comments } from 'src/entities/Comments.entity';
+import { PostLikes } from 'src/entities/PostLikes.entity';
+import { Prefers } from 'src/entities/Prefers.entity';
+import { ReplyComments } from 'src/entities/ReplyComments.entity';
 
 @Module({
   imports: [
@@ -24,7 +33,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: ['src/entities/*.ts'],
+        entities: [
+          Users,
+          CardPosts,
+          Chats,
+          ChatSaves,
+          CommentLikes,
+          Comments,
+          PostLikes,
+          Prefers,
+          ReplyComments,
+        ],
         synchronize: false, // !!! true 절대 금지 꼭 팀적으로 상의할 것 !!!
       }),
     }),
