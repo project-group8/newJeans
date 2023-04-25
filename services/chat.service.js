@@ -7,11 +7,10 @@ class ChatService {
   }
 
   // 채팅방을 개설합니다.
-  createUserChat = async (userIdx, title, maxParty, roomName) => {
+  createUserChat = async (userIdx, maxParty, roomName) => {
     try {
       return await this.chatRepository.createUserChat(
         userIdx,
-        title,
         maxParty,
         roomName
       );
@@ -21,9 +20,16 @@ class ChatService {
   };
 
   // 채팅방 정보를 봅니다.
-  enterUserChat = async (chatIdx) => {
+  enterUserChat = async (splitNumber, splitPageNumber) => {
     try {
-      return await this.chatRepository.enterUserChat(chatIdx);
+      const changesplitNumber = Number(splitNumber);
+      const changesplitPageNumber = Number(splitPageNumber);
+      const findCardPosts = await this.chatRepository.enterUserChat(
+        changesplitNumber,
+        changesplitPageNumber
+      );
+
+      return findCardPosts;
     } catch (error) {
       error;
     }
