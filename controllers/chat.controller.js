@@ -16,7 +16,7 @@ class ChatController {
    * @returns
    */
   createUserChat = async (req, res, next) => {
-    const { title, maxParty, roomName } = req.body;
+    const { maxParty, roomName } = req.body;
     const { email } = res.locals.user;
 
     try {
@@ -26,7 +26,7 @@ class ChatController {
         );
       }
 
-      if (!title || !maxParty || !roomName) {
+      if (!maxParty || !roomName) {
         throw Boom.notFound(
           `title, maxParty,  roomName은 비어있을 수 없습니다.`
         );
@@ -34,7 +34,7 @@ class ChatController {
 
       const findOneUser = await this.cardpostsRepository.findOneUser(email);
       const userIdx = findOneUser.userIdx;
-      await this.chatService.createUserChat(userIdx, title, maxParty, roomName);
+      await this.chatService.createUserChat(userIdx, maxParty, roomName);
 
       return res.status(200).json({ message: `${userIdx}의 채팅방 생성 성공` });
     } catch (error) {
@@ -51,17 +51,21 @@ class ChatController {
    * @returns
    */
   enterUserChat = async (req, res, next) => {
-    const { chatIdx } = req.params;
+    const { splitNumber, splitPageNumber } = req.query;
 
     try {
-      if (!chatIdx) {
+      if (!splitNumber || !splitPageNumber) {
         throw Boom.notFound(
-          `chatIdx : [${chatIdx}] 게시글이 존재하지 않습니다.`
+          `splitPageNumber, splitNumber은 비어있을 수 없습니다.`
         );
       }
 
-      await this.chatService.enterUserChat(chatIdx);
-      return res.status(200).json({ message: `${chatIdx} 방입니다.` });
+      const result = await this.chatService.enterUserChat(
+        splitNumber,
+        splitPageNumber
+      );
+
+      return res.status(200).json({ result });
     } catch (error) {
       next(error);
     }
