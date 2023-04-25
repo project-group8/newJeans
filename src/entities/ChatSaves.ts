@@ -10,18 +10,21 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Users } from './Users';
-import { CardPosts } from './CardPosts';
+import { Chats } from './Chats';
 
-@Entity({ name: 'PostLikes' })
-export class PostLikes {
+@Entity({ name: 'ChatSaves' })
+export class ChatSaves {
   @PrimaryGeneratedColumn('uuid')
-  postLikeIdx: string;
+  chatSaveIdx: string;
+
+  @Column({ type: 'uuid', nullable: false })
+  chatIdx: string;
 
   @Column({ type: 'uuid', nullable: false })
   userIdx: string;
 
-  @Column({ type: 'uuid', nullable: false })
-  postIdx: string;
+  @Column({ type: 'varchar', nullable: false })
+  saveData: string;
 
   @CreateDateColumn({ type: 'datetime', nullable: false })
   createdAt: Date;
@@ -31,25 +34,21 @@ export class PostLikes {
 
   //   // * Foreign Key * /
 
-  //   @Column({ type: 'int' })
-  //   UserId: number;
-
-  //   @Column({ type: 'int' })
-  //   PostId: number;
+  //
 
   //   // * Relation * /
 
-  // *  PostLikes | M : 1 | Users
-  @ManyToOne(() => Users, (users) => users.Prefers, {
+  // *  ChatSaves | M : 1 | Users
+  @ManyToOne(() => Users, (users) => users.ChatSaves, {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
   Users: Users;
 
-  // *  PostLikes | M : 1 | CardPosts
-  @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.Prefers, {
+  // *  ChatSaves | M : 1 | Chats
+  @ManyToOne(() => Chats, (chats) => chats.ChatSaves, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn([{ name: 'postIdx', referencedColumnName: 'postIdx' }])
-  CardPosts: CardPosts;
+  @JoinColumn([{ name: 'chatIdx', referencedColumnName: 'chatIdx' }])
+  Chats: Chats;
 }
