@@ -9,19 +9,17 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Users } from './Users.entity';
-import { Chats } from './Chats.entity';
 
 @Entity({ name: 'ChatSaves' })
 export class ChatSaves {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   chatSaveIdx: string;
 
-  @Column({ type: 'uuid', nullable: false })
-  chatIdx: string;
+  @Column({ type: 'varchar', nullable: false })
+  nickname: string;
 
-  @Column({ type: 'uuid', nullable: false })
-  userIdx: string;
+  @Column({ type: 'varchar', nullable: false })
+  room: string;
 
   @Column({ type: 'varchar', nullable: false })
   saveData: string;
@@ -38,17 +36,17 @@ export class ChatSaves {
 
   //   // * Relation * /
 
-  // *  ChatSaves | M : 1 | Users
-  @ManyToOne(() => Users, (users) => users.ChatSaves, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
-  Users: Users;
+  // // *  ChatSaves | M : 1 | Users
+  // @ManyToOne(() => Users, (users) => users.ChatSaves, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
+  // Users: Users;
 
-  // *  ChatSaves | M : 1 | Chats
-  @ManyToOne(() => Chats, (chats) => chats.ChatSaves, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn([{ name: 'chatIdx', referencedColumnName: 'chatIdx' }])
-  Chats: Chats;
+  // // *  ChatSaves | M : 1 | Chats
+  // @ManyToOne(() => Chats, (chats) => chats.ChatSaves, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn([{ name: 'chatIdx', referencedColumnName: 'chatIdx' }])
+  // Chats: Chats;
 }

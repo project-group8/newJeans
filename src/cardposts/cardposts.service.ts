@@ -16,7 +16,8 @@ export class CardpostsService {
   ) {}
 
   /**
-   * 페이지 네이션으로 작동합니다.
+   * 1. 페이지 네이션으로 작동합니다.
+   * 2. 핫 훈수 카드로 작동합니다.
    */
   async findSplitCards({
     maincategory,
@@ -24,6 +25,9 @@ export class CardpostsService {
     splitNumber,
     splitPageNumber,
   }: SplitCardsDto) {
+    console.log(maincategory, category, splitNumber, splitPageNumber);
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const qb = await this.cardPostsRepository
       .createQueryBuilder('cp')
       .leftJoin(Users, 'u', 'cp.userIdx = u.userIdx')
@@ -45,7 +49,8 @@ export class CardpostsService {
       ]);
 
     if (!maincategory && !category && !splitNumber && !splitPageNumber) {
-      qb.orderBy('value', 'DESC')
+      qb.andWhere('cp.createdAt > :sevenDaysAgo', { sevenDaysAgo })
+        .orderBy('value', 'DESC')
         .limit(5)
         .addSelect(
           `(COUNT(pl.postLikeIdx) * (FLOOR(RAND()*(10-5+1))+5) + (COUNT(cp.viewCount)  + COUNT(c.commentIdx)) * (FLOOR(RAND()*(20-10+1))+10))`,

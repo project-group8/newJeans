@@ -16,7 +16,7 @@ import { Comments } from './Comments.entity';
 import { CardPosts } from './CardPosts.entity';
 import { ReplyComments } from './ReplyComments.entity';
 import { Chats } from './Chats.entity';
-import { ChatSaves } from './ChatSaves.entity';
+// import { ChatSaves } from './ChatSaves.entity';
 
 @Entity({ name: 'Users' })
 export class Users {
@@ -105,10 +105,10 @@ export class Users {
   })
   ReplyComments: ReplyComments[];
 
-  // *  Users | 1 : M | ChatSaves
-  @OneToMany(() => ChatSaves, (chatSaves) => chatSaves.Users, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  ChatSaves: ChatSaves[];
+  // // *  Users | 1 : M | ChatSaves
+  // @OneToMany(() => ChatSaves, (chatSaves) => chatSaves.Users, {
+  //   cascade: true,
+  //   onDelete: 'CASCADE',
+  // })
+  // ChatSaves: ChatSaves[];
 }
