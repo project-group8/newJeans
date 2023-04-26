@@ -8,6 +8,7 @@ import { PostLikes } from '../entities/PostLikes.entity';
 import { Comments } from '../entities/Comments.entity';
 import { Prefers } from '../entities/Prefers.entity';
 import { UUID } from 'crypto';
+import { SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class CardpostsService {
@@ -25,12 +26,12 @@ export class CardpostsService {
     category,
     splitNumber,
     splitPageNumber,
-  }: SplitCardsDto): Promise<Object> {
+  }: SplitCardsDto): Promise<Object[]> {
     const now: Date = new Date();
     const sevenDaysAgo: Date = new Date(
       now.getTime() - 7 * 24 * 60 * 60 * 1000,
     );
-    const qb: any = await this.cardPostsRepository
+    const qb: SelectQueryBuilder<object> = await this.cardPostsRepository
       .createQueryBuilder('cp')
       .leftJoin(Users, 'u', 'cp.userIdx = u.userIdx')
       .leftJoin(Comments, 'c', 'cp.postIdx = c.postIdx')
@@ -79,7 +80,7 @@ export class CardpostsService {
   }
 
   async findOnePost(postIdx: UUID): Promise<Object> {
-    const qb = await this.cardPostsRepository
+    const qb: SelectQueryBuilder<object> = await this.cardPostsRepository
       .createQueryBuilder('cp')
       .where(`cp.postIdx = :postIdx`, { postIdx })
       .leftJoin(PostLikes, 'pl', 'cp.postIdx = pl.postIdx')

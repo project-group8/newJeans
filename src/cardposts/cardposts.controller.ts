@@ -20,8 +20,8 @@ export class CardpostsController {
   @Get('/')
   async findSplitCards(
     @Query(CardPostsCategoryTrans) splitCardsDto: SplitCardsDto,
-  ): Promise<Object> {
-    const findSplitCards: Object = await this.cardpostsService.findSplitCards(
+  ): Promise<Object[]> {
+    const findSplitCards: Object[] = await this.cardpostsService.findSplitCards(
       splitCardsDto,
     );
     return findSplitCards;
@@ -30,8 +30,8 @@ export class CardpostsController {
   @Get('/hotPostCard')
   async findHotCards(
     @Query(CardPostsCategoryTrans) splitCardsDto: SplitCardsDto,
-  ): Promise<Object> {
-    const findHotCards: Object = await this.cardpostsService.findSplitCards(
+  ): Promise<Object[]> {
+    const findHotCards: Object[] = await this.cardpostsService.findSplitCards(
       splitCardsDto,
     );
     return findHotCards;
@@ -41,9 +41,11 @@ export class CardpostsController {
   async findOnePostContents(
     @Param('postIdx') postIdx: UUID,
     @Req() request: string,
-  ) {
+  ): Promise<Object> {
     // const { email } = request;
-    const findOnePost = await this.cardpostsService.findOnePost(postIdx);
+    const findOnePost: Object = await this.cardpostsService.findOnePost(
+      postIdx,
+    );
 
     return findOnePost;
   }

@@ -12,10 +12,13 @@ export class PostCountUpMiddleware implements NestMiddleware {
   async use(req: any, res: any, next: (error?: any) => void) {
     const { postIdx } = req.params;
 
-    const cardPost = await this.cardPostsRepository.findOne({
-      where: { postIdx },
-    });
-    const viewCount = cardPost.viewCount + 1;
+    const cardPost: CardPosts | undefined =
+      await this.cardPostsRepository.findOne({
+        where: { postIdx },
+      });
+
+    const viewCount: number = cardPost.viewCount + 1;
+
     await this.cardPostsRepository.update(postIdx, { viewCount });
 
     next();
