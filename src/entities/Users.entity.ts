@@ -35,11 +35,11 @@ export class Users {
   @Column({ type: 'varchar', length: 6, nullable: true })
   provider: string;
 
-  @Column({ type: 'varchar', nullable: false })
-  level: string = '훈수 초보'; // 디폴트 벨류 '훈수 초보'
+  @Column({ type: 'varchar', nullable: false, default: '훈수 초보' })
+  level: string; // 디폴트 벨류 '훈수 초보'
 
-  @Column({ type: 'varchar', nullable: false })
-  status: string = 'US000001'; // 디폴트 벨류 "US000001"
+  @Column({ type: 'varchar', nullable: false, default: 'US000001' })
+  status: string; // 디폴트 벨류 "US000001"
 
   @CreateDateColumn({ type: 'datetime', nullable: false })
   createdAt: Date;
@@ -57,56 +57,56 @@ export class Users {
   //   // * Relation * /
 
   // *  Users | 1 : M | CommentsLikes
-  @OneToMany(() => CommentLikes, (commentLikes) => commentLikes.userIdx, {
+  @OneToMany(() => CommentLikes, (commentLikes) => commentLikes.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   CommentLikes: CommentLikes[];
 
   // *  Users | 1 : M | CardPosts
-  @OneToMany(() => CardPosts, (cardPosts) => cardPosts.userIdx, {
+  @OneToMany(() => CardPosts, (cardPosts) => cardPosts.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   CardPosts: CardPosts[];
 
   // *  Users | 1 : M | Chats
-  @OneToMany(() => Chats, (chats) => chats.userIdx, {
+  @OneToMany(() => Chats, (chats) => chats.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   Chats: Chats[];
 
   // *  Users | 1 : M | Prefers
-  @OneToMany(() => Prefers, (prefers) => prefers.userIdx, {
+  @OneToMany(() => Prefers, (prefers) => prefers.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   Prefers: Prefers[];
 
   // *  Users | 1 : M | PostLikes
-  @OneToMany(() => PostLikes, (postLikes) => postLikes.userIdx, {
+  @OneToMany(() => PostLikes, (postLikes) => postLikes.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   PostLikes: PostLikes[];
 
   // *  Users | 1 : M | Comments
-  @OneToMany(() => Comments, (comments) => comments.userIdx, {
+  @OneToMany(() => Comments, (comments) => comments.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   Comments: Comments[];
 
   // *  Users | 1 : M | ReplyComments
-  @OneToMany(() => ReplyComments, (replyComments) => replyComments.userIdx, {
+  @OneToMany(() => ReplyComments, (replyComments) => replyComments.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   ReplyComments: ReplyComments[];
 
   // *  Users | 1 : M | ChatSaves
-  @OneToMany(() => ChatSaves, (chatSaves) => chatSaves.userIdx, {
+  @OneToMany(() => ChatSaves, (chatSaves) => chatSaves.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
