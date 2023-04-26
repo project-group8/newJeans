@@ -28,20 +28,22 @@ export class CardpostsController {
   }
 
   @Get('/hotPostCard')
-  async findHotCards(): Promise<Object> {
+  async findHotCards(
+    @Query(CardPostsCategoryTrans) splitCardsDto: SplitCardsDto,
+  ): Promise<Object> {
     const findHotCards: Object = await this.cardpostsService.findSplitCards(
-      null,
+      splitCardsDto,
     );
     return findHotCards;
   }
 
-  @Get('/post/:postIdx') // allusers 미들웨어 넣어줘야함
+  @Get('/post/:postIdx') // allusers 미들웨어, count 미들웨어 넣어줘야함
   async findOnePostContents(
     @Param('postIdx') postIdx: UUID,
     @Req() request: string,
   ) {
     // const { email } = request;
-    const findOnePost = await this.cardpostsService.findOnePost(postIdx, email);
+    const findOnePost = await this.cardpostsService.findOnePost(postIdx);
 
     return findOnePost;
   }

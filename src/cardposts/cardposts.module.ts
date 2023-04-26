@@ -1,4 +1,9 @@
-import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
+import {
+  Module,
+  MiddlewareConsumer,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { CardpostsController } from './cardposts.controller';
 import { CardpostsService } from './cardposts.service';
 import { AuthMiddleWare } from 'src/middleware/authMiddleware';
@@ -9,6 +14,7 @@ import { CardPosts } from '../entities/CardPosts.entity';
 import { Comments } from '../entities/Comments.entity';
 import { PostLikes } from '../entities/PostLikes.entity';
 import { Prefers } from '../entities/Prefers.entity';
+import { PostCountUpMiddleware } from 'src/middleware/postCountUpMiddleware';
 
 @Module({
   imports: [
@@ -20,5 +26,9 @@ import { Prefers } from '../entities/Prefers.entity';
 export class CardpostsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleWare).forRoutes('*');
+    consumer.apply(PostCountUpMiddleware).forRoutes({
+      path: 'postCards/post/:postIdx',
+      method: RequestMethod.GET,
+    });
   }
 }

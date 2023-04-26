@@ -1,5 +1,4 @@
 import { UUID } from 'crypto';
-
 import { Users } from './Users.entity';
 import {
   Column,
@@ -10,6 +9,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToOne,
 } from 'typeorm';
 
 @Entity({ name: 'Tokens' })
@@ -36,11 +36,15 @@ export class Tokens {
 
   // * Relation * /
 
-  // *  Tokens | M : 1 | Users
+  // *  Tokens | 1 : 1 | Users
 
-  @ManyToOne(() => Users, (users) => users.Tokens, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
+  @OneToOne(() => Users)
+  @JoinColumn({ name: 'userIdx', referencedColumnName: 'userIdx' })
   Users: Users;
+
+  // @ManyToOne(() => Users, (users) => users.Tokens, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
+  // Users: Users;
 }

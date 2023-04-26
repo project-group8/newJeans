@@ -41,7 +41,7 @@ export class CardpostsService {
         'cp.maincategory as maincategory',
         'cp.category as category',
         'cp.title as title',
-        'cp.desc ',
+        'cp.desc as `desc`',
         'u.nickname as nickname',
         `DATE_FORMAT(CONVERT_TZ(cp.createdAt, '+00:00', '+09:00'), '%Y-%m-%d %H:%i:%s') as createdAt`,
         'cp.viewCount as postViewCount',
@@ -81,25 +81,32 @@ export class CardpostsService {
   async findOnePost(postIdx: UUID): Promise<Object> {
     const qb = await this.cardPostsRepository
       .createQueryBuilder('cp')
-      .where(`cp.postIdx = : postIdx`, { postIdx })
+      .where(`cp.postIdx = :postIdx`, { postIdx })
       .leftJoin(PostLikes, 'pl', 'cp.postIdx = pl.postIdx')
       .leftJoin(Comments, 'c', 'cp.postIdx = c.postIdx')
       .leftJoin(Users, 'u', 'cp.userIdx = u.userIdx')
       .select([
+        'cp.desc as `desc`',
         'cp.postIdx as postIdx',
         'cp.title as title',
-        'cp.desc',
         'cp.viewCount as postViewCount',
         `DATE_FORMAT(CONVERT_TZ(cp.createdAt, '+00:00', '+09:00'), '%Y-%m-%d %H:%i:%s') as createdAt`,
         `COUNT(pl.postLikeIdx) as likesCount`,
         `COUNT(c.commentIdx) as commentCount`,
         'u.nickname as nickname',
-      ])
-      .addSelect(``);
+      ]);
 
-    // if(email){
-    //   qb
-    // }
+    if (false) {
+      // email로 유저 검증해서 값 받을것이다.
+      qb.addSelect(
+        `CASE WHEN EXISTS (
+          SELECT 1 FROM PostLikes pl WHERE pl.postIdx = cp.postIdx AND pl.userIdx = :userIdx
+        ) THEN true ELSE false END`,
+        'IsLike',
+      );
+    } else {
+      qb.addSelect('false', 'IsLike');
+    }
 
     return qb.getRawOne();
   }

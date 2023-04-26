@@ -19,8 +19,8 @@ import { CommentLikes } from 'src/entities/CommentLikes.entity';
 import { Comments } from 'src/entities/Comments.entity';
 import { PostLikes } from 'src/entities/PostLikes.entity';
 import { Prefers } from 'src/entities/Prefers.entity';
+import { Tokens } from 'src/entities/Tokens.entity';
 import { ReplyComments } from 'src/entities/ReplyComments.entity';
-import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -44,6 +44,7 @@ import { AuthModule } from './auth/auth.module';
           PostLikes,
           Prefers,
           ReplyComments,
+          Tokens,
         ],
         synchronize: false, // !!! true 절대 금지 꼭 팀적으로 상의할 것 !!!
       }),
@@ -57,7 +58,6 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     ChatModule,
     UsersModule,
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

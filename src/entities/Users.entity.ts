@@ -8,6 +8,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToOne,
 } from 'typeorm';
 import { CommentLikes } from './CommentLikes.entity';
 import { Prefers } from './Prefers.entity';
@@ -17,7 +18,6 @@ import { CardPosts } from './CardPosts.entity';
 import { ReplyComments } from './ReplyComments.entity';
 import { Chats } from './Chats.entity';
 import { Tokens } from './Tokens.entity';
-
 import { UUID } from 'crypto';
 
 // import { ChatSaves } from './ChatSaves.entity';
@@ -109,11 +109,14 @@ export class Users {
   })
   ReplyComments: ReplyComments[];
 
-  @OneToMany(() => Tokens, (tokens) => tokens.Users, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  Tokens: Tokens[];
+  // @OneToMany(() => Tokens, (tokens) => tokens.Users, {
+  //   cascade: true,
+  //   onDelete: 'CASCADE',
+  // })
+  // Tokens: Tokens[];
+
+  @OneToOne(() => Tokens)
+  Tokens: Tokens;
 
   // // *  Users | 1 : M | ChatSaves
   // @OneToMany(() => ChatSaves, (chatSaves) => chatSaves.Users, {
