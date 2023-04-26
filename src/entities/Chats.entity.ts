@@ -10,15 +10,16 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Users } from './Users.entity';
+import { UUID } from 'crypto';
 // import { ChatSaves } from './ChatSaves.entity';
 
 @Entity({ name: 'Chats' })
 export class Chats {
   @PrimaryGeneratedColumn('uuid')
-  chatIdx: string;
+  chatIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  userIdx: string;
+  userIdx: UUID;
 
   @Column({ type: 'int', nullable: false })
   maxParty: number;

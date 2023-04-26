@@ -11,17 +11,18 @@ import {
 } from 'typeorm';
 import { Users } from './Users.entity';
 import { CardPosts } from './CardPosts.entity';
+import { UUID } from 'crypto';
 
 @Entity({ name: 'PostLikes' })
 export class PostLikes {
   @PrimaryGeneratedColumn('uuid')
-  postLikeIdx: string;
+  postLikeIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  userIdx: string;
+  userIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  postIdx: string;
+  postIdx: UUID;
 
   @CreateDateColumn({ type: 'datetime', nullable: false })
   createdAt: Date;

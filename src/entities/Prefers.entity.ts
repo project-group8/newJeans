@@ -11,17 +11,18 @@ import {
 } from 'typeorm';
 import { Users } from './Users.entity';
 import { CardPosts } from './CardPosts.entity';
+import { UUID } from 'crypto';
 
 @Entity({ name: 'Prefers' })
 export class Prefers {
   @PrimaryGeneratedColumn('uuid')
-  preferIdx: string;
+  preferIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  userIdx: string;
+  userIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  postIdx: string;
+  postIdx: UUID;
 
   @Column({ type: 'varchar', nullable: false })
   selectprefer: string; // 1. 디폴트 값이 존재해야함 2. 어떤식으로 저장할지 정해햐함

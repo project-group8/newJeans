@@ -16,12 +16,14 @@ import { Comments } from './Comments.entity';
 import { CardPosts } from './CardPosts.entity';
 import { ReplyComments } from './ReplyComments.entity';
 import { Chats } from './Chats.entity';
+import { Tokens } from './Tokens.entity';
+import { UUID } from 'crypto';
 // import { ChatSaves } from './ChatSaves.entity';
 
 @Entity({ name: 'Users' })
 export class Users {
   @PrimaryGeneratedColumn('uuid')
-  userIdx: string;
+  userIdx: UUID;
 
   @Column({ type: 'varchar', nullable: false })
   email: string;
@@ -104,7 +106,13 @@ export class Users {
     onDelete: 'CASCADE',
   })
   ReplyComments: ReplyComments[];
-
+  
+  // *  Users | 1 : M | Tokens
+  @OneToMany(() => Tokens, (tokens) => tokens.Users, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  Tokens: Tokens[];
   // // *  Users | 1 : M | ChatSaves
   // @OneToMany(() => ChatSaves, (chatSaves) => chatSaves.Users, {
   //   cascade: true,

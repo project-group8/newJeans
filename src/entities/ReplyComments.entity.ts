@@ -12,20 +12,21 @@ import {
 import { Users } from './Users.entity';
 import { CardPosts } from './CardPosts.entity';
 import { Comments } from './Comments.entity';
+import { UUID } from 'crypto';
 
 @Entity({ name: 'ReplyComments' })
 export class ReplyComments {
   @PrimaryGeneratedColumn('uuid')
-  replyIdx: string;
+  replyIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  userIdx: string;
+  userIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  postIdx: string;
+  postIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  commentIdx: string;
+  commentIdx: UUID;
 
   @Column({ type: 'varchar', nullable: false })
   comment: string;
