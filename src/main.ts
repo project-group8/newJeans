@@ -10,7 +10,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   // app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
-  await app.listen(3000);
+  await app.listen(3001);
   // console.log(DBicon);
   // console.log(DBhost);
   // console.log(DBicon);

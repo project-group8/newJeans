@@ -31,6 +31,9 @@ export class Users {
 
   @Column({ type: 'varchar', nullable: false, unique: true })
   nickname: string; // 유니크 옵션
+  
+  @Column({ type: 'varchar', length: 6, nullable: true })
+  provider: string;
 
   @Column({ type: 'varchar', nullable: false, default: '훈수 초보' })
   level: string; // 디폴트 벨류 '훈수 초보'
@@ -43,6 +46,9 @@ export class Users {
 
   @UpdateDateColumn({ type: 'datetime', nullable: false })
   updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamp' })
+  deletedAt: Date | null;
 
   //   // * Foreign Key * /
 
