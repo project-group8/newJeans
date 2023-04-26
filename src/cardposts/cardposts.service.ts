@@ -7,6 +7,7 @@ import { SplitCardsDto } from './dto/cardposts.dto';
 import { PostLikes } from '../entities/PostLikes.entity';
 import { Comments } from '../entities/Comments.entity';
 import { Prefers } from '../entities/Prefers.entity';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class CardpostsService {
@@ -24,11 +25,12 @@ export class CardpostsService {
     category,
     splitNumber,
     splitPageNumber,
-  }: SplitCardsDto) {
-    console.log(maincategory, category, splitNumber, splitPageNumber);
-    const now = new Date();
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    const qb = await this.cardPostsRepository
+  }: SplitCardsDto): Promise<Object> {
+    const now: Date = new Date();
+    const sevenDaysAgo: Date = new Date(
+      now.getTime() - 7 * 24 * 60 * 60 * 1000,
+    );
+    const qb: any = await this.cardPostsRepository
       .createQueryBuilder('cp')
       .leftJoin(Users, 'u', 'cp.userIdx = u.userIdx')
       .leftJoin(Comments, 'c', 'cp.postIdx = c.postIdx')
@@ -74,5 +76,31 @@ export class CardpostsService {
     }
 
     return qb.getRawMany();
+  }
+
+  async findOnePost(postIdx: UUID): Promise<Object> {
+    const qb = await this.cardPostsRepository
+      .createQueryBuilder('cp')
+      .where(`cp.postIdx = : postIdx`, { postIdx })
+      .leftJoin(PostLikes, 'pl', 'cp.postIdx = pl.postIdx')
+      .leftJoin(Comments, 'c', 'cp.postIdx = c.postIdx')
+      .leftJoin(Users, 'u', 'cp.userIdx = u.userIdx')
+      .select([
+        'cp.postIdx as postIdx',
+        'cp.title as title',
+        'cp.desc',
+        'cp.viewCount as postViewCount',
+        `DATE_FORMAT(CONVERT_TZ(cp.createdAt, '+00:00', '+09:00'), '%Y-%m-%d %H:%i:%s') as createdAt`,
+        `COUNT(pl.postLikeIdx) as likesCount`,
+        `COUNT(c.commentIdx) as commentCount`,
+        'u.nickname as nickname',
+      ])
+      .addSelect(``);
+
+    // if(email){
+    //   qb
+    // }
+
+    return qb.getRawOne();
   }
 }

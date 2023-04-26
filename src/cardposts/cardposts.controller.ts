@@ -6,10 +6,12 @@ import {
   Delete,
   Query,
   Param,
+  Req,
 } from '@nestjs/common';
 import { CardpostsService } from './cardposts.service';
 import { CardPostsCategoryTrans } from './pipes/cardposts-category-trans.pipe';
 import { SplitCardsDto } from './dto/cardposts.dto';
+import { UUID } from 'crypto';
 
 @Controller('/postCards')
 export class CardpostsController {
@@ -18,10 +20,29 @@ export class CardpostsController {
   @Get('/')
   async findSplitCards(
     @Query(CardPostsCategoryTrans) splitCardsDto: SplitCardsDto,
-  ) {
-    const findSplitCards = await this.cardpostsService.findSplitCards(
+  ): Promise<Object> {
+    const findSplitCards: Object = await this.cardpostsService.findSplitCards(
       splitCardsDto,
     );
     return findSplitCards;
+  }
+
+  @Get('/hotPostCard')
+  async findHotCards(): Promise<Object> {
+    const findHotCards: Object = await this.cardpostsService.findSplitCards(
+      null,
+    );
+    return findHotCards;
+  }
+
+  @Get('/post/:postIdx') // allusers 미들웨어 넣어줘야함
+  async findOnePostContents(
+    @Param('postIdx') postIdx: UUID,
+    @Req() request: string,
+  ) {
+    // const { email } = request;
+    const findOnePost = await this.cardpostsService.findOnePost(postIdx, email);
+
+    return findOnePost;
   }
 }

@@ -7,11 +7,10 @@ export class SplitCardsDto extends PickType(CardPosts, [
   'maincategory',
   'category',
 ]) {
-  @IsNotEmpty()
   @IsString()
   @Expose()
   splitNumber: number;
-  @IsNotEmpty()
+
   @Expose()
   @IsString()
   splitPageNumber: number;

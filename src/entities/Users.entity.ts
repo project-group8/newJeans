@@ -16,6 +16,7 @@ import { Comments } from './Comments.entity';
 import { CardPosts } from './CardPosts.entity';
 import { ReplyComments } from './ReplyComments.entity';
 import { Chats } from './Chats.entity';
+import { Tokens } from './Tokens.entity';
 // import { ChatSaves } from './ChatSaves.entity';
 
 @Entity({ name: 'Users' })
@@ -31,7 +32,7 @@ export class Users {
 
   @Column({ type: 'varchar', nullable: false, unique: true })
   nickname: string; // 유니크 옵션
-  
+
   @Column({ type: 'varchar', length: 6, nullable: true })
   provider: string;
 
@@ -104,6 +105,12 @@ export class Users {
     onDelete: 'CASCADE',
   })
   ReplyComments: ReplyComments[];
+
+  @OneToMany(() => Tokens, (tokens) => tokens.Users, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  Tokens: Tokens[];
 
   // // *  Users | 1 : M | ChatSaves
   // @OneToMany(() => ChatSaves, (chatSaves) => chatSaves.Users, {
