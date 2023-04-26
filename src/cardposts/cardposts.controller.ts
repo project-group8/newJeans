@@ -8,14 +8,20 @@ import {
   Param,
 } from '@nestjs/common';
 import { CardpostsService } from './cardposts.service';
+import { CardPostsCategoryTrans } from './pipes/cardposts-category-trans.pipe';
+import { SplitCardsDto } from './dto/cardposts.dto';
 
-@Controller('cardposts')
+@Controller('/postCards')
 export class CardpostsController {
   constructor(private cardpostsService: CardpostsService) {}
 
-  @Get()
-  async findSplitCards() {
-    const test = await this.cardpostsService.findOne();
-    return test;
+  @Get('/')
+  async findSplitCards(
+    @Query(CardPostsCategoryTrans) splitCardsDto: SplitCardsDto,
+  ) {
+    const findSplitCards = await this.cardpostsService.findSplitCards(
+      splitCardsDto,
+    );
+    return findSplitCards;
   }
 }

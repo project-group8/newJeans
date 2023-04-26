@@ -28,8 +28,8 @@ export class Comments {
   @Column({ type: 'varchar', nullable: false })
   comment: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  selectedTag: string = '';
+  @Column({ type: 'varchar', nullable: true, default: '' })
+  selectedTag: string;
 
   @CreateDateColumn({ type: 'datetime', nullable: false })
   createdAt: Date;
@@ -44,14 +44,14 @@ export class Comments {
   //   // * Relation * /
 
   // *  Comments | 1 : M | CommentLikes
-  @OneToMany(() => CommentLikes, (commentLikes) => commentLikes.commentIdx, {
+  @OneToMany(() => CommentLikes, (commentLikes) => commentLikes.Comments, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   CommentLikes: CommentLikes[];
 
   // *  Comments | 1 : M | ReplyComments
-  @OneToMany(() => ReplyComments, (replyComments) => replyComments.commentIdx, {
+  @OneToMany(() => ReplyComments, (replyComments) => replyComments.Comments, {
     cascade: true,
     onDelete: 'CASCADE',
   })
