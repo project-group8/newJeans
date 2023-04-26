@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
@@ -6,6 +6,8 @@ import { Tokens } from 'src/entities/Tokens.entity';
 import { Users } from 'src/entities/Users.entity';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
+import { LoginRequestDto } from './dtos/login.request.dto';
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
@@ -76,6 +78,45 @@ export class AuthService {
         );
     
         return newAccessToken;
+    }
+
+    async login(loginRequestDto: LoginRequestDto) {
+        const { email, password } = loginRequestDto;
+    
+        const user = await this.usersRepository.findOne({ where: { email } });
+        if (!user) throw new UnauthorizedException('존재하지 않는 이메일 입니다.');
+        if (!(await bcrypt.compare(password, user.password)))
+          throw new UnauthorizedException('로그인에 실패하였습니다.');
+    
+        try {
+          const accessToken = await this.jwtService.signAsync(
+            { sub: user.userIdx },
+            { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1d' },
+          );
+    
+          const existRefreshToken = await this.tokenFindByUserIdx(user.userIdx);
+    
+          if (existRefreshToken)
+            await this.tokensRepository.delete({ userIdx: user.userIdx });
+    
+          const refreshToken = await this.jwtService.signAsync(
+            {},
+            { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' },
+          );
+    
+          // const hashedRefreshToken = await bcrypt.hash(refreshToken, 12);
+    
+          await this.tokensRepository.insert({
+            userIdx: user.userIdx,
+            token: refreshToken,
+          });
+    
+          return { accessToken, nickname: user.nickname };
+        } catch (error) {
+          console.log(error.message);
+          throw new BadRequestException(error.messgae);
+        }
       }
+
 
 }
