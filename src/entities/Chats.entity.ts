@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Users } from './Users.entity';
-import { ChatSaves } from './ChatSaves.entity';
+// import { ChatSaves } from './ChatSaves.entity';
 
 @Entity({ name: 'Chats' })
 export class Chats {
@@ -38,12 +38,12 @@ export class Chats {
 
   //   // * Relation * /
 
-  // *  Chats | 1 : M | ChatSaves
-  @OneToMany(() => ChatSaves, (chatSaves) => chatSaves.chatIdx, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  ChatSaves: ChatSaves[];
+  // // *  Chats | 1 : M | ChatSaves
+  // @OneToMany(() => ChatSaves, (chatSaves) => chatSaves.chatIdx, {
+  //   cascade: true,
+  //   onDelete: 'CASCADE',
+  // })
+  // ChatSaves: ChatSaves[];
 
   // *  Chats | M : 1 | Users
   @ManyToOne(() => Users, (users) => users.Chats, {
