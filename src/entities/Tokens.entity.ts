@@ -1,3 +1,5 @@
+import { UUID } from 'crypto';
+
 import { Users } from './Users.entity';
 import {
   Column,
@@ -13,10 +15,10 @@ import {
 @Entity({ name: 'Tokens' })
 export class Tokens {
   @PrimaryGeneratedColumn('uuid')
-  tokenIdx: string;
+  tokenIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  userIdx: string;
+  userIdx: UUID;
 
   @Column({ type: 'text' })
   token: string;
@@ -34,7 +36,8 @@ export class Tokens {
 
   // * Relation * /
 
-  // * Tokens | M : 1 | Users
+  // *  Tokens | M : 1 | Users
+
   @ManyToOne(() => Users, (users) => users.Tokens, {
     onDelete: 'CASCADE',
   })

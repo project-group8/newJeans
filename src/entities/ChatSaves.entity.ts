@@ -1,3 +1,4 @@
+import { UUID } from 'crypto';
 import {
   Column,
   CreateDateColumn,
@@ -13,7 +14,7 @@ import {
 @Entity({ name: 'ChatSaves' })
 export class ChatSaves {
   @PrimaryGeneratedColumn()
-  chatSaveIdx: string;
+  chatSaveIdx: UUID;
 
   @Column({ type: 'varchar', nullable: false })
   nickname: string;
