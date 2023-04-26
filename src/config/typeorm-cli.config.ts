@@ -10,6 +10,7 @@ import { Comments } from 'src/entities/Comments.entity';
 import { PostLikes } from 'src/entities/PostLikes.entity';
 import { Prefers } from 'src/entities/Prefers.entity';
 import { ReplyComments } from 'src/entities/ReplyComments.entity';
+import { Tokens } from 'src/entities/Tokens.entity';
 
 // import { Migrations1682398086430 } from 'src/migrations/1682398086430-migrations';
 
@@ -46,6 +47,7 @@ const mysqlDataSource = new DataSource({
     PostLikes,
     Prefers,
     ReplyComments,
+    Tokens
   ],
   migrations: ['src/migrations/*.ts'],
   migrationsTableName: 'migrations',

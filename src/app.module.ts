@@ -20,6 +20,7 @@ import { Comments } from 'src/entities/Comments.entity';
 import { PostLikes } from 'src/entities/PostLikes.entity';
 import { Prefers } from 'src/entities/Prefers.entity';
 import { ReplyComments } from 'src/entities/ReplyComments.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { ReplyComments } from 'src/entities/ReplyComments.entity';
     UsersModule,
     ChatModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

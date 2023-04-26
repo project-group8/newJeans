@@ -13,17 +13,18 @@ import { Users } from './Users.entity';
 import { CardPosts } from './CardPosts.entity';
 import { ReplyComments } from './ReplyComments.entity';
 import { CommentLikes } from './CommentLikes.entity';
+import { UUID } from 'crypto';
 
 @Entity({ name: 'Comments' })
 export class Comments {
   @PrimaryGeneratedColumn('uuid')
-  commentIdx: string;
+  commentIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  userIdx: string;
+  userIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  postIdx: string;
+  postIdx: UUID;
 
   @Column({ type: 'varchar', nullable: false })
   comment: string;

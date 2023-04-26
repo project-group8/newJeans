@@ -10,6 +10,7 @@ export class UsersController {
     }
     @Post('signup')
     async signup(@Body() data: SignupReqeustDto){
+      data.provider = data.provider ? data.provider : 'local';
       return this.usersService.signup(data);
     }
 

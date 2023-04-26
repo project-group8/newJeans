@@ -15,14 +15,15 @@ import { PostLikes } from './PostLikes.entity';
 import { Comments } from './Comments.entity';
 import { ReplyComments } from './ReplyComments.entity';
 import { Users } from './Users.entity';
+import { UUID } from 'crypto';
 
 @Entity({ name: 'CardPosts' })
 export class CardPosts {
   @PrimaryGeneratedColumn('uuid')
-  postIdx: string;
+  postIdx: UUID;
 
   @Column({ type: 'uuid', nullable: false })
-  userIdx: string;
+  userIdx: UUID;
 
   @Column({ type: 'varchar', nullable: false })
   title: string;
