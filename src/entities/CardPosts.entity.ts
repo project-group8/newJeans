@@ -27,8 +27,8 @@ export class CardPosts {
   @Column({ type: 'varchar', nullable: false })
   title: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  pollType: string = ''; // Null을 허용해야함
+  @Column({ type: 'varchar', nullable: true, default: '' })
+  pollType: string; // Null을 허용해야함
 
   @Column({ type: 'varchar', nullable: false })
   desc: string;
@@ -39,17 +39,17 @@ export class CardPosts {
   @Column({ type: 'varchar', nullable: false })
   category: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  tag: string = ''; // Null을 허용해야함
+  @Column({ type: 'varchar', nullable: true, default: '' })
+  tag: string; // Null을 허용해야함
 
-  @Column({ type: 'varchar', nullable: true })
-  imgUrl: string = ''; // Null을 허용해야함
+  @Column({ type: 'varchar', nullable: true, default: '' })
+  imgUrl: string; // Null을 허용해야함
 
   @Column({ type: 'int', nullable: false })
   viewCount: number;
 
-  @Column({ type: 'varchar', nullable: true })
-  pollTitle: string = ''; // Null을 허용해야함
+  @Column({ type: 'varchar', nullable: true, default: '' })
+  pollTitle: string; // Null을 허용해야함
 
   @CreateDateColumn({ type: 'datetime', nullable: false })
   createdAt: Date;
@@ -63,35 +63,36 @@ export class CardPosts {
 
   //   // * Relation * /
 
-  @OneToMany(() => CommentLikes, (commentLikes) => commentLikes.postIdx, {
+  // *  CardPosts | 1 : M | CommentLikes
+  @OneToMany(() => CommentLikes, (commentLikes) => commentLikes.CardPosts, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   CommentLikes: CommentLikes[];
 
   // *  CardPosts | 1 : M | Prefers
-  @OneToMany(() => Prefers, (prefers) => prefers.postIdx, {
+  @OneToMany(() => Prefers, (prefers) => prefers.CardPosts, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   Prefers: Prefers[];
 
   // *  CardPosts | 1 : M | PostLikes
-  @OneToMany(() => PostLikes, (postLikes) => postLikes.postIdx, {
+  @OneToMany(() => PostLikes, (postLikes) => postLikes.CardPosts, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   PostLikes: PostLikes[];
 
   // *  CardPosts | 1 : M | Comments
-  @OneToMany(() => Comments, (comments) => comments.postIdx, {
+  @OneToMany(() => Comments, (comments) => comments.CardPosts, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   Comments: Comments[];
 
   // *  CardPosts | 1 : M | ReplyComments
-  @OneToMany(() => ReplyComments, (replyComments) => replyComments.postIdx, {
+  @OneToMany(() => ReplyComments, (replyComments) => replyComments.CardPosts, {
     cascade: true,
     onDelete: 'CASCADE',
   })

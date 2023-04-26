@@ -8,6 +8,6 @@ export class CardPostsCategoryTrans implements PipeTransform {
     value.splitNumber = parseInt(value.splitNumber, 10);
     value.splitPageNumber = parseInt(value.splitPageNumber, 10);
 
-    return;
+    return value;
   }
 }

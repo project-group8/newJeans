@@ -55,6 +55,7 @@ import { ReplyComments } from 'src/entities/ReplyComments.entity';
     PostLikeModule,
     UsersModule,
     ChatModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

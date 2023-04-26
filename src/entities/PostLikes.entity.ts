@@ -40,14 +40,14 @@ export class PostLikes {
   //   // * Relation * /
 
   // *  PostLikes | M : 1 | Users
-  @ManyToOne(() => Users, (users) => users.Prefers, {
+  @ManyToOne(() => Users, (users) => users.PostLikes, {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
   Users: Users;
 
   // *  PostLikes | M : 1 | CardPosts
-  @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.Prefers, {
+  @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.PostLikes, {
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'postIdx', referencedColumnName: 'postIdx' }])
