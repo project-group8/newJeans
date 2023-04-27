@@ -4,6 +4,7 @@ import { Users } from 'src/entities/Users.entity';
 import { Repository } from 'typeorm';
 import { SignupReqeustDto } from './dtos/signup.dto';
 import * as bcrypt from 'bcrypt'
+import { UUID } from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -11,6 +12,10 @@ export class UsersService {
         @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     ){}
+
+    async findById(userIdx: UUID) {
+      return await this.usersRepository.findOne({ where: { userIdx: userIdx } });
+    }
 
     async findByEmail(email: string) {
         return await this.usersRepository.findOne({ where: { email: email } });
@@ -28,7 +33,7 @@ export class UsersService {
             where: { nickname: data.nickname },
           });
 
-        if(nickname)
+        if(nickname && data.provider === 'local')
         throw new ConflictException('이미 존재하는 닉네임 입니다.');
         
         const hashedPassword =
@@ -58,11 +63,21 @@ export class UsersService {
         const insertedUser = await this.usersRepository.create({
             email: data.email,
             nickname: data.nickname,
-            password: hashedPassword
+            password: data.provider === 'local' ? hashedPassword : 'KAKAO',
+            provider: data.provider,
           });
 
         await this.usersRepository.save(insertedUser);
         return insertedUser;
+    }
+  
+    async leave(userIdx: UUID) {
+      const leaveUser = await this.usersRepository.delete(userIdx);
+  
+      if (leaveUser.affected === 0)
+        throw new BadRequestException('존재하지 않는 유저입니다.');
+  
+      return '탈퇴가 완료되었습니다.';
     }
     
 }

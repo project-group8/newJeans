@@ -8,6 +8,8 @@ import { Users } from 'src/entities/Users.entity';
 import { Tokens } from 'src/entities/Tokens.entity';
 import mysqlDataSource from 'src/config/typeorm-cli.config';
 import { UsersModule } from 'src/users/users.module';
+import { JwtStrategy } from './jwt/jwt.strategy';
+import { KakaoStrategy } from './kakao.strategy';
 
 @Module({
   imports: [
@@ -20,6 +22,6 @@ import { UsersModule } from 'src/users/users.module';
     forwardRef(() => UsersModule),
   ],
   controllers: [AuthController],
-  providers: [AuthService]
+  providers: [AuthService, JwtStrategy, KakaoStrategy],
 })
 export class AuthModule {}

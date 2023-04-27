@@ -1,10 +1,16 @@
-import { Body, Post, Controller, UsePipes, ValidationPipe, HttpCode } from '@nestjs/common';
+import { Body, Post, Controller, Delete, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { SignupReqeustDto } from './dtos/signup.dto';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { GetPayload } from 'src/common/decorators/get.payload.decorator';
+import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
+
+
 
 
 @Controller('user')
 export class UsersController {
+    authService: any;
     constructor(private usersService: UsersService){
 
     }
@@ -14,6 +20,14 @@ export class UsersController {
       return this.usersService.signup(data);
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Delete('leave')
+    async leave(@GetPayload() payload: JwtPayload) {
+      const userIdx = payload.sub;
+      return await this.usersService.leave(userIdx);
+    }
 
 
 }
+
+
