@@ -1,22 +1,20 @@
-import { Module } from '@nestjs/common';
 import { CommentsController } from './comments.controller';
+import { UsersModule } from './../users/users.module';
+import { AuthModule } from './../auth/auth.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Comments } from 'src/entities/Comments.entity';
-
-import mysqlDataSource from 'src/config/typeorm-cli.config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from 'src/auth/auth.module';
-
 import { Users } from 'src/entities/Users.entity';
-import { UsersModule } from 'src/users/users.module';
+import mysqlDataSource from 'src/config/typeorm-cli.config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Comments, Users], mysqlDataSource),
+    TypeOrmModule.forFeature([Comments], mysqlDataSource),
     AuthModule,
     UsersModule,
   ],
-  controllers: [CommentsController],
   providers: [CommentsService],
+  controllers: [CommentsController],
 })
 export class CommentsModule {}

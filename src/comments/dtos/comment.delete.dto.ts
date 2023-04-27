@@ -1,6 +1,7 @@
+import { UUID } from "crypto";
+
 export class CommentDeleteRequestDto {
+  public commentIdx: UUID;
 
-  public id: number;
-
-  public UserId: number;
+  public userIdx: UUID;
 }
