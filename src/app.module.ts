@@ -22,7 +22,6 @@ import { Prefers } from 'src/entities/Prefers.entity';
 import { ReplyComments } from 'src/entities/ReplyComments.entity';
 import { Tokens } from './entities/Tokens.entity';
 import { AuthModule } from './auth/auth.module';
-// import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -46,13 +45,13 @@ import { AuthModule } from './auth/auth.module';
           PostLikes,
           Prefers,
           ReplyComments,
-          Tokens
+          Tokens,
         ],
         synchronize: false, // !!! true 절대 금지 꼭 팀적으로 상의할 것 !!!
       }),
     }),
     CardpostsModule,
-    CommentsModule,
+    // CommentsModule,
     ReplycommentsModule,
     PreferModule,
     CommentLikeModule,
@@ -60,7 +59,6 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     ChatModule,
     UsersModule,
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
