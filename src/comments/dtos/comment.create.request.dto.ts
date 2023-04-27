@@ -6,7 +6,7 @@ export class CommentCreateRequestDto {
   @IsNotEmpty()
   public comment: string;
 
-  public target: number;
+  public selectedTag: string;
 
   public postIdx: UUID;
 

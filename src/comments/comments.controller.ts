@@ -1,26 +1,60 @@
-import { Body, Controller, HttpCode, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { GetPayload } from 'src/common/decorators/get.payload.decorator';
+import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
 import { CommentCreateRequestDto } from './dtos/comment.create.request.dto';
 import { UUID } from 'crypto';
-import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
+import { CommentUpdateRequestDto } from './dtos/comment.update.dto';
+import { CommentDeleteRequestDto } from './dtos/comment.delete.dto';
 
-@Controller('comments')
+@Controller('comment')
 export class CommentsController {
     constructor(private readonly commentsService: CommentsService) {}
 
     @UseGuards(JwtAuthGuard)
-    @Post(':postId')
+    @Post(':postIdx')
     @HttpCode(201)
     async createComment(
-    @GetPayload() payload: JwtPayload,
-    @Body() commentCreateRequestDto: CommentCreateRequestDto,
-    @Param('postIdx', new ParseIntPipe()) postIdx: UUID,
-  ) {
-    commentCreateRequestDto.userIdx = payload.sub;
-    commentCreateRequestDto.postIdx = postIdx;
+      @GetPayload() payload: JwtPayload,
+      @Body() commentCreateRequestDto: CommentCreateRequestDto,
+      @Param('postIdx') postIdx: UUID,
+    ) {
 
-    return await this.commentsService.createComment(commentCreateRequestDto);
+      commentCreateRequestDto.userIdx = payload.sub;
+      commentCreateRequestDto.postIdx = postIdx;
+
+      return await this.commentsService.createComment(commentCreateRequestDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(201)
+    @Put(':commentIdx')
+    async updateComment(
+      @Param('commentIdx') commentIdx: UUID,
+      @GetPayload() payload: JwtPayload,
+      @Body() commentUpdateRequestDto: CommentUpdateRequestDto,
+    ) {
+
+    commentUpdateRequestDto.userIdx = payload.sub;
+    commentUpdateRequestDto.commentIdx = commentIdx;
+
+    return await this.commentsService.updateComment(commentUpdateRequestDto);
+    }
+    
+    @UseGuards(JwtAuthGuard)
+    @Delete(':commentIdx')
+    @HttpCode(204)
+    async deleteComment(
+      @Param('commentIdx') commentIdx: UUID,
+      @GetPayload() payload: JwtPayload,
+    ) {
+    const commentDeleteRequestDto = new CommentDeleteRequestDto();
+    
+    commentDeleteRequestDto.userIdx = payload.sub;
+    commentDeleteRequestDto.commentIdx = commentIdx;
+    
+    return await this.commentsService.deleteComment(commentDeleteRequestDto);
   }
+
 }
