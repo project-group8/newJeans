@@ -15,3 +15,14 @@ export class SplitCardsDto extends PickType(CardPosts, [
   @IsString()
   splitPageNumber: number;
 }
+
+export class CreateCardDto extends PickType(CardPosts, [
+  'title',
+  'maincategory',
+  'category',
+  'desc',
+  'pollType',
+  'pollTitle',
+  'tag',
+  'imgUrl',
+]) {}
