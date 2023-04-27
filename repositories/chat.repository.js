@@ -27,6 +27,10 @@ class ChatRepository {
     return test;
   };
 
+  checkroomName = async (roomName) => {
+    return await Chat.findOne({ where: { roomName } });
+  };
+
   enterUserChat = async (splitNumber, splitPageNumber) => {
     console.log(await Chat.count());
     const findUserChat = await Chat.findAll({
@@ -55,6 +59,10 @@ class ChatRepository {
     );
 
     return reName;
+  };
+
+  deleteUserChat = async (userIdx, roomName) => {
+    return await Chat.destroy({ where: { userIdx, roomName } });
   };
 }
 

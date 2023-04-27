@@ -23,6 +23,10 @@ class ChatService {
     }
   };
 
+  deleteUserChat = async (userIdx, roomName) => {
+    return await this.chatRepository.deleteUserChat(userIdx, roomName);
+  };
+
   // 채팅방 정보를 봅니다.
   enterUserChat = async (splitNumber, splitPageNumber) => {
     try {

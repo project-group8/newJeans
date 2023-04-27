@@ -9,7 +9,7 @@ class CardpostsController {
     this.cardpostsRepository = new CardpostsRepository();
   }
 
-  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
+  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다. nest done
   findSplitCards = async (req, res, next) => {
     const { maincategory, category, splitNumber, splitPageNumber } = req.query;
     try {
@@ -39,7 +39,7 @@ class CardpostsController {
     }
   };
 
-  // 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.
+  // 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.  nest done
   findHotCards = async (req, res, next) => {
     try {
       const hotPostCards = await this.cardpostsService.findHotCards();
@@ -54,7 +54,7 @@ class CardpostsController {
     }
   };
 
-  // postIdx로 지정한 카드를 불러들입니다.
+  // postIdx로 지정한 카드를 불러들입니다. nest done
   findOnePost = async (req, res, next) => {
     const { postIdx } = req.params;
 
@@ -87,7 +87,7 @@ class CardpostsController {
     }
   };
 
-  // 지정한 카드의 contents를 불러들입니다.
+  // 지정한 카드의 contents를 불러들입니다. nest done
   findOnePostContents = async (req, res, next) => {
     const { postIdx } = req.params;
 
@@ -128,7 +128,7 @@ class CardpostsController {
     }
   };
 
-  // 지정한 카드의 category 정보를 불러들입니다.
+  // 지정한 카드의 category 정보를 불러들입니다. nest done
   findOnePostCategorys = async (req, res, next) => {
     const { postIdx } = req.params;
 

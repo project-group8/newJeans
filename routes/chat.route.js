@@ -7,5 +7,10 @@ const chatController = new ChatController();
 
 router.post("/hunsuChat", authMiddleware, chatController.createUserChat);
 router.get("/hunsuChat", chatController.enterUserChat);
+router.delete(
+  "/hunsuChat/:roomName",
+  authMiddleware,
+  chatController.deleteUserChat
+);
 
 module.exports = router;
