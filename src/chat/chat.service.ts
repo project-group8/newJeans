@@ -14,6 +14,8 @@ export class ChatService {
   constructor(
     @InjectRepository(Chats)
     private chatRepository: Repository<Chats>,
+    @InjectRepository(Users)
+    private usersRepository: Repository<Users>,
   ) {}
 
   async chatRooms(enterUserChatDto: EnterUserChatDto): Promise<object[]> {
@@ -62,5 +64,18 @@ export class ChatService {
 
     deleteChat;
     return;
+  }
+
+  async adminUserFind(roomName: string) {
+    const test = await this.chatRepository
+      .createQueryBuilder('c')
+      .where('c.roomName = :roomName', { roomName })
+      .select(['u.nickname'])
+      .leftJoin(Users, 'u', 'c.userIdx = u.userIdx')
+      .getRawOne();
+
+    console.log(test);
+
+    return test;
   }
 }

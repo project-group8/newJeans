@@ -64,4 +64,11 @@ export class ChatController {
     chatDelete;
     return { msg: '채팅방 삭제에 성공했습니다.' };
   }
+
+  @Get('/hunsuChat/admin/:roomName')
+  async adminUserFind(@Param('roomName') roomName: string) {
+    const adminUserFind = await this.chatService.adminUserFind(roomName);
+
+    return adminUserFind;
+  }
 }

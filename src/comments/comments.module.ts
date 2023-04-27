@@ -14,9 +14,9 @@ import { UsersModule } from 'src/users/users.module';
   imports: [
     TypeOrmModule.forFeature([Comments, Users], mysqlDataSource),
     AuthModule,
-    UsersModule
+    UsersModule,
   ],
   controllers: [CommentsController],
-  providers: [CommentsService]
+  providers: [CommentsService],
 })
 export class CommentsModule {}

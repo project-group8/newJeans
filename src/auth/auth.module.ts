@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import { Module, forwardRef } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -27,4 +25,3 @@ import { KakaoStrategy } from './kakao.strategy';
   providers: [AuthService, JwtStrategy, KakaoStrategy],
 })
 export class AuthModule {}
->>>>>>> 1eb1c12b49f864505f20d1c6c220de8ad7832696

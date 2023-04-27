@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1682523574874 implements MigrationInterface {
-    name = 'Migrations1682523574874'
+export class Migrations1682610675398 implements MigrationInterface {
+    name = 'Migrations1682610675398'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE \`Prefers\` (\`preferIdx\` varchar(36) NOT NULL, \`userIdx\` varchar(255) NOT NULL, \`postIdx\` varchar(255) NOT NULL, \`selectprefer\` varchar(255) NOT NULL, \`createdAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), \`updatedAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (\`preferIdx\`)) ENGINE=InnoDB`);
@@ -28,7 +28,7 @@ export class Migrations1682523574874 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE \`CommentLikes\` ADD CONSTRAINT \`FK_396fb61ad554bb6f84bbef93d88\` FOREIGN KEY (\`commentIdx\`) REFERENCES \`Comments\`(\`commentIdx\`) ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE \`CommentLikes\` ADD CONSTRAINT \`FK_7e7478dfbf281c8991a0f1dbfa4\` FOREIGN KEY (\`postIdx\`) REFERENCES \`CardPosts\`(\`postIdx\`) ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE \`Chats\` ADD CONSTRAINT \`FK_f8de00de808e24ca46b0bb10aa0\` FOREIGN KEY (\`userIdx\`) REFERENCES \`Users\`(\`userIdx\`) ON DELETE CASCADE ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE \`Tokens\` ADD CONSTRAINT \`FK_5e2389ba2f7642aed3dc0df4b2c\` FOREIGN KEY (\`userIdx\`) REFERENCES \`Users\`(\`userIdx\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`Tokens\` ADD CONSTRAINT \`FK_5e2389ba2f7642aed3dc0df4b2c\` FOREIGN KEY (\`userIdx\`) REFERENCES \`Users\`(\`userIdx\`) ON DELETE CASCADE ON UPDATE NO ACTION`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

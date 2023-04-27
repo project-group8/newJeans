@@ -9,7 +9,8 @@ import { AuthModule } from 'src/auth/auth.module';
 @Module({
   imports: [
     forwardRef(() => AuthModule),
-    TypeOrmModule.forFeature([Users], mysqlDataSource)],
+    TypeOrmModule.forFeature([Users], mysqlDataSource),
+  ],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

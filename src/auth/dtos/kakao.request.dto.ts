@@ -1,3 +1,3 @@
 export class KakaoRequestDto {
-    public accessToken: string;
-  }
+  public accessToken: string;
+}
