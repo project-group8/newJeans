@@ -11,7 +11,7 @@ class CardpostsRepository {
     this.preferRepository = new PreferRepository();
   }
 
-  //로그인 한 유저라면 IsLike의 상태를 볼 수 있습니다.
+  //로그인 한 유저라면 IsLike의 상태를 볼 수 있습니다. nest done
   findOneIogInPost = async (userIdx, postIdx) => {
     const findOnePost = await CardPost.findOne({
       where: { postIdx: postIdx },
@@ -73,7 +73,7 @@ class CardpostsRepository {
     return findOneUser;
   };
 
-  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
+  // splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다. nest done
   findSplitCards = async (
     maincategory,
     category,
@@ -90,7 +90,7 @@ class CardpostsRepository {
     return findCardPosts;
   };
 
-  // 특정 로직을 세우고 7일 안에 작성된 가장 인기있는 게시물 5개를 가져옵니다.
+  // 특정 로직을 세우고 7일 안에 작성된 가장 인기있는 게시물 5개를 가져옵니다. nest done
   findHotCards = async () => {
     const hotCardfindAll = await this.hotCardfindAll();
 

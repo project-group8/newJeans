@@ -10,7 +10,7 @@ class CardpostsService {
   }
 
   /**
-   * splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다.
+   * splitNumber쿼리로 지정한 수 만큼 카드를 불러들입니다. nest done
    *
    * @param {*} maincategory
    * @param {*} category
@@ -48,7 +48,7 @@ class CardpostsService {
     return findSplitCards;
   };
 
-  // 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다.
+  // 특정 로직을 세우고 가장 인기있는 게시물 3개를 가져옵니다. nest done
   findHotCards = async () => {
     const findHotCards = await this.cardpostsRepository.findHotCards();
 
