@@ -66,16 +66,24 @@ export class ChatService {
     return;
   }
 
-  async adminUserFind(roomName: string) {
-    const test = await this.chatRepository
+  async adminUserFind(roomName: string): Promise<Chats> {
+    const existChat: Chats = await this.chatRepository.findOne({
+      where: { roomName },
+    });
+
+    if (!existChat) {
+      throw new BadRequestException(
+        `${roomName} 해당 채팅방이 존재하지 않습니다.`,
+      );
+    }
+
+    const findAdmin: Chats = await this.chatRepository
       .createQueryBuilder('c')
       .where('c.roomName = :roomName', { roomName })
-      .select(['u.nickname'])
+      .select(['u.nickname as nickname'])
       .leftJoin(Users, 'u', 'c.userIdx = u.userIdx')
       .getRawOne();
 
-    console.log(test);
-
-    return test;
+    return findAdmin;
   }
 }

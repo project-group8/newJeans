@@ -66,8 +66,10 @@ export class ChatController {
   }
 
   @Get('/hunsuChat/admin/:roomName')
-  async adminUserFind(@Param('roomName') roomName: string) {
-    const adminUserFind = await this.chatService.adminUserFind(roomName);
+  async adminUserFind(@Param('roomName') roomName: string): Promise<object> {
+    const adminUserFind: object = await this.chatService.adminUserFind(
+      roomName,
+    );
 
     return adminUserFind;
   }
