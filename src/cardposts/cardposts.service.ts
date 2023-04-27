@@ -14,11 +14,9 @@ import { SelectQueryBuilder, UpdateResult, DeleteResult } from 'typeorm';
 export class CardpostsService {
   constructor(
     @InjectRepository(CardPosts)
-    private readonly cardPostsRepository: Repository<CardPosts>,
+    private cardPostsRepository: Repository<CardPosts>,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
-    @InjectRepository(Comments)
-    private readonly commentsRepository: Repository<Comments>,
   ) {}
 
   /**

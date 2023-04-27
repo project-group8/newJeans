@@ -1,18 +1,18 @@
 import { PickType } from '@nestjs/mapped-types';
 import { CardPosts } from '../../entities/CardPosts.entity';
 import { Expose } from 'class-transformer';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class SplitCardsDto extends PickType(CardPosts, [
   'maincategory',
   'category',
 ]) {
-  @IsString()
+  @IsNumber()
   @Expose()
   splitNumber: number;
 
   @Expose()
-  @IsString()
+  @IsNumber()
   splitPageNumber: number;
 }
 
