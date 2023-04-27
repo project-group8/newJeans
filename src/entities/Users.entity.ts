@@ -54,55 +54,55 @@ export class Users {
   @DeleteDateColumn({ type: 'timestamp' })
   deletedAt: Date | null;
 
-  //   // * Foreign Key * /
+  // // * Foreign Key * /
 
   //
 
-  //   // * Relation * /
+  // // * Relation * /
 
-  // *  Users | 1 : M | CommentsLikes
+  // * Users | 1 : M | CommentsLikes
   @OneToMany(() => CommentLikes, (commentLikes) => commentLikes.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   CommentLikes: CommentLikes[];
 
-  // *  Users | 1 : M | CardPosts
+  // * Users | 1 : M | CardPosts
   @OneToMany(() => CardPosts, (cardPosts) => cardPosts.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   CardPosts: CardPosts[];
 
-  // *  Users | 1 : M | Chats
+  // * Users | 1 : M | Chats
   @OneToMany(() => Chats, (chats) => chats.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   Chats: Chats[];
 
-  // *  Users | 1 : M | Prefers
+  // * Users | 1 : M | Prefers
   @OneToMany(() => Prefers, (prefers) => prefers.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   Prefers: Prefers[];
 
-  // *  Users | 1 : M | PostLikes
+  // * Users | 1 : M | PostLikes
   @OneToMany(() => PostLikes, (postLikes) => postLikes.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   PostLikes: PostLikes[];
 
-  // *  Users | 1 : M | Comments
+  // * Users | 1 : M | Comments
   @OneToMany(() => Comments, (comments) => comments.Users, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   Comments: Comments[];
 
-  // *  Users | 1 : M | ReplyComments
+  // * Users | 1 : M | ReplyComments
   @OneToMany(() => ReplyComments, (replyComments) => replyComments.Users, {
     cascade: true,
     onDelete: 'CASCADE',
@@ -110,18 +110,23 @@ export class Users {
   ReplyComments: ReplyComments[];
 
   // @OneToMany(() => Tokens, (tokens) => tokens.Users, {
-  //   cascade: true,
-  //   onDelete: 'CASCADE',
+  // cascade: true,
+  // onDelete: 'CASCADE',
   // })
   // Tokens: Tokens[];
 
-  @OneToOne(() => Tokens)
+  // @OneToOne(() => Tokens)
+  // Tokens: Tokens;
+  @OneToOne(() => Tokens, (Tokens) => Tokens.Users, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   Tokens: Tokens;
+  // // * Users | 1 : M | ChatSaves
 
-  // // *  Users | 1 : M | ChatSaves
   // @OneToMany(() => ChatSaves, (chatSaves) => chatSaves.Users, {
-  //   cascade: true,
-  //   onDelete: 'CASCADE',
+  // cascade: true,
+  // onDelete: 'CASCADE',
   // })
   // ChatSaves: ChatSaves[];
 }

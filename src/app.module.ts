@@ -21,6 +21,12 @@ import { PostLikes } from 'src/entities/PostLikes.entity';
 import { Prefers } from 'src/entities/Prefers.entity';
 import { Tokens } from 'src/entities/Tokens.entity';
 import { ReplyComments } from 'src/entities/ReplyComments.entity';
+<<<<<<< HEAD
+=======
+import { Tokens } from './entities/Tokens.entity';
+import { AuthModule } from './auth/auth.module';
+// import { AuthModule } from './auth/auth.module';
+>>>>>>> 1eb1c12b49f864505f20d1c6c220de8ad7832696
 
 @Module({
   imports: [
@@ -44,7 +50,11 @@ import { ReplyComments } from 'src/entities/ReplyComments.entity';
           PostLikes,
           Prefers,
           ReplyComments,
+<<<<<<< HEAD
           Tokens,
+=======
+          Tokens
+>>>>>>> 1eb1c12b49f864505f20d1c6c220de8ad7832696
         ],
         synchronize: false, // !!! true 절대 금지 꼭 팀적으로 상의할 것 !!!
       }),
