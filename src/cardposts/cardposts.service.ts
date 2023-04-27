@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from '../entities/Users.entity';
 import { CardPosts } from '../entities/CardPosts.entity';
@@ -8,7 +8,7 @@ import { PostLikes } from '../entities/PostLikes.entity';
 import { Comments } from '../entities/Comments.entity';
 import { Prefers } from '../entities/Prefers.entity';
 import { UUID } from 'crypto';
-import { SelectQueryBuilder, UpdateResult } from 'typeorm';
+import { SelectQueryBuilder, UpdateResult, DeleteResult } from 'typeorm';
 
 @Injectable()
 export class CardpostsService {
@@ -216,6 +216,12 @@ export class CardpostsService {
     return createPost;
   }
 
+  /**
+   * 카드를 업데이트 합니다.
+   * @param postIdx
+   * @param createCardDto
+   * @returns
+   */
   async updatePost(
     postIdx: string,
     createCardDto: CreateCardDto,
@@ -248,5 +254,31 @@ export class CardpostsService {
       .execute();
 
     return updatePost;
+  }
+
+  /**
+   * 카드를 삭제합니다.
+   * @param postIdx
+   * @returns
+   */
+  async deletePost(postIdx: UUID): Promise<void> {
+    const exeistPost: CardPosts = await this.cardPostsRepository.findOne({
+      where: { postIdx },
+    });
+
+    if (!exeistPost) {
+      throw new BadRequestException('해당 게시글이 존재하지 않습니다.');
+    }
+
+    const deletePost: DeleteResult = await this.cardPostsRepository
+      .createQueryBuilder('cp')
+      .delete()
+      .from(CardPosts)
+      .where('cp.postIdx = :postIdx', { postIdx })
+      .andWhere('') // 유저 조건 추가해야함
+      .execute();
+
+    deletePost;
+    return;
   }
 }

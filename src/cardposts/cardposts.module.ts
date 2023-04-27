@@ -27,8 +27,30 @@ export class CardpostsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleWare).forRoutes('*');
     consumer.apply(PostCountUpMiddleware).forRoutes({
+      // allusers 미들웨어 있어야함
       path: 'postCards/post/:postIdx',
       method: RequestMethod.GET,
     });
+    consumer.apply().forRoutes({
+      // allusers 미들웨어 있어야함
+      path: 'postCards/post/contents/:postIdx',
+      method: RequestMethod.GET,
+    });
+    consumer.apply().forRoutes({
+      // authmiddleware 달아줘야함
+      path: 'postCards/post/createPost',
+      method: RequestMethod.POST,
+    });
+    consumer.apply().forRoutes({
+      // authmiddleware 달아줘야함
+      path: 'postCards/post/createPost/:postIdx',
+      method: RequestMethod.PUT,
+    });
+    consumer
+      .apply() // authmiddleware 달아줘야함
+      .forRoutes({
+        path: 'postCards/post/createPost/:postIdx',
+        method: RequestMethod.DELETE,
+      });
   }
 }
