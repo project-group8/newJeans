@@ -59,16 +59,24 @@ export class Comments {
   ReplyComments: ReplyComments[];
 
   // *  Comments | M : 1 | Users
-  @ManyToOne(() => Users, (users) => users.Comments, {
-    onDelete: 'CASCADE',
-  })
+  // @ManyToOne(() => Users, (users) => users.Comments, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
+  // Users: Users;
+
+  @ManyToOne(() => Users, (users) => users.Comments, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
   Users: Users;
 
   // *  Comments | M : 1 | CardPosts
-  @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.Comments, {
-    onDelete: 'CASCADE',
-  })
+  // @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.Comments, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn([{ name: 'postIdx', referencedColumnName: 'postIdx' }])
+  // CardPosts: CardPosts;
+
+  @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.Comments, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'postIdx', referencedColumnName: 'postIdx' }])
   CardPosts: CardPosts;
 }
