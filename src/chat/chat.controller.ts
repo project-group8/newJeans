@@ -52,9 +52,9 @@ export class ChatController {
   //
   //미완성
   //auth미들웨어 넣어야함
-  @Delete('/hunsuChat')
+  @Delete('/hunsuChat/:roomName')
   async deleteUserChat(
-    @Param('postIdx') deleteUserChatDto: DeleteUserChatDto,
+    @Param('roomName') deleteUserChatDto: DeleteUserChatDto,
   ): Promise<object> {
     // const { email } = request;
     // const {userIdx} = await this.cardpostsService.findUser(email)
