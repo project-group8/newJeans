@@ -1,7 +1,7 @@
-import { UUID } from "crypto";
+import { UUID } from 'crypto';
 
 export class JwtPayload {
-    sub: UUID;
-    iat?: number;
-    exp?: number;
-  }
+  sub: UUID;
+  iat?: number;
+  exp?: number;
+}

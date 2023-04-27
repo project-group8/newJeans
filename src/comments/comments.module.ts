@@ -12,7 +12,7 @@ import mysqlDataSource from 'src/config/typeorm-cli.config';
   imports: [
     TypeOrmModule.forFeature([Comments], mysqlDataSource),
     AuthModule,
-    UsersModule
+    UsersModule,
   ],
   providers: [CommentsService],
   controllers: [CommentsController],

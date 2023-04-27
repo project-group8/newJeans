@@ -23,6 +23,7 @@ import { Tokens } from './entities/Tokens.entity';
 import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -45,13 +46,13 @@ import { CommentsModule } from './comments/comments.module';
           PostLikes,
           Prefers,
           ReplyComments,
-          Tokens
+          Tokens,
         ],
         synchronize: false, // !!! true 절대 금지 꼭 팀적으로 상의할 것 !!!
       }),
     }),
     CardpostsModule,
-    CommentsModule,
+    // CommentsModule,
     ReplycommentsModule,
     PreferModule,
     CommentLikeModule,
@@ -59,7 +60,6 @@ import { CommentsModule } from './comments/comments.module';
     UsersModule,
     ChatModule,
     UsersModule,
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,9 +1,24 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { PostLikeController } from './post-like.controller';
 import { PostLikeService } from './post-like.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CardPosts } from 'src/entities/CardPosts.entity';
+import { PostLikes } from 'src/entities/PostLikes.entity';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([CardPosts, PostLikes])],
   controllers: [PostLikeController],
-  providers: [PostLikeService]
+  providers: [PostLikeService],
 })
-export class PostLikeModule {}
+export class PostLikeModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply()
+      .forRoutes({ path: '/post/:postIdx', method: RequestMethod.PUT });
+  }
+}

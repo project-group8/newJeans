@@ -4,5 +4,4 @@ import { PickType } from '@nestjs/swagger';
 export class LoginRequestDto extends PickType(SignupReqeustDto, [
   'email',
   'password',
-
 ] as const) {}
