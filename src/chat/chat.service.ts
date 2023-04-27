@@ -8,6 +8,7 @@ import {
   DeleteUserChatDto,
 } from './dto/chat.dto';
 import { Users } from 'src/entities/Users.entity';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class ChatService {
@@ -32,10 +33,14 @@ export class ChatService {
     return qb.getRawMany();
   }
 
-  async createUserChat(createUserChatDto: CreateUserChatDto): Promise<Chats> {
+  async createUserChat(
+    userIdx: UUID,
+    createUserChatDto: CreateUserChatDto,
+  ): Promise<Chats> {
     const { maxParty, roomName } = createUserChatDto;
 
     const createChat: Chats = await this.chatRepository.create({
+      userIdx,
       maxParty,
       roomName,
     });
@@ -43,7 +48,10 @@ export class ChatService {
     return createChat;
   }
 
-  async deleteUserChat(deleteUserChatDto: DeleteUserChatDto): Promise<void> {
+  async deleteUserChat(
+    userIdx: UUID,
+    deleteUserChatDto: DeleteUserChatDto,
+  ): Promise<void> {
     const { roomName } = deleteUserChatDto;
 
     const exesitChat: Chats = await this.chatRepository.findOne({
@@ -58,8 +66,10 @@ export class ChatService {
       .createQueryBuilder('c')
       .delete()
       .from(Chats)
-      .where('c.roomName = :roomName', { roomName })
-      .andWhere('') // 유저 조건 추가해야함
+      .where('c.roomName = :roomName, c.userIdx = :userIdx', {
+        roomName,
+        userIdx,
+      })
       .execute();
 
     deleteChat;

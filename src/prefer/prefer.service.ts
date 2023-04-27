@@ -46,6 +46,7 @@ export class PreferService {
    * @returns
    */
   async createPostPoll(
+    userIdx: UUID,
     postIdx: UUID,
     createPollDto: CreatePollDto,
   ): Promise<number> {

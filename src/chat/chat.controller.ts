@@ -7,6 +7,7 @@ import {
   Query,
   Req,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatSplitValidPipe, CreateUserChatValidPipe } from './pipes/chat.pipe';
@@ -16,6 +17,10 @@ import {
   DeleteUserChatDto,
 } from './dto/chat.dto';
 import { Chats } from 'src/entities/Chats.entity';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { GetPayload } from 'src/common/decorators/get.payload.decorator';
+import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
+import { UUID } from 'crypto';
 
 @Controller('chat')
 export class ChatController {
@@ -32,33 +37,30 @@ export class ChatController {
     return { result: enterUserChat };
   }
 
-  //
-  //미완성
-  //auth미들웨어 넣어야함
+  @UseGuards(JwtAuthGuard)
   @Post('/hunsuChat')
   async createUserChat(
+    @GetPayload() payload: JwtPayload,
     @Body(CreateUserChatValidPipe) createUserChatDto: CreateUserChatDto,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload.sub;
     const createUserChat: Chats = await this.chatService.createUserChat(
+      userIdx,
       createUserChatDto,
     );
     createUserChat;
     return { msg: '채팅방 생성에 성공했습니다.' };
   }
 
-  //
-  //미완성
-  //auth미들웨어 넣어야함
+  @UseGuards(JwtAuthGuard)
   @Delete('/hunsuChat/:roomName')
   async deleteUserChat(
+    @GetPayload() payload: JwtPayload,
     @Param('roomName') deleteUserChatDto: DeleteUserChatDto,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload.sub;
     const chatDelete: void = await this.chatService.deleteUserChat(
+      userIdx,
       deleteUserChatDto,
     );
     chatDelete;

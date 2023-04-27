@@ -1,8 +1,19 @@
-import { Body, Controller, Get, Param, Put, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { PreferService } from './prefer.service';
 import { CreatePollValidPipe } from './pipes/prefer.pipe';
 import { CreatePollDto } from './dto/prefer.dto';
 import { UUID } from 'crypto';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { GetPayload } from 'src/common/decorators/get.payload.decorator';
+import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
 
 @Controller('prefer')
 export class PreferController {
@@ -17,17 +28,17 @@ export class PreferController {
     return { pollResult: postPollResult };
   }
 
-  // 미완성
-  // authmiddle 만들기
+  // 미완성 내일 만들기
+  @UseGuards(JwtAuthGuard)
   @Put('/post/:postIdx')
   async createPostPoll(
+    @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
     @Body(CreatePollValidPipe) createPollDto: CreatePollDto,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload.sub;
     const createPostPoll: number = await this.preferService.createPostPoll(
+      userIdx,
       postIdx,
       createPollDto,
     );

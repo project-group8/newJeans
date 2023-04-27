@@ -14,7 +14,7 @@ export class PostLikeService {
     private cardPostsRepository: Repository<CardPosts>,
   ) {}
 
-  async postToggleLike(postIdx: UUID): Promise<string> {
+  async postToggleLike(userIdx: UUID, postIdx: UUID): Promise<string> {
     const exeistPost: CardPosts = await this.cardPostsRepository.findOne({
       where: { postIdx },
     });
@@ -24,11 +24,11 @@ export class PostLikeService {
     }
 
     const isLike: PostLikes = await this.postLikesRepository.findOne({
-      where: { postIdx },
-    }); // 유저 추가해야함
+      where: { userIdx, postIdx },
+    });
 
     if (!isLike) {
-      await this.postLikesRepository.create({ postIdx }); // 유저 추가해야함
+      await this.postLikesRepository.create({ userIdx, postIdx });
       const message: string = '좋아요를 등록하였습니다.';
       return message;
     } else {
@@ -36,7 +36,10 @@ export class PostLikeService {
         .createQueryBuilder('pl')
         .delete()
         .from(PostLikes)
-        .where('pl.postIdx = :postIdx', { postIdx }) // 유저 추가해야함
+        .where('pl.postIdx = :postIdx AND pl.userIdx = :userIdx', {
+          userIdx,
+          postIdx,
+        })
         .execute();
       const message: string = '좋아요를 취소하였습니다.';
       return message;

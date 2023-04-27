@@ -188,7 +188,10 @@ export class CardpostsService {
    * @param createCardDto
    * @returns
    */
-  async postCard(createCardDto: CreateCardDto): Promise<CardPosts> {
+  async postCard(
+    userIdx: UUID,
+    createCardDto: CreateCardDto,
+  ): Promise<CardPosts> {
     const {
       maincategory,
       category,
@@ -201,6 +204,7 @@ export class CardpostsService {
     } = createCardDto;
 
     const createPost: CardPosts = await this.cardPostsRepository.create({
+      userIdx,
       maincategory,
       category,
       title,
@@ -221,7 +225,8 @@ export class CardpostsService {
    * @returns
    */
   async updatePost(
-    postIdx: string,
+    userIdx: UUID,
+    postIdx: UUID,
     createCardDto: CreateCardDto,
   ): Promise<UpdateResult> {
     const {
@@ -248,7 +253,10 @@ export class CardpostsService {
         pollType,
         pollTitle,
       })
-      .where('cp.postIdx = :postIdx', { postIdx })
+      .where('cp.postIdx = :postIdx AND cp.userIdx = :userIdx', {
+        postIdx,
+        userIdx,
+      })
       .execute();
 
     return updatePost;
@@ -259,7 +267,7 @@ export class CardpostsService {
    * @param postIdx
    * @returns
    */
-  async deletePost(postIdx: UUID): Promise<void> {
+  async deletePost(userIdx: UUID, postIdx: UUID): Promise<void> {
     const exeistPost: CardPosts = await this.cardPostsRepository.findOne({
       where: { postIdx },
     });
@@ -272,8 +280,10 @@ export class CardpostsService {
       .createQueryBuilder('cp')
       .delete()
       .from(CardPosts)
-      .where('cp.postIdx = :postIdx', { postIdx })
-      .andWhere('') // 유저 조건 추가해야함
+      .where('cp.postIdx = :postIdx AND cp.userIdx = :userIdx', {
+        userIdx,
+        postIdx,
+      })
       .execute();
 
     deletePost;

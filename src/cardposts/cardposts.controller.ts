@@ -8,6 +8,7 @@ import {
   Param,
   Req,
   Body,
+  UseGuards,
 } from '@nestjs/common';
 import { CardpostsService } from './cardposts.service';
 import { CardPosts } from '../entities/CardPosts.entity';
@@ -19,7 +20,9 @@ import {
 import { SplitCardsDto, CreateCardDto } from './dto/cardposts.dto';
 import { UUID } from 'crypto';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { request } from 'http';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { GetPayload } from 'src/common/decorators/get.payload.decorator';
+import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
 
 @Controller('/postCards')
 export class CardpostsController {
@@ -47,11 +50,9 @@ export class CardpostsController {
 
   // 미완성
   // allusers 미들웨어 있어야함 좋아요 여부 확인
+
   @Get('/post/:postIdx')
-  async findOnePost(
-    @Param('postIdx') postIdx: UUID,
-    @Req() request: string,
-  ): Promise<object> {
+  async findOnePost(@Param('postIdx') postIdx: UUID): Promise<object> {
     // const { email } = request;
     // const {userIdx} = await this.cardpostsService.findUser(email)
     const findOnePost: object = await this.cardpostsService.findOnePost(
@@ -85,15 +86,16 @@ export class CardpostsController {
 
   //
   // 미완성 Multer 넣어야함
-  // authmiddleware 달아줘야함
+  @UseGuards(JwtAuthGuard)
   @Post('/post/createPost')
   async postCard(
+    @GetPayload() payload: JwtPayload,
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload.sub;
+
     const postCard: CardPosts = await this.cardpostsService.postCard(
+      userIdx,
       createCardDto,
     );
 
@@ -102,16 +104,17 @@ export class CardpostsController {
 
   //
   // 미완성 Multer 넣어야함
-  // authmiddleware 달아줘야함
+  @UseGuards(JwtAuthGuard)
   @Put('/post/createPost/:postIdx')
   async updatePost(
+    @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload.sub;
+
     const updatePost: UpdateResult = await this.cardpostsService.updatePost(
+      userIdx,
       postIdx,
       createCardDto,
     );
@@ -123,15 +126,17 @@ export class CardpostsController {
 
   //
   // 미완성
-  // authmiddleware 달아줘야함
+  @UseGuards(JwtAuthGuard)
   @Delete('/post/createPost/:postIdx')
   async deletePost(
+    @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
-    const deletePost: void = await this.cardpostsService.deletePost(postIdx);
+    const userIdx: UUID = payload.sub;
+    const deletePost: void = await this.cardpostsService.deletePost(
+      userIdx,
+      postIdx,
+    );
     deletePost;
     return { msg: '게시글 삭제에 성공했습니다.' };
   }
