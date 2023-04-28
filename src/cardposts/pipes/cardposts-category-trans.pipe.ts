@@ -91,6 +91,7 @@ export class CardPostCreateValidPipe implements PipeTransform {
     } = value;
 
     console.log(
+      'CardPostCreateValidPipe ===========================>',
       typeof title,
       typeof maincategory,
       typeof category,

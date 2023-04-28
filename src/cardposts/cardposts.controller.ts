@@ -9,6 +9,7 @@ import {
   Body,
   UseGuards,
   UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { CardpostsService } from './cardposts.service';
 import { CardPosts } from '../entities/CardPosts.entity';
@@ -24,7 +25,7 @@ import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { GetPayload } from 'src/common/decorators/get.payload.decorator';
 import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
 import { AllUsersJwtAuthGuard } from 'src/middleware/allusersjwtauthguard';
-import { UploadFileMiddleware } from 'src/middleware/uploads.middleware';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('/postCards')
 export class CardpostsController {
@@ -119,9 +120,10 @@ export class CardpostsController {
    * @returns
    */
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(UploadFileMiddleware)
+  @UseInterceptors(FilesInterceptor('files', 4))
   @Post('/post/createPost')
   async postCard(
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @GetPayload() payload: JwtPayload,
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
   ): Promise<object> {
@@ -130,6 +132,7 @@ export class CardpostsController {
     const postCard: CardPosts = await this.cardpostsService.postCard(
       userIdx,
       createCardDto,
+      files,
     );
 
     return { msg: `${postCard.title} 작성에 성공했습니다.` };
@@ -140,12 +143,14 @@ export class CardpostsController {
    * @param payload
    * @param postIdx
    * @param createCardDto
+   * @param files
    * @returns
    */
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(UploadFileMiddleware)
+  @UseInterceptors(FilesInterceptor('files', 4))
   @Put('/post/createPost/:postIdx')
   async updatePost(
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
@@ -156,6 +161,7 @@ export class CardpostsController {
       userIdx,
       postIdx,
       createCardDto,
+      files,
     );
 
     updatePost;
