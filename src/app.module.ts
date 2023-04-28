@@ -23,8 +23,8 @@ import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { ReplycommentsModule } from './replycomments/replycomments.module';
-
-
+import { SlackService, SlackExceptionFilter } from './slack/slack';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -63,9 +63,13 @@ import { ReplycommentsModule } from './replycomments/replycomments.module';
     ChatModule,
     UsersModule,
     UploadsModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    SlackService,
+    { provide: APP_FILTER, useClass: SlackExceptionFilter },
+  ],
 })
 export class AppModule {}
