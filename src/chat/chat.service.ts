@@ -18,8 +18,6 @@ export class ChatService {
     private chatRepository: Repository<Chats>,
     @InjectRepository(ChatSaves)
     private chatSavesRepository: Repository<ChatSaves>,
-    @InjectRepository(Users)
-    private usersRepository: Repository<Users>,
   ) {}
 
   /**
@@ -28,7 +26,7 @@ export class ChatService {
    * @returns
    */
   async chatRooms(enterUserChatDto: EnterUserChatDto): Promise<object[]> {
-    const { splitNumber, splitPageNumber } = enterUserChatDto;
+    const { splitNumber, splitPageNumber }: EnterUserChatDto = enterUserChatDto;
 
     const qb: SelectQueryBuilder<object> = await this.chatRepository
       .createQueryBuilder('c')
@@ -51,7 +49,7 @@ export class ChatService {
     userIdx: UUID,
     createUserChatDto: CreateUserChatDto,
   ): Promise<Chats> {
-    const { maxParty, roomName } = createUserChatDto;
+    const { maxParty, roomName }: CreateUserChatDto = createUserChatDto;
 
     const createChat: Chats = await this.chatRepository.save({
       userIdx,
@@ -139,7 +137,7 @@ export class ChatService {
    * @returns
    */
   async chatSave(createChatSaveDto: CreateChatSaveDto): Promise<void> {
-    const { nickname, room, saveData } = createChatSaveDto;
+    const { nickname, room, saveData }: CreateChatSaveDto = createChatSaveDto;
     try {
       await this.chatSavesRepository.save({ nickname, room, saveData });
     } catch (error) {
@@ -154,17 +152,27 @@ export class ChatService {
    * @returns
    */
   async doneChat(): Promise<object[]> {
-    // const doneChat: object[] = await this.chatSavesRepository
-    //   .createQueryBuilder()
-    //   .select(['chatSaveIdx', 'room'])
-    //   .getMany();
-
-    const doneChat = await this.chatSavesRepository
+    const doneChat: ChatSaves[] = await this.chatSavesRepository
       .createQueryBuilder()
       .from(ChatSaves, 'cs')
       .select(['cs.chatSaveIdx', 'cs.room'])
       .getMany();
 
     return doneChat;
+  }
+
+  /**
+   * 8. 메인에 보여줄 무작위 훈수배틀을 보여줍니다.
+   * @returns
+   */
+  async liveChat(): Promise<Chats> {
+    const randLiveChat: Chats = await this.chatRepository
+      .createQueryBuilder()
+      .from(Chats, 'c')
+      .select(['c.roomName as roomName'])
+      .orderBy('RAND()')
+      .getRawOne();
+
+    return randLiveChat;
   }
 }

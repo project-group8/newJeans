@@ -198,8 +198,15 @@ export class CardpostsService {
     createCardDto: CreateCardDto,
     files: Array<Express.Multer.File>,
   ): Promise<CardPosts> {
-    const { maincategory, category, title, desc, tag, pollType, pollTitle } =
-      createCardDto;
+    const {
+      maincategory,
+      category,
+      title,
+      desc,
+      tag,
+      pollType,
+      pollTitle,
+    }: CreateCardDto = createCardDto;
 
     const imageList = [];
 
@@ -245,8 +252,15 @@ export class CardpostsService {
     createCardDto: CreateCardDto,
     files: Array<Express.Multer.File>,
   ): Promise<UpdateResult> {
-    const { maincategory, category, title, desc, tag, pollType, pollTitle } =
-      createCardDto;
+    const {
+      maincategory,
+      category,
+      title,
+      desc,
+      tag,
+      pollType,
+      pollTitle,
+    }: CreateCardDto = createCardDto;
 
     const existPost = await this.cardPostsRepository.findOne({
       where: { postIdx },
