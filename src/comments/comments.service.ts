@@ -43,6 +43,7 @@ export class CommentsService {
             'c.commentIdx',
             'c.userIdx',
             'c.comment',
+            'c.selectedTag',
             'c.createdAt',
             'c.updatedAt',
             'u.nickname',
@@ -62,11 +63,8 @@ export class CommentsService {
         });
     
         return {
-          commentIdx: comment.commentIdx,
           comment: commentUpdateRequestDto.comment,
-          nickname: comment.Users.nickname,
-          userIdx: comment.userIdx,
-          createdAt: comment.createdAt,
+          selectedTag: commentUpdateRequestDto.selectedTag,
         };
     }
 
@@ -85,8 +83,8 @@ export class CommentsService {
           );
         await this.commentsRepository.delete(comment);
     
-        return '댓글 삭제가 완료되었습니다.';
-      }
+        return '댓글을 삭제했습니다.';
+    }
 
 
 }

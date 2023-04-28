@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Req, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { LoginRequestDto } from './dtos/login.request.dto';
 import { KakaoRequestDto } from './dtos/kakao.request.dto';
@@ -10,7 +10,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginRequestDto: LoginRequestDto, @Res() res: Response) {
+  async login(
+    @Body() loginRequestDto: LoginRequestDto,
+    @Res() res: Response,
+  ) {
     const { accessToken, nickname, userLevel } = await this.authService.login(
       loginRequestDto,
     );
@@ -33,13 +36,13 @@ export class AuthController {
     res.status(201).send('Created');
   }
 
-  @Post('kakao')
+  @Post('kakaoLogin')
   async kakaoAuth(
     @Body() kakaoRequestDto: KakaoRequestDto,
     @Res() res: Response,
   ) {
     const kakaoUser = await this.authService.kakaoAuth(kakaoRequestDto);
     res.setHeader('Authorization', `Bearer ${kakaoUser.authorization}`);
-    res.json({ nickname: kakaoUser.nickname });
+    res.json({ email: kakaoUser.email, nickname: kakaoUser.nickname  });
   }
 }

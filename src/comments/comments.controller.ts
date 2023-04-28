@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { GetPayload } from 'src/common/decorators/get.payload.decorator';
@@ -31,12 +31,14 @@ export class CommentsController {
     @HttpCode(201)
     @Put(':commentIdx')
     async updateComment(
+      @Param('postIdx') postIdx: UUID,
       @Param('commentIdx') commentIdx: UUID,
       @GetPayload() payload: JwtPayload,
       @Body() commentUpdateRequestDto: CommentUpdateRequestDto,
     ) {
 
     commentUpdateRequestDto.userIdx = payload.sub;
+    commentUpdateRequestDto.postIdx = postIdx;
     commentUpdateRequestDto.commentIdx = commentIdx;
 
     return await this.commentsService.updateComment(commentUpdateRequestDto);
@@ -46,15 +48,27 @@ export class CommentsController {
     @Delete(':commentIdx')
     @HttpCode(204)
     async deleteComment(
+      @Param('postIdx') postIdx: UUID,
       @Param('commentIdx') commentIdx: UUID,
       @GetPayload() payload: JwtPayload,
     ) {
     const commentDeleteRequestDto = new CommentDeleteRequestDto();
     
     commentDeleteRequestDto.userIdx = payload.sub;
+    commentDeleteRequestDto.postIdx = postIdx;
     commentDeleteRequestDto.commentIdx = commentIdx;
     
     return await this.commentsService.deleteComment(commentDeleteRequestDto);
   }
 
+  // @UseGuards(JwtAuthGuard)
+  // @Get()
+  // @HttpCode(200)
+  // async getAllComment(
+  //   @Param('postIdx') postIdx: UUID,
+  //   @GetPayload() payload: JwtPayload,
+  // ) {
+
+  //   return await this.commentsService.getAllComment(postIdx, payload);
+  // }
 }
