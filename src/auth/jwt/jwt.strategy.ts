@@ -22,7 +22,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     try {
 
       const user = await this.usersService.findById(payload.sub);
-      const user = await this.usersService.findById(payload.sub);
 
       if (user) return payload;
       throw new Error();

@@ -122,17 +122,6 @@ export class AuthService {
     }
   }
 
-  async kakaoLogin(token: string) {
-    if (!token) {
-      return 'No user from kakao';
-    }
-
-    return {
-      message: 'User information from kakao',
-      user: token,
-    };
-  }
-
   async createNickname(userIdx: UUID, data: { nickname: string }) {
     const nicknameRegexp = /^[a-zA-Z0-9]{3,10}$/g;
     if (!nicknameRegexp.test(data.nickname)) {
@@ -162,6 +151,17 @@ export class AuthService {
     }
   }
 
+  async kakaoLogin(token: string) {
+    if (!token) {
+      return 'No user from kakao';
+    }
+
+    return {
+      message: 'User information from kakao',
+      user: token,
+    };
+  }
+
   async kakaoAuth(kakaoRequestDto: KakaoRequestDto) {
     const getUserInfoUrl = 'https://kapi.kakao.com/v2/user/me';
     const axiosHeaders = {
@@ -175,9 +175,11 @@ export class AuthService {
       timeout: 100000,
       headers: axiosHeaders,
     });
-
+    
+    console.log(res)
+    console.log(res.data)
     const kakaoId = res.data.id;
-
+    
     const user = await this.usersRepository.findOne({
       where: { email: kakaoId },
     });
@@ -194,7 +196,7 @@ export class AuthService {
         { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1d' },
       );
 
-      return { nickname: null, authorization: accessToken };
+      return { nickname: 'test수정필요', authorization: accessToken };
     }
 
     const accessToken = await this.jwtService.signAsync(

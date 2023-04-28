@@ -2,16 +2,12 @@
 import { IsNotEmpty } from 'class-validator';
 import { UUID } from 'crypto';
 
-export class CommentUpdateRequestDto {
+export class ReplyCommentUpdateRequestDto {
 
   @IsNotEmpty()
   public comment: string;
 
-  public selectedTag: string;
-
-  public postIdx: UUID;
-
-  public commentIdx: UUID;
+  public replyIdx: UUID;
 
   public userIdx: UUID;
 }

@@ -33,7 +33,7 @@ export class AuthController {
     res.status(201).send('Created');
   }
 
-  @Post('kakao')
+  @Post('kakaoLogin')
   async kakaoAuth(
     @Body() kakaoRequestDto: KakaoRequestDto,
     @Res() res: Response,

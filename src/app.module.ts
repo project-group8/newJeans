@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CardpostsModule } from './cardposts/cardposts.module';
-import { ReplycommentsModule } from './replycomments/replycomments.module';
 import { PreferModule } from './prefer/prefer.module';
 import { CommentLikeModule } from './comment-like/comment-like.module';
 import { PostLikeModule } from './post-like/post-like.module';
@@ -22,6 +21,8 @@ import { ReplyComments } from 'src/entities/ReplyComments.entity';
 import { Tokens } from './entities/Tokens.entity';
 import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
+import { ReplycommentsModule } from './replycomments/replycomments.module';
+
 
 
 @Module({
@@ -52,7 +53,7 @@ import { CommentsModule } from './comments/comments.module';
       }),
     }),
     CardpostsModule,
-    // CommentsModule,
+    CommentsModule,
     ReplycommentsModule,
     PreferModule,
     CommentLikeModule,
@@ -60,6 +61,7 @@ import { CommentsModule } from './comments/comments.module';
     UsersModule,
     ChatModule,
     UsersModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
