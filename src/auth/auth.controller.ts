@@ -10,7 +10,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginRequestDto: LoginRequestDto, @Res() res: Response) {
+  async login(
+    @Body() loginRequestDto: LoginRequestDto,
+    @Res() res: Response,
+  ) {
     const { accessToken, nickname, userLevel } = await this.authService.login(
       loginRequestDto,
     );
@@ -40,6 +43,6 @@ export class AuthController {
   ) {
     const kakaoUser = await this.authService.kakaoAuth(kakaoRequestDto);
     res.setHeader('Authorization', `Bearer ${kakaoUser.authorization}`);
-    res.json({ nickname: kakaoUser.nickname });
+    res.json({ email: kakaoUser.email, nickname: kakaoUser.nickname  });
   }
 }

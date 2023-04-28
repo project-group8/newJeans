@@ -177,16 +177,23 @@ export class AuthService {
     });
     
     console.log(res)
+    console.log("=================================================================")
     console.log(res.data)
-    const kakaoId = res.data.id;
-    
+    console.log("=================================================================")
+    console.log(res.data.id)
+    console.log("=================================================================")
+    const kakaoUser = res.data;
+    const kakaoEmail = kakaoUser.kakao_account.email
+    const kakaoNickname = kakaoUser.properties.nickname
+
     const user = await this.usersRepository.findOne({
-      where: { email: kakaoId },
+      where: { email: kakaoEmail },
     });
 
     if (!user) {
       const newUserData = new SignupReqeustDto();
-      newUserData.email = kakaoId;
+      newUserData.email = kakaoEmail;
+      newUserData.nickname = kakaoNickname;
       newUserData.provider = 'kakao';
 
       const newUser = await this.usersService.signup(newUserData);
@@ -196,7 +203,7 @@ export class AuthService {
         { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1d' },
       );
 
-      return { nickname: 'test수정필요', authorization: accessToken };
+      return { email: kakaoEmail, nickname: newUserData.nickname, authorization: accessToken };
     }
 
     const accessToken = await this.jwtService.signAsync(
@@ -204,6 +211,6 @@ export class AuthService {
       { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1d' },
     );
 
-    return { nickname: user.nickname, authorization: accessToken };
+    return { email:user.email, nickname: user.nickname, authorization: accessToken };
   }
 }
