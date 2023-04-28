@@ -1,6 +1,7 @@
 const CardpostsRepository = require("../repositories/cardposts.repository");
 const ChatRepository = require("../repositories/chat.repository");
 const ChatService = require("../services/chat.service");
+
 const Boom = require("boom");
 class ChatController {
   constructor() {
@@ -49,7 +50,7 @@ class ChatController {
   };
 
   /**
-   * 채팅방 정보를 봅니다.
+   * 채팅방 정보를 봅니다.  nest done
    *
    * @param {*} req
    * @param {*} res
@@ -77,10 +78,11 @@ class ChatController {
     }
   };
 
+  // nest done
   deleteUserChat = async (req, res, next) => {
     const { roomName } = req.params;
     const { email } = res.locals.user;
-    console.log(roomName);
+
     try {
       if (!email) {
         throw Boom.badRequest(
@@ -100,6 +102,53 @@ class ChatController {
     } catch (error) {
       next(error);
     }
+  };
+
+  adminUser = async (req, res, next) => {
+    const { roomName } = req.params;
+
+    const transRoomName = String(roomName);
+
+    if (!roomName) {
+      throw Boom.badRequest("roomName을 입력하세요.");
+    }
+
+    const findRoomAdmin = await this.chatService.adminUser(transRoomName);
+    const { nickname } = findRoomAdmin;
+
+    return res.status(200).json({ nickname });
+  };
+
+  findChatSave = async (req, res, next) => {
+    const { chatSaveIdx } = req.params;
+
+    if (!chatSaveIdx) {
+      throw Boom.badRequest("chatSaveIdx 입력하세요.");
+    }
+
+    const findRoomAdmin = await this.chatService.findChatSave(chatSaveIdx);
+
+    const { saveData } = findRoomAdmin;
+
+    return res.status(200).json({ saveData });
+  };
+
+  chatSave = async (req, res, next) => {
+    const { saveDataChat } = req.body;
+
+    if (!saveDataChat) {
+      throw Boom.badRequest("saveDataChat 입력하세요.");
+    }
+
+    await this.chatService.chatSave(saveDataChat);
+
+    return res.status(200).json({ msg: "데이터 저장에 성공했습니다." });
+  };
+
+  doneChat = async (req, res, next) => {
+    const allchatroom = await this.chatService.doneChat();
+
+    return res.status(200).json({ doneChats: allchatroom });
   };
 }
 

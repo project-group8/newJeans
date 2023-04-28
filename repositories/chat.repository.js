@@ -6,6 +6,7 @@ const {
   Comment,
   PostLike,
   CommentLike,
+  ChatSaves,
 } = require("../models");
 const { Op, Sequelize } = require("sequelize");
 const { parseModelToFlatObject } = require("../helpers/sequelize.helper");
@@ -14,9 +15,6 @@ const { parseModelToFlatObject } = require("../helpers/sequelize.helper");
 // 7. 포스트 찬성 8. 포스트 반대.
 
 class ChatRepository {
-  /**
-   * 포스트에 대해서 찬성표를 던집니다.
-   */
   createUserChat = async (userIdx, maxParty, roomName) => {
     const test = await Chat.create({
       userIdx: userIdx,
@@ -32,7 +30,6 @@ class ChatRepository {
   };
 
   enterUserChat = async (splitNumber, splitPageNumber) => {
-    console.log(await Chat.count());
     const findUserChat = await Chat.findAll({
       order: [["createdAt", "DESC"]],
       offset: splitNumber * (splitPageNumber - 1), // * (page - 1) 페이지당 게시글 수만큼 건너뛰기
@@ -63,6 +60,50 @@ class ChatRepository {
 
   deleteUserChat = async (userIdx, roomName) => {
     return await Chat.destroy({ where: { userIdx, roomName } });
+  };
+
+  findChat = async (roomName) => {
+    return await Chat.findOne({ where: { roomName } });
+  };
+
+  adminUser = async (roomName) => {
+    const findUserChat = await Chat.findOne({
+      where: { roomName },
+      include: [{ model: Users, attributes: ["nickname"] }],
+      raw: true,
+    });
+
+    // Manually change 'User.nickname' to 'nickname'
+    const result = { ...findUserChat, nickname: findUserChat["User.nickname"] };
+    delete result["User.nickname"];
+
+    return result;
+  };
+
+  findChatSave = async (chatSaveIdx) => {
+    const findChat = await ChatSaves.findOne({
+      where: { chatSaveIdx: chatSaveIdx },
+      attributes: ["saveData"],
+      raw: true,
+    });
+
+    return findChat;
+  };
+
+  chatSave = async (saveDataChat) => {
+    const findChat = await ChatSaves.create({
+      saveData: saveDataChat,
+    });
+
+    return findChat;
+  };
+
+  doneChat = async () => {
+    const allchatroom = await ChatSaves.findAll({
+      attributes: ["chatSaveIdx", "room"],
+    });
+
+    return allchatroom;
   };
 }
 

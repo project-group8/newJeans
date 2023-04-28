@@ -27,6 +27,16 @@ class ChatService {
     return await this.chatRepository.deleteUserChat(userIdx, roomName);
   };
 
+  adminUser = async (roomName) => {
+    if (!this.chatRepository.findChat(roomName)) {
+      throw Boom.badRequest("해당 채팅방이 존재하지 않습니다.");
+    }
+
+    const adminfind = await this.chatRepository.adminUser(roomName);
+
+    return adminfind;
+  };
+
   // 채팅방 정보를 봅니다.
   enterUserChat = async (splitNumber, splitPageNumber) => {
     try {
@@ -41,6 +51,24 @@ class ChatService {
     } catch (error) {
       error;
     }
+  };
+
+  findChatSave = async (chatSaveIdx) => {
+    const findChatSave = await this.chatRepository.findChatSave(chatSaveIdx);
+
+    return findChatSave;
+  };
+
+  chatSave = async (saveDataChat) => {
+    const chatSave = await this.chatRepository.chatSave(saveDataChat);
+
+    return chatSave;
+  };
+
+  doneChat = async () => {
+    const allchatroom = await this.chatRepository.doneChat();
+
+    return allchatroom;
   };
 }
 
