@@ -122,34 +122,34 @@ export class AuthService {
     }
   }
 
-  async createNickname(userIdx: UUID, data: { nickname: string }) {
-    const nicknameRegexp = /^[a-zA-Z0-9]{3,10}$/g;
-    if (!nicknameRegexp.test(data.nickname)) {
-      throw new BadRequestException('올바르지 않은 데이터 형식입니다.');
-    }
+  // async createNickname(userIdx: UUID, data: { nickname: string }) {
+  //   const nicknameRegexp = /^[a-zA-Z0-9]{3,10}$/g;
+  //   if (!nicknameRegexp.test(data.nickname)) {
+  //     throw new BadRequestException('올바르지 않은 데이터 형식입니다.');
+  //   }
 
-    const existNick = await this.usersRepository.findOne({
-      where: { nickname: data.nickname },
-    });
+  //   const existNick = await this.usersRepository.findOne({
+  //     where: { nickname: data.nickname },
+  //   });
 
-    if (existNick)
-      throw new BadRequestException('이미지 존재하는 닉네임입니다.');
+  //   if (existNick)
+  //     throw new BadRequestException('이미지 존재하는 닉네임입니다.');
 
-    const updateNickname = await this.usersRepository.update(
-      { userIdx: userIdx },
-      { nickname: data.nickname },
-    );
+  //   const updateNickname = await this.usersRepository.update(
+  //     { userIdx: userIdx },
+  //     { nickname: data.nickname },
+  //   );
 
-    if (updateNickname.affected === 1) {
-      const userData = await this.usersRepository.findOne({
-        where: { userIdx: userIdx },
-      });
+  //   if (updateNickname.affected === 1) {
+  //     const userData = await this.usersRepository.findOne({
+  //       where: { userIdx: userIdx },
+  //     });
 
-      return { nickname: userData.nickname };
-    } else {
-      throw new BadRequestException('닉네임 등록에 실패했습니다.');
-    }
-  }
+  //     return { nickname: userData.nickname };
+  //   } else {
+  //     throw new BadRequestException('닉네임 등록에 실패했습니다.');
+  //   }
+  // }
 
   async kakaoLogin(token: string) {
     if (!token) {
@@ -176,8 +176,7 @@ export class AuthService {
       headers: axiosHeaders,
     });
     
-    console.log(res)
-    console.log("=================================================================")
+
     console.log(res.data)
     console.log("=================================================================")
     console.log(res.data.id)

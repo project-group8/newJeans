@@ -20,8 +20,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     // console.log('프로필', profile);
     // console.log(profile._json.kakao_account.email);
     return {
-      // name: profile.displayName,
-      nickname: profile._json.kakao_account.nickname,
+      name: profile.displayName,
       email: profile._json.kakao_account.email,
     };
   }

@@ -45,20 +45,20 @@ export class UsersService {
         ? data.email
         : false;
 
-        if (!nicknameOrEmail)
-        throw new BadRequestException('올바르지 않은 데이터 형식입니다.');
+        // if (!nicknameOrEmail)
+        // throw new BadRequestException('올바르지 않은 데이터 형식입니다.');
 
-        const nicknameRegexp = /^[a-zA-Z0-9]{3,10}$/g;
-        const emailRegexp =/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        // const nicknameRegexp = /^[a-zA-Z0-9]{3,10}$/g;
+        // const emailRegexp =/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         
-        const isCorrect = nicknameRegexp.test(nicknameOrEmail)
-        ? { nickname: nicknameOrEmail }
-        : emailRegexp.test(nicknameOrEmail)
-        ? { email: nicknameOrEmail }
-        : false;
+        // const isCorrect = nicknameRegexp.test(nicknameOrEmail)
+        // ? { nickname: nicknameOrEmail }
+        // : emailRegexp.test(nicknameOrEmail)
+        // ? { email: nicknameOrEmail }
+        // : false;
 
-        if (!isCorrect)
-        throw new BadRequestException('올바르지 않은 데이터 형식입니다.');
+        // if (!isCorrect)
+        // throw new BadRequestException('올바르지 않은 데이터 형식입니다.');
         
         const insertedUser = await this.usersRepository.create({
             email: data.email,
