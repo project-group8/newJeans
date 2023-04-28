@@ -44,23 +44,35 @@ export class ReplyComments {
   //   // * Relation * /
 
   // *  ReplyComments | M : 1 | Users
-  @ManyToOne(() => Users, (users) => users.ReplyComments, {
-    onDelete: 'CASCADE',
-  })
+  // @ManyToOne(() => Users, (users) => users.ReplyComments, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
+  // Users: Users;
+
+  @ManyToOne(() => Users, (users) => users.ReplyComments, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'userIdx', referencedColumnName: 'userIdx' }])
   Users: Users;
 
   // *  ReplyComments | M : 1 | CardPosts
-  @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.ReplyComments, {
-    onDelete: 'CASCADE',
-  })
+  // @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.ReplyComments, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn([{ name: 'postIdx', referencedColumnName: 'postIdx' }])
+  // CardPosts: CardPosts;
+
+  @ManyToOne(() => CardPosts, (cardPosts) => cardPosts.ReplyComments, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'postIdx', referencedColumnName: 'postIdx' }])
   CardPosts: CardPosts;
 
   // *  ReplyComments | M : 1 | Comments
-  @ManyToOne(() => Comments, (comments) => comments.ReplyComments, {
-    onDelete: 'CASCADE',
-  })
+  // @ManyToOne(() => Comments, (comments) => comments.ReplyComments, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn([{ name: 'commentIdx', referencedColumnName: 'commentIdx' }])
+  // Comments: Comments;
+
+  @ManyToOne(() => Comments, (comments) => comments.ReplyComments, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'commentIdx', referencedColumnName: 'commentIdx' }])
   Comments: Comments;
 }

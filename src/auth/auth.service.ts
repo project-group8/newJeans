@@ -122,6 +122,35 @@ export class AuthService {
     }
   }
 
+  // async createNickname(userIdx: UUID, data: { nickname: string }) {
+  //   const nicknameRegexp = /^[a-zA-Z0-9]{3,10}$/g;
+  //   if (!nicknameRegexp.test(data.nickname)) {
+  //     throw new BadRequestException('올바르지 않은 데이터 형식입니다.');
+  //   }
+
+  //   const existNick = await this.usersRepository.findOne({
+  //     where: { nickname: data.nickname },
+  //   });
+
+  //   if (existNick)
+  //     throw new BadRequestException('이미지 존재하는 닉네임입니다.');
+
+  //   const updateNickname = await this.usersRepository.update(
+  //     { userIdx: userIdx },
+  //     { nickname: data.nickname },
+  //   );
+
+  //   if (updateNickname.affected === 1) {
+  //     const userData = await this.usersRepository.findOne({
+  //       where: { userIdx: userIdx },
+  //     });
+
+  //     return { nickname: userData.nickname };
+  //   } else {
+  //     throw new BadRequestException('닉네임 등록에 실패했습니다.');
+  //   }
+  // }
+
   async kakaoLogin(token: string) {
     if (!token) {
       return 'No user from kakao';
@@ -131,35 +160,6 @@ export class AuthService {
       message: 'User information from kakao',
       user: token,
     };
-  }
-
-  async createNickname(userIdx: UUID, data: { nickname: string }) {
-    const nicknameRegexp = /^[a-zA-Z0-9]{3,10}$/g;
-    if (!nicknameRegexp.test(data.nickname)) {
-      throw new BadRequestException('올바르지 않은 데이터 형식입니다.');
-    }
-
-    const existNick = await this.usersRepository.findOne({
-      where: { nickname: data.nickname },
-    });
-
-    if (existNick)
-      throw new BadRequestException('이미지 존재하는 닉네임입니다.');
-
-    const updateNickname = await this.usersRepository.update(
-      { userIdx: userIdx },
-      { nickname: data.nickname },
-    );
-
-    if (updateNickname.affected === 1) {
-      const userData = await this.usersRepository.findOne({
-        where: { userIdx: userIdx },
-      });
-
-      return { nickname: userData.nickname };
-    } else {
-      throw new BadRequestException('닉네임 등록에 실패했습니다.');
-    }
   }
 
   async kakaoAuth(kakaoRequestDto: KakaoRequestDto) {
@@ -175,16 +175,24 @@ export class AuthService {
       timeout: 100000,
       headers: axiosHeaders,
     });
+    
 
-    const kakaoId = res.data.id;
+    console.log(res.data)
+    console.log("=================================================================")
+    console.log(res.data.id)
+    console.log("=================================================================")
+    const kakaoUser = res.data;
+    const kakaoEmail = kakaoUser.kakao_account.email
+    const kakaoNickname = kakaoUser.properties.nickname
 
     const user = await this.usersRepository.findOne({
-      where: { email: kakaoId },
+      where: { email: kakaoEmail },
     });
 
     if (!user) {
       const newUserData = new SignupReqeustDto();
-      newUserData.email = kakaoId;
+      newUserData.email = kakaoEmail;
+      newUserData.nickname = kakaoNickname;
       newUserData.provider = 'kakao';
 
       const newUser = await this.usersService.signup(newUserData);
@@ -194,7 +202,7 @@ export class AuthService {
         { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1d' },
       );
 
-      return { nickname: null, authorization: accessToken };
+      return { email: kakaoEmail, nickname: newUserData.nickname, authorization: accessToken };
     }
 
     const accessToken = await this.jwtService.signAsync(
@@ -202,6 +210,6 @@ export class AuthService {
       { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1d' },
     );
 
-    return { nickname: user.nickname, authorization: accessToken };
+    return { email:user.email, nickname: user.nickname, authorization: accessToken };
   }
 }
