@@ -2,15 +2,22 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chats } from 'src/entities/Chats.entity';
 import { DeleteResult, Repository, SelectQueryBuilder } from 'typeorm';
-import { EnterUserChatDto, CreateUserChatDto } from './dto/chat.dto';
+import {
+  EnterUserChatDto,
+  CreateUserChatDto,
+  CreateChatSaveDto,
+} from './dto/chat.dto';
 import { Users } from 'src/entities/Users.entity';
 import { UUID } from 'crypto';
+import { ChatSaves } from 'src/entities/ChatSaves.entity';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectRepository(Chats)
     private chatRepository: Repository<Chats>,
+    @InjectRepository(ChatSaves)
+    private chatSavesRepository: Repository<ChatSaves>,
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
   ) {}
@@ -35,7 +42,7 @@ export class ChatService {
   }
 
   /**
-   * 1. 채팅방 생성
+   * 2. 채팅방 생성
    * @param userIdx
    * @param createUserChatDto
    * @returns
@@ -56,7 +63,7 @@ export class ChatService {
   }
 
   /**
-   * 1. 채팅방 삭제
+   * 3. 채팅방 삭제
    * @param userIdx
    * @param deleteUserChatDto
    * @returns
@@ -87,7 +94,7 @@ export class ChatService {
   }
 
   /**
-   * 1. 채팅방을 생성한 admin 조회
+   * 4. 채팅방을 생성한 admin 조회
    * @param roomName
    * @returns
    */
@@ -110,5 +117,54 @@ export class ChatService {
       .getRawOne();
 
     return findAdmin;
+  }
+
+  /**
+   * 5. chatSaveIdx를 이용해 채팅 내역을 가져옵니다.
+   * @param chatSaveIdx
+   * @returns
+   */
+  async findChatSave(chatSaveIdx: UUID): Promise<ChatSaves> {
+    const findChat: ChatSaves = await this.chatSavesRepository.findOne({
+      where: { chatSaveIdx },
+      select: { saveData: true },
+    });
+
+    return findChat;
+  }
+
+  /**
+   * 6. 채팅 내역을 저장합니다.
+   * @param createChatSaveDto
+   * @returns
+   */
+  async chatSave(createChatSaveDto: CreateChatSaveDto): Promise<void> {
+    const { nickname, room, saveData } = createChatSaveDto;
+    try {
+      await this.chatSavesRepository.save({ nickname, room, saveData });
+    } catch (error) {
+      throw new BadRequestException('채팅 저장에 실패했습니다.');
+    }
+
+    return;
+  }
+
+  /**
+   * 7. 삭제된 채팅방의 이름과 chatSaveIdx를 모두 가져옵니다.
+   * @returns
+   */
+  async doneChat(): Promise<object[]> {
+    // const doneChat: object[] = await this.chatSavesRepository
+    //   .createQueryBuilder()
+    //   .select(['chatSaveIdx', 'room'])
+    //   .getMany();
+
+    const doneChat = await this.chatSavesRepository
+      .createQueryBuilder()
+      .from(ChatSaves, 'cs')
+      .select(['cs.chatSaveIdx', 'cs.room'])
+      .getMany();
+
+    return doneChat;
   }
 }

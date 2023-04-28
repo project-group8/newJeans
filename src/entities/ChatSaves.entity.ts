@@ -13,7 +13,7 @@ import {
 
 @Entity({ name: 'ChatSaves' })
 export class ChatSaves {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   chatSaveIdx: UUID;
 
   @Column({ type: 'varchar', nullable: false })

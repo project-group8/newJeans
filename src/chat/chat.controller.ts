@@ -10,8 +10,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { ChatSplitValidPipe, CreateUserChatValidPipe } from './pipes/chat.pipe';
-import { EnterUserChatDto, CreateUserChatDto } from './dto/chat.dto';
+import {
+  ChatSplitValidPipe,
+  CreateUserChatValidPipe,
+  CreateChatSaveValidPip,
+} from './pipes/chat.pipe';
+import {
+  EnterUserChatDto,
+  CreateUserChatDto,
+  CreateChatSaveDto,
+} from './dto/chat.dto';
 import { Chats } from 'src/entities/Chats.entity';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { GetPayload } from 'src/common/decorators/get.payload.decorator';
@@ -39,7 +47,7 @@ export class ChatController {
   }
 
   /**
-   * 1. 채팅방 생성
+   * 2. 채팅방 생성
    * @param payload
    * @param createUserChatDto
    * @returns
@@ -60,7 +68,7 @@ export class ChatController {
   }
 
   /**
-   * 1. 채팅방 삭제
+   * 3. 채팅방 삭제
    * @param payload
    * @param deleteUserChatDto
    * @returns
@@ -81,7 +89,7 @@ export class ChatController {
   }
 
   /**
-   * 1. 채팅방을 생성한 admin 조회
+   * 4. 채팅방을 생성한 admin 조회
    * @param roomName
    * @returns
    */
@@ -92,5 +100,44 @@ export class ChatController {
     );
 
     return adminUserFind;
+  }
+
+  /**
+   * 5. chatSaveIdx를 이용해 채팅 내역을 가져옵니다.
+   * @param chatSaveIdx
+   * @returns
+   */
+  @Get('/chatSave/:chatSaveIdx')
+  async findChatSave(@Param('chatSaveIdx') chatSaveIdx: UUID) {
+    const findChatSave = await this.chatService.findChatSave(chatSaveIdx);
+
+    return findChatSave;
+  }
+
+  /**
+   * 6. 채팅 내역을 저장합니다.
+   * @param payload
+   * @param createChatSaveDto
+   * @returns
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post('/chatSave')
+  async chatSave(
+    @GetPayload() payload: JwtPayload,
+    @Body(CreateChatSaveValidPip) createChatSaveDto: CreateChatSaveDto,
+  ): Promise<object> {
+    const chatSave: void = await this.chatService.chatSave(createChatSaveDto);
+    chatSave;
+    return { msg: '데이터 저장에 성공했습니다.' };
+  }
+
+  /**
+   * 7. 삭제된 채팅방의 이름과 chatSaveIdx를 모두 가져옵니다.
+   * @returns
+   */
+  @Get('/doneChat')
+  async doneChat(): Promise<object> {
+    const doneChat: object[] = await this.chatService.doneChat();
+    return { doneChats: doneChat };
   }
 }
