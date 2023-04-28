@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Req, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { LoginRequestDto } from './dtos/login.request.dto';
 import { KakaoRequestDto } from './dtos/kakao.request.dto';
