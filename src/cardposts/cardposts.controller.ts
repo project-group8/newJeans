@@ -6,9 +6,9 @@ import {
   Delete,
   Query,
   Param,
-  Req,
   Body,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CardpostsService } from './cardposts.service';
 import { CardPosts } from '../entities/CardPosts.entity';
@@ -19,11 +19,12 @@ import {
 } from './pipes/cardposts-category-trans.pipe';
 import { SplitCardsDto, CreateCardDto } from './dto/cardposts.dto';
 import { UUID } from 'crypto';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { GetPayload } from 'src/common/decorators/get.payload.decorator';
 import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
 import { AllUsersJwtAuthGuard } from 'src/middleware/allusersjwtauthguard';
+import { UploadFileMiddleware } from 'src/middleware/uploads.middleware';
 
 @Controller('/postCards')
 export class CardpostsController {
@@ -45,7 +46,7 @@ export class CardpostsController {
   }
 
   /**
-   * 1. 인기게시글 조회 기능.
+   * 2. 인기게시글 조회 기능.
    * @param splitCardsDto
    * @returns
    */
@@ -60,7 +61,7 @@ export class CardpostsController {
   }
 
   /**
-   * 1. 상세페이지 조회
+   * 3. 상세페이지 조회
    * @param payload
    * @param postIdx
    * @returns
@@ -81,7 +82,7 @@ export class CardpostsController {
   }
 
   /**
-   * 1. 상세페이지 Contents 조회
+   * 4. 상세페이지 Contents 조회
    * @param payload
    * @param postIdx
    * @returns
@@ -100,7 +101,7 @@ export class CardpostsController {
   }
 
   /**
-   * 1. 상세페이지 Category 조회
+   * 5. 상세페이지 Category 조회
    * @param postIdx
    * @returns
    */
@@ -111,9 +112,14 @@ export class CardpostsController {
     return findOnePostCategorys;
   }
 
-  //
-  // 미완성 Multer 넣어야함
+  /**
+   * 6. 게시글 작성하기
+   * @param payload
+   * @param createCardDto
+   * @returns
+   */
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(UploadFileMiddleware)
   @Post('/post/createPost')
   async postCard(
     @GetPayload() payload: JwtPayload,
@@ -129,9 +135,15 @@ export class CardpostsController {
     return { msg: `${postCard.title} 작성에 성공했습니다.` };
   }
 
-  //
-  // 미완성 Multer 넣어야함
+  /**
+   * 7. 게시글 수정하기
+   * @param payload
+   * @param postIdx
+   * @param createCardDto
+   * @returns
+   */
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(UploadFileMiddleware)
   @Put('/post/createPost/:postIdx')
   async updatePost(
     @GetPayload() payload: JwtPayload,
@@ -152,7 +164,7 @@ export class CardpostsController {
   }
 
   /**
-   * 1. 게시글 삭제
+   * 8. 게시글 삭제
    * @param payload
    * @param postIdx
    * @returns

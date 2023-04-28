@@ -90,6 +90,17 @@ export class CardPostCreateValidPipe implements PipeTransform {
       imgUrl = null,
     } = value;
 
+    console.log(
+      typeof title,
+      typeof maincategory,
+      typeof category,
+      typeof desc,
+      title,
+      maincategory,
+      category,
+      desc,
+    );
+
     if (
       title === null ||
       maincategory === null ||

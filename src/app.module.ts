@@ -22,6 +22,7 @@ import { ReplyComments } from 'src/entities/ReplyComments.entity';
 import { Tokens } from './entities/Tokens.entity';
 import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 
 @Module({
@@ -60,6 +61,7 @@ import { CommentsModule } from './comments/comments.module';
     UsersModule,
     ChatModule,
     UsersModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
