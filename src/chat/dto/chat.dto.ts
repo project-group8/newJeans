@@ -18,5 +18,3 @@ export class CreateUserChatDto extends PickType(Chats, [
   'maxParty',
   'roomName',
 ]) {}
-
-export class DeleteUserChatDto extends PickType(Chats, ['roomName']) {}

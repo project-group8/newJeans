@@ -22,19 +22,6 @@ export class CreatePollValidPipe implements PipeTransform {
       );
     }
 
-    // const findPollUserCheckValue: Prefers =
-    //   await this.prefersRepository.findOne({}); // 미완성 유저추가 해야함
-
-    // if (findPollUserCheckValue) {
-    //   const { selectprefer } = findPollUserCheckValue;
-
-    //   if (selectprefer == '7' && value.conInputValue == true) {
-    //     return '이미 찬성에 투표 했습니다.';
-    //   } else if (selectprefer == '8' && value.proInputValue == true) {
-    //     return '이미 반대에 투표 했습니다.';
-    //   }
-    // }
-
     return value;
   }
 

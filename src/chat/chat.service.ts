@@ -2,11 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chats } from 'src/entities/Chats.entity';
 import { DeleteResult, Repository, SelectQueryBuilder } from 'typeorm';
-import {
-  EnterUserChatDto,
-  CreateUserChatDto,
-  DeleteUserChatDto,
-} from './dto/chat.dto';
+import { EnterUserChatDto, CreateUserChatDto } from './dto/chat.dto';
 import { Users } from 'src/entities/Users.entity';
 import { UUID } from 'crypto';
 
@@ -19,6 +15,11 @@ export class ChatService {
     private usersRepository: Repository<Users>,
   ) {}
 
+  /**
+   * 1. 채팅방을 조회합니다 페이지 네이션으로 작동합니다.
+   * @param enterUserChatDto
+   * @returns
+   */
   async chatRooms(enterUserChatDto: EnterUserChatDto): Promise<object[]> {
     const { splitNumber, splitPageNumber } = enterUserChatDto;
 
@@ -33,13 +34,19 @@ export class ChatService {
     return qb.getRawMany();
   }
 
+  /**
+   * 1. 채팅방 생성
+   * @param userIdx
+   * @param createUserChatDto
+   * @returns
+   */
   async createUserChat(
     userIdx: UUID,
     createUserChatDto: CreateUserChatDto,
   ): Promise<Chats> {
     const { maxParty, roomName } = createUserChatDto;
 
-    const createChat: Chats = await this.chatRepository.create({
+    const createChat: Chats = await this.chatRepository.save({
       userIdx,
       maxParty,
       roomName,
@@ -48,12 +55,13 @@ export class ChatService {
     return createChat;
   }
 
-  async deleteUserChat(
-    userIdx: UUID,
-    deleteUserChatDto: DeleteUserChatDto,
-  ): Promise<void> {
-    const { roomName } = deleteUserChatDto;
-
+  /**
+   * 1. 채팅방 삭제
+   * @param userIdx
+   * @param deleteUserChatDto
+   * @returns
+   */
+  async deleteUserChat(userIdx: UUID, roomName: string): Promise<void> {
     const exesitChat: Chats = await this.chatRepository.findOne({
       where: { roomName },
     });
@@ -61,21 +69,28 @@ export class ChatService {
     if (!exesitChat) {
       throw new BadRequestException('해당 채팅이 존재하지 않습니다.');
     }
+    if (exesitChat.userIdx !== userIdx) {
+      throw new BadRequestException('해당 게시글 삭제 권한이 없습니다.');
+    }
 
-    const deleteChat: DeleteResult = await this.chatRepository
-      .createQueryBuilder('c')
+    await this.chatRepository
+      .createQueryBuilder()
       .delete()
       .from(Chats)
-      .where('c.roomName = :roomName, c.userIdx = :userIdx', {
+      .where('roomName = :roomName AND userIdx = :userIdx', {
         roomName,
         userIdx,
       })
       .execute();
 
-    deleteChat;
     return;
   }
 
+  /**
+   * 1. 채팅방을 생성한 admin 조회
+   * @param roomName
+   * @returns
+   */
   async adminUserFind(roomName: string): Promise<Chats> {
     const existChat: Chats = await this.chatRepository.findOne({
       where: { roomName },

@@ -19,6 +19,11 @@ import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
 export class PreferController {
   constructor(private preferService: PreferService) {}
 
+  /**
+   * 1. 투표 결과를 봅니다.
+   * @param postIdx
+   * @returns
+   */
   @Get('/post/:postIdx')
   async postPollResult(@Param('postIdx') postIdx: UUID): Promise<object> {
     const postPollResult: object = await this.preferService.postPollResult(
@@ -28,7 +33,13 @@ export class PreferController {
     return { pollResult: postPollResult };
   }
 
-  // 미완성 내일 만들기
+  /**
+   * 1. 찬성표 반대표를 던집니다.
+   * @param payload
+   * @param postIdx
+   * @param createPollDto
+   * @returns
+   */
   @UseGuards(JwtAuthGuard)
   @Put('/post/:postIdx')
   async createPostPoll(

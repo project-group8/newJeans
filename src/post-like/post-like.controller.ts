@@ -9,6 +9,12 @@ import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
 export class PostLikeController {
   constructor(private postLikeService: PostLikeService) {}
 
+  /**
+   * 1. post에 좋아요를 토글합니다.
+   * @param payload
+   * @param postIdx
+   * @returns
+   */
   @UseGuards(JwtAuthGuard)
   @Put('/post/:postIdx')
   async postToggleLike(

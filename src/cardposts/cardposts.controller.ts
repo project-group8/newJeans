@@ -23,11 +23,17 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { GetPayload } from 'src/common/decorators/get.payload.decorator';
 import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
+import { AllUsersJwtAuthGuard } from 'src/middleware/allusersjwtauthguard';
 
 @Controller('/postCards')
 export class CardpostsController {
   constructor(private cardpostsService: CardpostsService) {}
 
+  /**
+   * 1. 페이지 네이션 기능.
+   * @param splitCardsDto
+   * @returns
+   */
   @Get('/')
   async findSplitCards(
     @Query(CardPostsCategoryTransPipe) splitCardsDto: SplitCardsDto,
@@ -38,6 +44,11 @@ export class CardpostsController {
     return findSplitCards;
   }
 
+  /**
+   * 1. 인기게시글 조회 기능.
+   * @param splitCardsDto
+   * @returns
+   */
   @Get('/hotPostCard')
   async findHotCards(
     @Query(HotCardPostsMockPipe) splitCardsDto: SplitCardsDto,
@@ -48,35 +59,51 @@ export class CardpostsController {
     return findHotCards;
   }
 
-  // 미완성
-  // allusers 미들웨어 있어야함 좋아요 여부 확인
-
+  /**
+   * 1. 상세페이지 조회
+   * @param payload
+   * @param postIdx
+   * @returns
+   */
+  @UseGuards(AllUsersJwtAuthGuard)
   @Get('/post/:postIdx')
-  async findOnePost(@Param('postIdx') postIdx: UUID): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+  async findOnePost(
+    @GetPayload() payload: JwtPayload | null,
+    @Param('postIdx') postIdx: UUID,
+  ): Promise<object> {
+    const userIdx: UUID = payload ? payload.sub : null;
     const findOnePost: object = await this.cardpostsService.findOnePost(
+      userIdx,
       postIdx,
     );
 
     return { post: findOnePost };
   }
 
-  // 미완성
-  // allusers 미들웨어 있어야함 어디에 투표했는지 여부 확인
+  /**
+   * 1. 상세페이지 Contents 조회
+   * @param payload
+   * @param postIdx
+   * @returns
+   */
+  @UseGuards(AllUsersJwtAuthGuard)
   @Get('/post/contents/:postIdx')
   async findOnePostContents(
+    @GetPayload() payload: JwtPayload | null,
     @Param('postIdx') postIdx: UUID,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload ? payload.sub : null;
     const findOnePostContents: object =
-      await this.cardpostsService.findOnePostContents(postIdx);
+      await this.cardpostsService.findOnePostContents(userIdx, postIdx);
 
     return { contents: findOnePostContents };
   }
 
+  /**
+   * 1. 상세페이지 Category 조회
+   * @param postIdx
+   * @returns
+   */
   @Get('/post/category/:postIdx')
   async findOnePostCategorys(@Param('postIdx') postIdx: UUID): Promise<object> {
     const findOnePostCategorys: object =
@@ -124,8 +151,12 @@ export class CardpostsController {
     return { msg: '게시글 수정에 성공했습니다.' };
   }
 
-  //
-  // 미완성
+  /**
+   * 1. 게시글 삭제
+   * @param payload
+   * @param postIdx
+   * @returns
+   */
   @UseGuards(JwtAuthGuard)
   @Delete('/post/createPost/:postIdx')
   async deletePost(
