@@ -31,7 +31,7 @@ router.get(
 // 게시글 상세 가져오기 3. Categorys nest done
 router.get("/post/category/:postIdx", cardpostsController.findOnePostCategorys);
 
-// 게시글 작성하기
+// 게시글 작성하기 nest done
 router.post(
   "/post/createPost",
   authMiddleware,
@@ -39,7 +39,7 @@ router.post(
   cardpostsController.postCard
 );
 
-// 게시글 수정하기
+// 게시글 수정하기 nest done
 router.put(
   "/post/createPost/:postIdx",
   authMiddleware,
@@ -47,7 +47,7 @@ router.put(
   cardpostsController.updatePost
 );
 
-// 게시글 삭제하기
+// 게시글 삭제하기 nest done
 router.delete(
   "/post/createPost/:postIdx",
   authMiddleware,

@@ -154,7 +154,7 @@ class CardpostsController {
     }
   };
 
-  // 새로운 post를 등록합니다..
+  // 새로운 post를 등록합니다..  nest done
   postCard = async (req, res, next) => {
     const { title, maincategory, category, desc, tag, pollTitle, pollType } =
       req.body;
@@ -202,7 +202,7 @@ class CardpostsController {
     }
   };
 
-  // 포스트를 업데이트 합니다.
+  // 포스트를 업데이트 합니다. nest done
   updatePost = async (req, res, next) => {
     const { email } = res.locals.user;
     const { postIdx } = req.params;
@@ -246,7 +246,7 @@ class CardpostsController {
     }
   };
 
-  // 포스트를 삭제합니다.
+  // 포스트를 삭제합니다. nest done
   deletePost = async (req, res, next) => {
     const { email } = res.locals.user;
     const { postIdx } = req.params;

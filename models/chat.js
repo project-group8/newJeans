@@ -16,11 +16,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userIdx", // 현재 모델의 userId가 외래키로 가진다.
         onDelete: "CASCADE",
       });
-
-      this.hasMany(models.ChatSaves, {
-        sourceKey: "chatIdx",
-        foreignKey: "chatIdx",
-      });
     }
   }
   Chat.init(
