@@ -74,7 +74,7 @@ export class CardpostsService {
         .orderBy('value', 'DESC')
         .limit(5)
         .addSelect(
-          `(COUNT(DISTINCT pl.postLikeIdx) * (FLOOR(RAND()*(10-5+1))+5) + (COUNT(cp.viewCount)  + COUNT(c.commentIdx)) * (FLOOR(RAND()*(20-10+1))+10))`,
+          '(COUNT(DISTINCT pl.postLikeIdx) * (FLOOR(RAND()*(10-5+1))+5) + cp.viewCount + (COUNT(c.commentIdx) * FLOOR(RAND()*(20-10+1))+10))',
           'value',
         );
     }
@@ -105,7 +105,7 @@ export class CardpostsService {
    * 2. 로그인한 유저라면 포스트에 좋아요를 했는지 봅니다.
    * @param postIdx
    */
-  async findOnePost(postIdx: UUID): Promise<object> {
+  async findOnePost(userIdx: UUID, postIdx: UUID): Promise<object> {
     const qb: SelectQueryBuilder<object> = await this.cardPostsRepository
       .createQueryBuilder('cp')
       .where(`cp.postIdx = :postIdx`, { postIdx })
@@ -123,15 +123,13 @@ export class CardpostsService {
         'u.nickname as nickname',
       ]);
 
-    if (false) {
-      // email로 유저 검증해서 값 받을것이다.
+    if (userIdx) {
       qb.addSelect(
         `CASE WHEN EXISTS (
           SELECT 1 FROM PostLikes pl WHERE pl.postIdx = cp.postIdx AND pl.userIdx = :userIdx
         ) THEN true ELSE false END`,
         'IsLike',
-      );
-      // .setParameter('userIdx',  userIdx );
+      ).setParameter('userIdx', userIdx);
     } else {
       qb.addSelect('false', 'IsLike');
     }
@@ -144,9 +142,7 @@ export class CardpostsService {
    * @param postIdx
    * @returns
    */
-  async findOnePostContents(postIdx: UUID): Promise<object> {
-    let userIdx = '';
-
+  async findOnePostContents(userIdx: UUID, postIdx: UUID): Promise<object> {
     const qb: SelectQueryBuilder<object> = await this.cardPostsRepository
       .createQueryBuilder('cp')
       .where('cp.postIdx = :postIdx', { postIdx })
@@ -188,7 +184,10 @@ export class CardpostsService {
    * @param createCardDto
    * @returns
    */
-  async postCard(createCardDto: CreateCardDto): Promise<CardPosts> {
+  async postCard(
+    userIdx: UUID,
+    createCardDto: CreateCardDto,
+  ): Promise<CardPosts> {
     const {
       maincategory,
       category,
@@ -200,7 +199,8 @@ export class CardpostsService {
       pollTitle,
     } = createCardDto;
 
-    const createPost: CardPosts = await this.cardPostsRepository.create({
+    const createPost: CardPosts = await this.cardPostsRepository.save({
+      userIdx,
       maincategory,
       category,
       title,
@@ -214,14 +214,9 @@ export class CardpostsService {
     return createPost;
   }
 
-  /**
-   * 카드를 업데이트 합니다.
-   * @param postIdx
-   * @param createCardDto
-   * @returns
-   */
   async updatePost(
-    postIdx: string,
+    userIdx: UUID,
+    postIdx: UUID,
     createCardDto: CreateCardDto,
   ): Promise<UpdateResult> {
     const {
@@ -235,8 +230,19 @@ export class CardpostsService {
       pollTitle,
     } = createCardDto;
 
+    const existPost = await this.cardPostsRepository.findOne({
+      where: { postIdx },
+    });
+
+    if (!existPost) {
+      throw new BadRequestException('해당 게시글이 존재하지 않습니다.');
+    }
+    if (existPost.userIdx !== userIdx) {
+      throw new BadRequestException('해당 게시글 수정 권한이 없습니다.');
+    }
+
     const updatePost: UpdateResult = await this.cardPostsRepository
-      .createQueryBuilder('cp')
+      .createQueryBuilder()
       .update(CardPosts)
       .set({
         maincategory,
@@ -248,7 +254,10 @@ export class CardpostsService {
         pollType,
         pollTitle,
       })
-      .where('cp.postIdx = :postIdx', { postIdx })
+      .where('postIdx = :postIdx AND userIdx = :userIdx', {
+        postIdx,
+        userIdx,
+      })
       .execute();
 
     return updatePost;
@@ -259,21 +268,25 @@ export class CardpostsService {
    * @param postIdx
    * @returns
    */
-  async deletePost(postIdx: UUID): Promise<void> {
+  async deletePost(userIdx: UUID, postIdx: UUID): Promise<void> {
     const exeistPost: CardPosts = await this.cardPostsRepository.findOne({
       where: { postIdx },
     });
 
     if (!exeistPost) {
       throw new BadRequestException('해당 게시글이 존재하지 않습니다.');
+    } else if (exeistPost.userIdx !== userIdx) {
+      throw new BadRequestException('해당 게시글 삭제 권한이 없습니다.');
     }
 
     const deletePost: DeleteResult = await this.cardPostsRepository
-      .createQueryBuilder('cp')
+      .createQueryBuilder()
       .delete()
       .from(CardPosts)
-      .where('cp.postIdx = :postIdx', { postIdx })
-      .andWhere('') // 유저 조건 추가해야함
+      .where('postIdx = :postIdx AND userIdx = :userIdx', {
+        userIdx,
+        postIdx,
+      })
       .execute();
 
     deletePost;

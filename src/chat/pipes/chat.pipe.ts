@@ -69,3 +69,36 @@ export class CreateUserChatValidPipe implements PipeTransform {
     return true;
   }
 }
+
+export class CreateChatSaveValidPip implements PipeTransform {
+  transform(value: any, metadata: ArgumentMetadata) {
+    if (!this.isValid(value)) {
+      throw new BadRequestException(
+        '입력 값에서 알 수 없는 오류가 발생했습니다.',
+      );
+    }
+    return value;
+  }
+
+  private isValid(value) {
+    const { room, saveData, nickname } = value;
+
+    if (
+      typeof room !== 'string' ||
+      typeof saveData !== 'string' ||
+      typeof nickname !== 'string'
+    ) {
+      throw new BadRequestException(
+        'room, saveData, nickname 타입은 string입니다.',
+      );
+    }
+
+    if (room == null || saveData == null || nickname == null) {
+      throw new BadRequestException(
+        'room, saveData, nickname은 비어있을 수 없습니다.',
+      );
+    }
+
+    return true;
+  }
+}

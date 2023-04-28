@@ -9,13 +9,14 @@ import { CardPosts } from 'src/entities/CardPosts.entity';
 @Injectable()
 export class PreferService {
   constructor(
-    @InjectRepository(Prefers) private prefersRepository: Repository<Prefers>,
+    @InjectRepository(Prefers)
+    private prefersRepository: Repository<Prefers>,
     @InjectRepository(CardPosts)
     private cardPostsRepository: Repository<CardPosts>,
   ) {}
 
   /**
-   * 상세 페이지 투표결과 보기
+   * 1. 상세 페이지 투표결과 보기
    * @param postIdx
    * @returns
    */
@@ -39,54 +40,67 @@ export class PreferService {
   }
 
   /**
-   * //미완성 수정해야함
-   * 상세 페이지 투표하기
+   *
+   * 1. 상세 페이지 투표하기
    * @param postIdx
    * @param createPollDto
    * @returns
    */
   async createPostPoll(
+    userIdx: UUID,
     postIdx: UUID,
     createPollDto: CreatePollDto,
-  ): Promise<number> {
+  ) {
     const { proInputValue, conInputValue } = createPollDto;
     const input: boolean = proInputValue || conInputValue;
+    const inputTransVal: string = proInputValue
+      ? '7'
+      : conInputValue
+      ? '8'
+      : null;
 
     if (input) {
-      const prefersRepository: Repository<Prefers> = await this
-        .prefersRepository;
-      const isPoll: Prefers = await prefersRepository
-        .createQueryBuilder('prefer')
-        .where(
-          'prefer.postIdx = :postIdx AND prefer.selectprefer = :selectprefer',
-          {
-            postIdx,
-            selectprefer: '7',
-          },
-        )
-        .getOne();
+      const isPoll: Prefers = await this.prefersRepository.findOne({
+        where: { userIdx, postIdx },
+      });
+
+      if (isPoll) {
+        const { selectprefer } = isPoll;
+
+        if (selectprefer == '7' && conInputValue == true) {
+          return '이미 찬성에 투표 했습니다.';
+        } else if (selectprefer == '8' && proInputValue == true) {
+          return '이미 반대에 투표 했습니다.';
+        }
+      }
 
       if (!isPoll) {
-        await prefersRepository
-          .createQueryBuilder()
-          .insert()
-          .into(Prefers)
-          .values([{ postIdx }, {}])
-          .execute();
+        await this.prefersRepository.save({
+          userIdx,
+          postIdx,
+          selectprefer: inputTransVal,
+        });
       } else {
-        await prefersRepository
+        await this.prefersRepository
           .createQueryBuilder()
           .delete()
           .from(Prefers)
-          .where('postIdx = :postIdx', { postIdx })
+          .where(
+            'postIdx = :postIdx AND userIdx = :userIdx AND selectprefer = :inputTransVal',
+            { postIdx, userIdx, inputTransVal },
+          )
           .execute();
       }
 
-      const count = await prefersRepository
+      const count = await this.prefersRepository
         .createQueryBuilder('p')
         .where('p.postIdx = :postIdx', { postIdx })
-        .getCount();
-      console.log(count);
+        .select([
+          `COUNT(CASE WHEN p.selectprefer = 7 THEN 1 END) as proCount`,
+          `COUNT(CASE WHEN p.selectprefer = 8 THEN 1 END) as conCount`,
+        ])
+        .getRawOne();
+
       return count;
     }
   }

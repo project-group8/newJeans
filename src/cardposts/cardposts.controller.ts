@@ -6,8 +6,9 @@ import {
   Delete,
   Query,
   Param,
-  Req,
   Body,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CardpostsService } from './cardposts.service';
 import { CardPosts } from '../entities/CardPosts.entity';
@@ -18,13 +19,22 @@ import {
 } from './pipes/cardposts-category-trans.pipe';
 import { SplitCardsDto, CreateCardDto } from './dto/cardposts.dto';
 import { UUID } from 'crypto';
-import { DeleteResult, UpdateResult } from 'typeorm';
-import { request } from 'http';
+import { UpdateResult } from 'typeorm';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { GetPayload } from 'src/common/decorators/get.payload.decorator';
+import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
+import { AllUsersJwtAuthGuard } from 'src/middleware/allusersjwtauthguard';
+import { UploadFileMiddleware } from 'src/middleware/uploads.middleware';
 
 @Controller('/postCards')
 export class CardpostsController {
   constructor(private cardpostsService: CardpostsService) {}
 
+  /**
+   * 1. 페이지 네이션 기능.
+   * @param splitCardsDto
+   * @returns
+   */
   @Get('/')
   async findSplitCards(
     @Query(CardPostsCategoryTransPipe) splitCardsDto: SplitCardsDto,
@@ -35,6 +45,11 @@ export class CardpostsController {
     return findSplitCards;
   }
 
+  /**
+   * 2. 인기게시글 조회 기능.
+   * @param splitCardsDto
+   * @returns
+   */
   @Get('/hotPostCard')
   async findHotCards(
     @Query(HotCardPostsMockPipe) splitCardsDto: SplitCardsDto,
@@ -45,37 +60,51 @@ export class CardpostsController {
     return findHotCards;
   }
 
-  // 미완성
-  // allusers 미들웨어 있어야함 좋아요 여부 확인
+  /**
+   * 3. 상세페이지 조회
+   * @param payload
+   * @param postIdx
+   * @returns
+   */
+  @UseGuards(AllUsersJwtAuthGuard)
   @Get('/post/:postIdx')
   async findOnePost(
+    @GetPayload() payload: JwtPayload | null,
     @Param('postIdx') postIdx: UUID,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload ? payload.sub : null;
     const findOnePost: object = await this.cardpostsService.findOnePost(
+      userIdx,
       postIdx,
     );
 
     return { post: findOnePost };
   }
 
-  // 미완성
-  // allusers 미들웨어 있어야함 어디에 투표했는지 여부 확인
+  /**
+   * 4. 상세페이지 Contents 조회
+   * @param payload
+   * @param postIdx
+   * @returns
+   */
+  @UseGuards(AllUsersJwtAuthGuard)
   @Get('/post/contents/:postIdx')
   async findOnePostContents(
+    @GetPayload() payload: JwtPayload | null,
     @Param('postIdx') postIdx: UUID,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload ? payload.sub : null;
     const findOnePostContents: object =
-      await this.cardpostsService.findOnePostContents(postIdx);
+      await this.cardpostsService.findOnePostContents(userIdx, postIdx);
 
     return { contents: findOnePostContents };
   }
 
+  /**
+   * 5. 상세페이지 Category 조회
+   * @param postIdx
+   * @returns
+   */
   @Get('/post/category/:postIdx')
   async findOnePostCategorys(@Param('postIdx') postIdx: UUID): Promise<object> {
     const findOnePostCategorys: object =
@@ -83,35 +112,48 @@ export class CardpostsController {
     return findOnePostCategorys;
   }
 
-  //
-  // 미완성 Multer 넣어야함
-  // authmiddleware 달아줘야함
+  /**
+   * 6. 게시글 작성하기
+   * @param payload
+   * @param createCardDto
+   * @returns
+   */
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(UploadFileMiddleware)
   @Post('/post/createPost')
   async postCard(
+    @GetPayload() payload: JwtPayload,
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload.sub;
+
     const postCard: CardPosts = await this.cardpostsService.postCard(
+      userIdx,
       createCardDto,
     );
 
     return { msg: `${postCard.title} 작성에 성공했습니다.` };
   }
 
-  //
-  // 미완성 Multer 넣어야함
-  // authmiddleware 달아줘야함
+  /**
+   * 7. 게시글 수정하기
+   * @param payload
+   * @param postIdx
+   * @param createCardDto
+   * @returns
+   */
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(UploadFileMiddleware)
   @Put('/post/createPost/:postIdx')
   async updatePost(
+    @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload.sub;
+
     const updatePost: UpdateResult = await this.cardpostsService.updatePost(
+      userIdx,
       postIdx,
       createCardDto,
     );
@@ -121,17 +163,23 @@ export class CardpostsController {
     return { msg: '게시글 수정에 성공했습니다.' };
   }
 
-  //
-  // 미완성
-  // authmiddleware 달아줘야함
+  /**
+   * 8. 게시글 삭제
+   * @param payload
+   * @param postIdx
+   * @returns
+   */
+  @UseGuards(JwtAuthGuard)
   @Delete('/post/createPost/:postIdx')
   async deletePost(
+    @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
-    const deletePost: void = await this.cardpostsService.deletePost(postIdx);
+    const userIdx: UUID = payload.sub;
+    const deletePost: void = await this.cardpostsService.deletePost(
+      userIdx,
+      postIdx,
+    );
     deletePost;
     return { msg: '게시글 삭제에 성공했습니다.' };
   }

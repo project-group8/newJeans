@@ -3,6 +3,7 @@ import { CardPosts } from 'src/entities/CardPosts.entity';
 import { IsNumber } from 'class-validator';
 import { Expose } from 'class-transformer';
 import { Chats } from 'src/entities/Chats.entity';
+import { ChatSaves } from 'src/entities/ChatSaves.entity';
 
 export class EnterUserChatDto {
   @IsNumber()
@@ -19,4 +20,8 @@ export class CreateUserChatDto extends PickType(Chats, [
   'roomName',
 ]) {}
 
-export class DeleteUserChatDto extends PickType(Chats, ['roomName']) {}
+export class CreateChatSaveDto extends PickType(ChatSaves, [
+  'nickname',
+  'room',
+  'saveData',
+]) {}

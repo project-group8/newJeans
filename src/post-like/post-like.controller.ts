@@ -1,22 +1,29 @@
-import { Controller, Get, Param, Put, Req } from '@nestjs/common';
+import { Controller, Get, Param, Put, Req, UseGuards } from '@nestjs/common';
 import { PostLikeService } from './post-like.service';
 import { UUID } from 'crypto';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { GetPayload } from 'src/common/decorators/get.payload.decorator';
+import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
 
 @Controller('postlike')
 export class PostLikeController {
   constructor(private postLikeService: PostLikeService) {}
 
-  //
-  //미완성
-  //auth미들웨어 넣어야함
+  /**
+   * 1. post에 좋아요를 토글합니다.
+   * @param payload
+   * @param postIdx
+   * @returns
+   */
+  @UseGuards(JwtAuthGuard)
   @Put('/post/:postIdx')
   async postToggleLike(
+    @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
-    @Req() request: string,
   ): Promise<object> {
-    // const { email } = request;
-    // const {userIdx} = await this.cardpostsService.findUser(email)
+    const userIdx: UUID = payload.sub;
     const postToggleLike: string = await this.postLikeService.postToggleLike(
+      userIdx,
       postIdx,
     );
     return { msg: postToggleLike };

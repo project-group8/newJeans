@@ -90,16 +90,16 @@ export class CardPostCreateValidPipe implements PipeTransform {
       imgUrl = null,
     } = value;
 
-    if (
-      typeof title !== 'string' ||
-      typeof maincategory !== 'string' ||
-      typeof category !== 'string' ||
-      typeof desc !== 'string'
-    ) {
-      throw new BadRequestException(
-        '게시글 작성의 입력 타입에 오류가 있습니다.',
-      );
-    }
+    console.log(
+      typeof title,
+      typeof maincategory,
+      typeof category,
+      typeof desc,
+      title,
+      maincategory,
+      category,
+      desc,
+    );
 
     if (
       title === null ||
@@ -109,6 +109,17 @@ export class CardPostCreateValidPipe implements PipeTransform {
     ) {
       throw new BadRequestException(
         'title, maincategory, category, desc는 비워 둘 수 없습니다.',
+      );
+    }
+
+    if (
+      typeof title !== 'string' ||
+      typeof maincategory !== 'string' ||
+      typeof category !== 'string' ||
+      typeof desc !== 'string'
+    ) {
+      throw new BadRequestException(
+        '게시글 작성의 입력 타입에 오류가 있습니다.',
       );
     }
 
