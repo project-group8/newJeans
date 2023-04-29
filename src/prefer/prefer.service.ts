@@ -41,7 +41,7 @@ export class PreferService {
 
   /**
    *
-   * 1. 상세 페이지 투표하기
+   * 2. 상세 페이지 투표하기
    * @param postIdx
    * @param createPollDto
    * @returns
@@ -51,7 +51,7 @@ export class PreferService {
     postIdx: UUID,
     createPollDto: CreatePollDto,
   ) {
-    const { proInputValue, conInputValue } = createPollDto;
+    const { proInputValue, conInputValue }: CreatePollDto = createPollDto;
     const input: boolean = proInputValue || conInputValue;
     const inputTransVal: string = proInputValue
       ? '7'

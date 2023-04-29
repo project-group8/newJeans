@@ -24,4 +24,11 @@ import { UploadsModule } from 'src/uploads/uploads.module';
   controllers: [CardpostsController],
   providers: [CardpostsService],
 })
-export class CardpostsModule {}
+export class CardpostsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(PostCountUpMiddleware).forRoutes({
+      path: 'postCards/post/:postIdx',
+      method: RequestMethod.GET,
+    });
+  }
+}

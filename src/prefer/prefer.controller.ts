@@ -34,7 +34,7 @@ export class PreferController {
   }
 
   /**
-   * 1. 찬성표 반대표를 던집니다.
+   * 2. 상세 페이지 투표하기
    * @param payload
    * @param postIdx
    * @param createPollDto

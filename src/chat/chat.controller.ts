@@ -25,6 +25,7 @@ import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { GetPayload } from 'src/common/decorators/get.payload.decorator';
 import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
 import { UUID } from 'crypto';
+import { ChatSaves } from 'src/entities/ChatSaves.entity';
 
 @Controller('chat')
 export class ChatController {
@@ -108,8 +109,12 @@ export class ChatController {
    * @returns
    */
   @Get('/chatSave/:chatSaveIdx')
-  async findChatSave(@Param('chatSaveIdx') chatSaveIdx: UUID) {
-    const findChatSave = await this.chatService.findChatSave(chatSaveIdx);
+  async findChatSave(
+    @Param('chatSaveIdx') chatSaveIdx: UUID,
+  ): Promise<ChatSaves> {
+    const findChatSave: ChatSaves = await this.chatService.findChatSave(
+      chatSaveIdx,
+    );
 
     return findChatSave;
   }
@@ -139,5 +144,16 @@ export class ChatController {
   async doneChat(): Promise<object> {
     const doneChat: object[] = await this.chatService.doneChat();
     return { doneChats: doneChat };
+  }
+
+  /**
+   * 8. 메인에 보여줄 무작위 훈수배틀을 보여줍니다.
+   * @returns
+   */
+  @Get('/hunsuChat/live')
+  async liveChat(): Promise<object> {
+    const { roomName }: Chats = await this.chatService.liveChat();
+
+    return { roomName };
   }
 }
