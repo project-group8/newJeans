@@ -3,6 +3,7 @@ import { Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { ArgumentsHost } from '@nestjs/common';
 import { SlackService } from './slack.config';
+import { Namespace, Server } from 'socket.io';
 
 @Catch()
 @Injectable()

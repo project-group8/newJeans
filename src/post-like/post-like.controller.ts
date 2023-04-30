@@ -26,6 +26,6 @@ export class PostLikeController {
       userIdx,
       postIdx,
     );
-    return { msg: postToggleLike };
+    return { message: postToggleLike };
   }
 }

@@ -34,7 +34,13 @@ export class ChatService {
       .offset(splitNumber * (splitPageNumber - 1))
       .limit(splitNumber)
       .leftJoin(Users, 'u', 'c.userIdx = u.userIdx')
-      .select(['c.chatIdx', 'c.roomName', 'c.maxParty', 'u.nickname']);
+      .select([
+        'c.chatIdx as chatIdx',
+        'c.roomName as roomName',
+        'c.maxParty as maxParty',
+        'u.nickname as nickname',
+      ])
+      .groupBy('c.userIdx');
 
     return qb.getRawMany();
   }

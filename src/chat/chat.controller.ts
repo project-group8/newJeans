@@ -100,7 +100,7 @@ export class ChatController {
       roomName,
     );
 
-    return adminUserFind;
+    return { result: adminUserFind };
   }
 
   /**
@@ -109,14 +109,12 @@ export class ChatController {
    * @returns
    */
   @Get('/chatSave/:chatSaveIdx')
-  async findChatSave(
-    @Param('chatSaveIdx') chatSaveIdx: UUID,
-  ): Promise<ChatSaves> {
+  async findChatSave(@Param('chatSaveIdx') chatSaveIdx: UUID): Promise<object> {
     const findChatSave: ChatSaves = await this.chatService.findChatSave(
       chatSaveIdx,
     );
 
-    return findChatSave;
+    return { result: findChatSave };
   }
 
   /**
@@ -154,6 +152,6 @@ export class ChatController {
   async liveChat(): Promise<object> {
     const { roomName }: Chats = await this.chatService.liveChat();
 
-    return { roomName };
+    return { roomName: roomName };
   }
 }

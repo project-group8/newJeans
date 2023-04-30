@@ -18,7 +18,12 @@ import {
   HotCardPostsMockPipe,
   CardPostCreateValidPipe,
 } from './pipes/cardposts-category-trans.pipe';
-import { SplitCardsDto, CreateCardDto } from './dto/cardposts.dto';
+import {
+  SplitCardsDto,
+  CreateCardDto,
+  CardPostWithIsLike,
+  CardPostWithContents,
+} from './dto/cardposts.dto';
 import { UUID } from 'crypto';
 import { UpdateResult } from 'typeorm';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
@@ -39,11 +44,11 @@ export class CardpostsController {
   @Get('/')
   async findSplitCards(
     @Query(CardPostsCategoryTransPipe) splitCardsDto: SplitCardsDto,
-  ): Promise<object[]> {
-    const findSplitCards: object[] = await this.cardpostsService.findSplitCards(
+  ): Promise<object> {
+    const postCards: object[] = await this.cardpostsService.findSplitCards(
       splitCardsDto,
     );
-    return findSplitCards;
+    return { postCards: postCards };
   }
 
   /**
@@ -54,11 +59,11 @@ export class CardpostsController {
   @Get('/hotPostCard')
   async findHotCards(
     @Query(HotCardPostsMockPipe) splitCardsDto: SplitCardsDto,
-  ): Promise<object[]> {
-    const findHotCards: object[] = await this.cardpostsService.findSplitCards(
+  ): Promise<object> {
+    const postCards: object[] = await this.cardpostsService.findSplitCards(
       splitCardsDto,
     );
-    return findHotCards;
+    return { postCards: postCards };
   }
 
   /**
@@ -74,12 +79,12 @@ export class CardpostsController {
     @Param('postIdx') postIdx: UUID,
   ): Promise<object> {
     const userIdx: UUID = payload ? payload.sub : null;
-    const findOnePost: object = await this.cardpostsService.findOnePost(
+    const post: CardPostWithIsLike = await this.cardpostsService.findOnePost(
       userIdx,
       postIdx,
     );
 
-    return { post: findOnePost };
+    return { post: post };
   }
 
   /**
@@ -95,10 +100,10 @@ export class CardpostsController {
     @Param('postIdx') postIdx: UUID,
   ): Promise<object> {
     const userIdx: UUID = payload ? payload.sub : null;
-    const findOnePostContents: object =
+    const contents: CardPostWithContents =
       await this.cardpostsService.findOnePostContents(userIdx, postIdx);
 
-    return { contents: findOnePostContents };
+    return { contents: contents };
   }
 
   /**
@@ -108,9 +113,10 @@ export class CardpostsController {
    */
   @Get('/post/category/:postIdx')
   async findOnePostCategorys(@Param('postIdx') postIdx: UUID): Promise<object> {
-    const findOnePostCategorys: object =
-      await this.cardpostsService.findOnePostCategorys(postIdx);
-    return findOnePostCategorys;
+    const data: object = await this.cardpostsService.findOnePostCategorys(
+      postIdx,
+    );
+    return data;
   }
 
   /**
@@ -134,8 +140,8 @@ export class CardpostsController {
       createCardDto,
       files,
     );
-
-    return { msg: `${postCard.title} 작성에 성공했습니다.` };
+    postCard;
+    return { msg: '포스트 작성에 성공했습니다.' };
   }
 
   /**
@@ -188,5 +194,17 @@ export class CardpostsController {
     );
     deletePost;
     return { msg: '게시글 삭제에 성공했습니다.' };
+  }
+
+  /**
+   * 9. 지정 카드의 Img 배열을 가져옵니다.
+   * @param postIdx
+   * @returns
+   */
+  @Get('/post/imgs/:postIdx')
+  async findImg(@Param('postIdx') postIdx: UUID): Promise<object> {
+    const findImg: object = await this.cardpostsService.findImg(postIdx);
+
+    return { imgs: findImg };
   }
 }

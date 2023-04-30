@@ -12,6 +12,18 @@ export class SlackService {
   async sendSlackMessage(message: string) {
     const channel = this.configService.get('SLACK_CHANNEL');
 
+    const errorMessage = 'Error: Cannot GET /socket.io/?EIO=4&transport';
+
+    const DisconnecterrorMessage = 'Error: Cannot GET /ws';
+
+    // Socket.IO 통신 관련 에러를 확인하고 무시합니다.
+    if (
+      message.includes(errorMessage) ||
+      message.includes(DisconnecterrorMessage)
+    ) {
+      return;
+    }
+
     try {
       const response = await axios.post(
         `${this.slackApiUrl}/chat.postMessage`,

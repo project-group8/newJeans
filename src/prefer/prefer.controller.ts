@@ -26,11 +26,9 @@ export class PreferController {
    */
   @Get('/post/:postIdx')
   async postPollResult(@Param('postIdx') postIdx: UUID): Promise<object> {
-    const postPollResult: object = await this.preferService.postPollResult(
-      postIdx,
-    );
+    const pollResult: object = await this.preferService.postPollResult(postIdx);
 
-    return { pollResult: postPollResult };
+    return { pollResult: pollResult };
   }
 
   /**
@@ -48,12 +46,12 @@ export class PreferController {
     @Body(CreatePollValidPipe) createPollDto: CreatePollDto,
   ): Promise<object> {
     const userIdx: UUID = payload.sub;
-    const createPostPoll: number = await this.preferService.createPostPoll(
+    const pollResult: number = await this.preferService.createPostPoll(
       userIdx,
       postIdx,
       createPollDto,
     );
 
-    return { msg: createPostPoll };
+    return { pollResult: pollResult };
   }
 }

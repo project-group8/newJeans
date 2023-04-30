@@ -8,6 +8,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ViewColumn,
 } from 'typeorm';
 import { CommentLikes } from './CommentLikes.entity';
 import { Prefers } from './Prefers.entity';

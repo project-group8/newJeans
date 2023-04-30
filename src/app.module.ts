@@ -27,6 +27,8 @@ import { SlackExceptionFilter } from './slack/slack';
 import { SlackService } from './slack/slack.config';
 import { APP_FILTER } from '@nestjs/core';
 import { TestController } from './slack/slack-error-mesage-test';
+// import { SocketGatewayModule } from './gateway/socket.module';
+import { SocketIoModule } from './gateway/socket.module';
 
 @Module({
   imports: [
@@ -66,6 +68,7 @@ import { TestController } from './slack/slack-error-mesage-test';
     UsersModule,
     UploadsModule,
     AuthModule,
+    SocketIoModule,
   ],
   controllers: [AppController, TestController],
   providers: [
