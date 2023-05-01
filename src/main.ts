@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {cors:true});
   // const configService = app.get(ConfigService);
   // const DBhost = configService.get('DATABASE_URL');
   // const DBicon = configService.get('DATABASE_ICON');
