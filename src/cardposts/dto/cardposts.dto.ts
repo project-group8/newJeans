@@ -1,6 +1,6 @@
 import { PickType } from '@nestjs/mapped-types';
 import { CardPosts } from '../../entities/CardPosts.entity';
-import { Expose } from 'class-transformer';
+import { Expose, Transform, TransformFnParams } from 'class-transformer';
 import { IsString, IsNotEmpty, IsNumber, IsBoolean } from 'class-validator';
 
 export class SplitCardsDto extends PickType(CardPosts, [

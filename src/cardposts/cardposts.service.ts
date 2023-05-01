@@ -104,10 +104,8 @@ export class CardpostsService {
       splitPageNumber
     ) {
       qb.orderBy('cp.createdAt', 'DESC')
-        .where(
-          !maincategory ? {} : { maincategory },
-          !category ? {} : { category },
-        )
+        .where(!maincategory ? {} : { maincategory })
+        .andWhere(!category ? {} : { category })
         .limit(splitNumber)
         .offset(splitNumber * (splitPageNumber - 1));
     }
@@ -188,6 +186,8 @@ export class CardpostsService {
 
     const result = await qb.getRawOne();
 
+    result.conCount = Number(result.conCount);
+    result.proCount = Number(result.proCount);
     result.proInputValue = result.proInputValue === '1';
     result.conInputValue = result.conInputValue === '1';
 

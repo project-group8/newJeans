@@ -10,7 +10,7 @@ export class SocketGatewayService {
     private readonly chatSavesRepository: Repository<ChatSaves>,
   ) {}
 
-  async saveChatData(saveData: string, nickname: string, room: string) {
+  async saveChatData(saveData: any, nickname: any, room: any) {
     const chatSave = this.chatSavesRepository.create({
       saveData,
       nickname,

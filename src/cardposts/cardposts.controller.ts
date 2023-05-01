@@ -44,7 +44,7 @@ export class CardpostsController {
   @Get('/')
   async findSplitCards(
     @Query(CardPostsCategoryTransPipe) splitCardsDto: SplitCardsDto,
-  ): Promise<object> {
+  ): Promise<{ postCards: object[] }> {
     const postCards: object[] = await this.cardpostsService.findSplitCards(
       splitCardsDto,
     );
@@ -59,7 +59,7 @@ export class CardpostsController {
   @Get('/hotPostCard')
   async findHotCards(
     @Query(HotCardPostsMockPipe) splitCardsDto: SplitCardsDto,
-  ): Promise<object> {
+  ): Promise<{ postCards: object[] }> {
     const postCards: object[] = await this.cardpostsService.findSplitCards(
       splitCardsDto,
     );
@@ -77,7 +77,7 @@ export class CardpostsController {
   async findOnePost(
     @GetPayload() payload: JwtPayload | null,
     @Param('postIdx') postIdx: UUID,
-  ): Promise<object> {
+  ): Promise<{ post: CardPostWithIsLike }> {
     const userIdx: UUID = payload ? payload.sub : null;
     const post: CardPostWithIsLike = await this.cardpostsService.findOnePost(
       userIdx,
@@ -98,7 +98,7 @@ export class CardpostsController {
   async findOnePostContents(
     @GetPayload() payload: JwtPayload | null,
     @Param('postIdx') postIdx: UUID,
-  ): Promise<object> {
+  ): Promise<{ contents: CardPostWithContents }> {
     const userIdx: UUID = payload ? payload.sub : null;
     const contents: CardPostWithContents =
       await this.cardpostsService.findOnePostContents(userIdx, postIdx);
@@ -132,7 +132,7 @@ export class CardpostsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @GetPayload() payload: JwtPayload,
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
-  ): Promise<object> {
+  ): Promise<{ msg: string }> {
     const userIdx: UUID = payload.sub;
 
     const postCard: CardPosts = await this.cardpostsService.postCard(
@@ -160,7 +160,7 @@ export class CardpostsController {
     @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
-  ): Promise<object> {
+  ): Promise<{ msg: string }> {
     const userIdx: UUID = payload.sub;
 
     const updatePost: UpdateResult = await this.cardpostsService.updatePost(
@@ -186,7 +186,7 @@ export class CardpostsController {
   async deletePost(
     @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
-  ): Promise<object> {
+  ): Promise<{ msg: string }> {
     const userIdx: UUID = payload.sub;
     const deletePost: void = await this.cardpostsService.deletePost(
       userIdx,
@@ -202,8 +202,8 @@ export class CardpostsController {
    * @returns
    */
   @Get('/post/imgs/:postIdx')
-  async findImg(@Param('postIdx') postIdx: UUID): Promise<object> {
-    const findImg: object = await this.cardpostsService.findImg(postIdx);
+  async findImg(@Param('postIdx') postIdx: UUID): Promise<{ imgs: string[] }> {
+    const findImg: string[] = await this.cardpostsService.findImg(postIdx);
 
     return { imgs: findImg };
   }
