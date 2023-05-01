@@ -13,8 +13,8 @@ import { CardPosts } from '../entities/CardPosts.entity';
 import { Comments } from '../entities/Comments.entity';
 import { PostLikes } from '../entities/PostLikes.entity';
 import { Prefers } from '../entities/Prefers.entity';
-import { PostCountUpMiddleware } from 'src/middleware/postCountUpMiddleware';
-import { UploadsModule } from 'src/uploads/uploads.module';
+import { PostCountUpMiddleware } from '../middleware/postCountUpMiddleware';
+import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
   imports: [

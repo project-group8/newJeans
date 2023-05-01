@@ -20,12 +20,12 @@ import {
   CreateUserChatDto,
   CreateChatSaveDto,
 } from './dto/chat.dto';
-import { Chats } from 'src/entities/Chats.entity';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
-import { GetPayload } from 'src/common/decorators/get.payload.decorator';
-import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
+import { Chats } from '../entities/Chats.entity';
+import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
+import { GetPayload } from '../common/decorators/get.payload.decorator';
+import { JwtPayload } from '../auth/jwt/jwt.payload.dto';
 import { UUID } from 'crypto';
-import { ChatSaves } from 'src/entities/ChatSaves.entity';
+import { ChatSaves } from '../entities/ChatSaves.entity';
 
 @Controller('chat')
 export class ChatController {
@@ -100,7 +100,7 @@ export class ChatController {
       roomName,
     );
 
-    return adminUserFind;
+    return { result: adminUserFind };
   }
 
   /**
@@ -109,14 +109,12 @@ export class ChatController {
    * @returns
    */
   @Get('/chatSave/:chatSaveIdx')
-  async findChatSave(
-    @Param('chatSaveIdx') chatSaveIdx: UUID,
-  ): Promise<ChatSaves> {
+  async findChatSave(@Param('chatSaveIdx') chatSaveIdx: UUID): Promise<object> {
     const findChatSave: ChatSaves = await this.chatService.findChatSave(
       chatSaveIdx,
     );
 
-    return findChatSave;
+    return { result: findChatSave };
   }
 
   /**
@@ -154,6 +152,6 @@ export class ChatController {
   async liveChat(): Promise<object> {
     const { roomName }: Chats = await this.chatService.liveChat();
 
-    return { roomName };
+    return { roomName: roomName };
   }
 }

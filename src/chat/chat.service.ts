@@ -1,15 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Chats } from 'src/entities/Chats.entity';
+import { Chats } from '../entities/Chats.entity';
 import { DeleteResult, Repository, SelectQueryBuilder } from 'typeorm';
 import {
   EnterUserChatDto,
   CreateUserChatDto,
   CreateChatSaveDto,
 } from './dto/chat.dto';
-import { Users } from 'src/entities/Users.entity';
+import { Users } from '../entities/Users.entity';
 import { UUID } from 'crypto';
-import { ChatSaves } from 'src/entities/ChatSaves.entity';
+import { ChatSaves } from '../entities/ChatSaves.entity';
 
 @Injectable()
 export class ChatService {
@@ -34,7 +34,13 @@ export class ChatService {
       .offset(splitNumber * (splitPageNumber - 1))
       .limit(splitNumber)
       .leftJoin(Users, 'u', 'c.userIdx = u.userIdx')
-      .select(['c.chatIdx', 'c.roomName', 'c.maxParty', 'u.nickname']);
+      .select([
+        'c.chatIdx as chatIdx',
+        'c.roomName as roomName',
+        'c.maxParty as maxParty',
+        'u.nickname as nickname',
+      ])
+      .groupBy('c.userIdx');
 
     return qb.getRawMany();
   }

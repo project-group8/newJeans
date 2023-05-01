@@ -6,8 +6,8 @@ config();
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   constructor() {
     super({
-      clientID: process.env.KAKAO_CLIENT_ID,
-      clientSecret: process.env.KAKAO_CLIENT_SECRET,
+      clientID: 'a558b560602bb0e31eec3dcf9866557e',
+      clientSecret: 'u8rQ5HJHR7WhNfSWqe7HJpqz2Hau4Iax',
       callbackURL: 'http://localhost:3000/auth/kakao/redirect',
 
       scope: ['account_email', 'profile_nickname'],

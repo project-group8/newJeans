@@ -175,15 +175,18 @@ export class AuthService {
       timeout: 100000,
       headers: axiosHeaders,
     });
-    
 
-    console.log(res.data)
-    console.log("=================================================================")
-    console.log(res.data.id)
-    console.log("=================================================================")
+    console.log(res.data);
+    console.log(
+      '=================================================================',
+    );
+    console.log(res.data.id);
+    console.log(
+      '=================================================================',
+    );
     const kakaoUser = res.data;
-    const kakaoEmail = kakaoUser.kakao_account.email
-    const kakaoNickname = kakaoUser.properties.nickname
+    const kakaoEmail = kakaoUser.kakao_account.email;
+    const kakaoNickname = kakaoUser.properties.nickname;
 
     const user = await this.usersRepository.findOne({
       where: { email: kakaoEmail },
@@ -202,7 +205,11 @@ export class AuthService {
         { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1d' },
       );
 
-      return { email: kakaoEmail, nickname: newUserData.nickname, authorization: accessToken };
+      return {
+        email: kakaoEmail,
+        nickname: newUserData.nickname,
+        authorization: accessToken,
+      };
     }
 
     const accessToken = await this.jwtService.signAsync(
@@ -210,6 +217,10 @@ export class AuthService {
       { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '1d' },
     );
 
-    return { email:user.email, nickname: user.nickname, authorization: accessToken };
+    return {
+      email: user.email,
+      nickname: user.nickname,
+      authorization: accessToken,
+    };
   }
 }

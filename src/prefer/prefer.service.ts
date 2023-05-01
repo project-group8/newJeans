@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Prefers } from 'src/entities/Prefers.entity';
+import { Prefers } from '../entities/Prefers.entity';
 import { Repository, SelectQueryBuilder, createQueryBuilder } from 'typeorm';
 import { CreatePollDto } from './dto/prefer.dto';
 import { UUID } from 'crypto';
-import { CardPosts } from 'src/entities/CardPosts.entity';
+import { CardPosts } from '../entities/CardPosts.entity';
 
 @Injectable()
 export class PreferService {

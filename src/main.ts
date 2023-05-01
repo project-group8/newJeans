@@ -2,10 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {cors:true});
-  // const configService = app.get(ConfigService);
-  // const DBhost = configService.get('DATABASE_URL');
-  // const DBicon = configService.get('DATABASE_ICON');
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   app.enableCors({
     origin: true,
@@ -15,9 +12,6 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   // app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
-  await app.listen(3001);
-  // console.log(DBicon);
-  // console.log(DBhost);
-  // console.log(DBicon);
+  await app.listen(3000);
 }
 bootstrap();
