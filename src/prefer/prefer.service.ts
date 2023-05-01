@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Prefers } from 'src/entities/Prefers.entity';
+import { Prefers } from '../entities/Prefers.entity';
 import { Repository, SelectQueryBuilder, createQueryBuilder } from 'typeorm';
 import { CreatePollDto } from './dto/prefer.dto';
 import { UUID } from 'crypto';
-import { CardPosts } from 'src/entities/CardPosts.entity';
+import { CardPosts } from '../entities/CardPosts.entity';
 
 @Injectable()
 export class PreferService {
@@ -41,7 +41,7 @@ export class PreferService {
 
   /**
    *
-   * 1. 상세 페이지 투표하기
+   * 2. 상세 페이지 투표하기
    * @param postIdx
    * @param createPollDto
    * @returns
@@ -51,7 +51,7 @@ export class PreferService {
     postIdx: UUID,
     createPollDto: CreatePollDto,
   ) {
-    const { proInputValue, conInputValue } = createPollDto;
+    const { proInputValue, conInputValue }: CreatePollDto = createPollDto;
     const input: boolean = proInputValue || conInputValue;
     const inputTransVal: string = proInputValue
       ? '7'

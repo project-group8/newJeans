@@ -10,7 +10,7 @@ import { ChatService } from './chat.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from '../entities/Users.entity';
 import { Chats } from '../entities/Chats.entity';
-import { ChatSaves } from 'src/entities/ChatSaves.entity';
+import { ChatSaves } from '../entities/ChatSaves.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Users, Chats, ChatSaves])],

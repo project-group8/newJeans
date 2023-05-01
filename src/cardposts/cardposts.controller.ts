@@ -9,6 +9,7 @@ import {
   Body,
   UseGuards,
   UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { CardpostsService } from './cardposts.service';
 import { CardPosts } from '../entities/CardPosts.entity';
@@ -17,14 +18,19 @@ import {
   HotCardPostsMockPipe,
   CardPostCreateValidPipe,
 } from './pipes/cardposts-category-trans.pipe';
-import { SplitCardsDto, CreateCardDto } from './dto/cardposts.dto';
+import {
+  SplitCardsDto,
+  CreateCardDto,
+  CardPostWithIsLike,
+  CardPostWithContents,
+} from './dto/cardposts.dto';
 import { UUID } from 'crypto';
 import { UpdateResult } from 'typeorm';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
-import { GetPayload } from 'src/common/decorators/get.payload.decorator';
-import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
-import { AllUsersJwtAuthGuard } from 'src/middleware/allusersjwtauthguard';
-import { UploadFileMiddleware } from 'src/middleware/uploads.middleware';
+import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
+import { GetPayload } from '../common/decorators/get.payload.decorator';
+import { JwtPayload } from '../auth/jwt/jwt.payload.dto';
+import { AllUsersJwtAuthGuard } from '../middleware/allusersjwtauthguard';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('/postCards')
 export class CardpostsController {
@@ -38,11 +44,11 @@ export class CardpostsController {
   @Get('/')
   async findSplitCards(
     @Query(CardPostsCategoryTransPipe) splitCardsDto: SplitCardsDto,
-  ): Promise<object[]> {
-    const findSplitCards: object[] = await this.cardpostsService.findSplitCards(
+  ): Promise<{ postCards: object[] }> {
+    const postCards: object[] = await this.cardpostsService.findSplitCards(
       splitCardsDto,
     );
-    return findSplitCards;
+    return { postCards: postCards };
   }
 
   /**
@@ -53,11 +59,11 @@ export class CardpostsController {
   @Get('/hotPostCard')
   async findHotCards(
     @Query(HotCardPostsMockPipe) splitCardsDto: SplitCardsDto,
-  ): Promise<object[]> {
-    const findHotCards: object[] = await this.cardpostsService.findSplitCards(
+  ): Promise<{ postCards: object[] }> {
+    const postCards: object[] = await this.cardpostsService.findSplitCards(
       splitCardsDto,
     );
-    return findHotCards;
+    return { postCards: postCards };
   }
 
   /**
@@ -71,14 +77,14 @@ export class CardpostsController {
   async findOnePost(
     @GetPayload() payload: JwtPayload | null,
     @Param('postIdx') postIdx: UUID,
-  ): Promise<object> {
+  ): Promise<{ post: CardPostWithIsLike }> {
     const userIdx: UUID = payload ? payload.sub : null;
-    const findOnePost: object = await this.cardpostsService.findOnePost(
+    const post: CardPostWithIsLike = await this.cardpostsService.findOnePost(
       userIdx,
       postIdx,
     );
 
-    return { post: findOnePost };
+    return { post: post };
   }
 
   /**
@@ -92,12 +98,12 @@ export class CardpostsController {
   async findOnePostContents(
     @GetPayload() payload: JwtPayload | null,
     @Param('postIdx') postIdx: UUID,
-  ): Promise<object> {
+  ): Promise<{ contents: CardPostWithContents }> {
     const userIdx: UUID = payload ? payload.sub : null;
-    const findOnePostContents: object =
+    const contents: CardPostWithContents =
       await this.cardpostsService.findOnePostContents(userIdx, postIdx);
 
-    return { contents: findOnePostContents };
+    return { contents: contents };
   }
 
   /**
@@ -107,9 +113,10 @@ export class CardpostsController {
    */
   @Get('/post/category/:postIdx')
   async findOnePostCategorys(@Param('postIdx') postIdx: UUID): Promise<object> {
-    const findOnePostCategorys: object =
-      await this.cardpostsService.findOnePostCategorys(postIdx);
-    return findOnePostCategorys;
+    const data: object = await this.cardpostsService.findOnePostCategorys(
+      postIdx,
+    );
+    return data;
   }
 
   /**
@@ -119,20 +126,22 @@ export class CardpostsController {
    * @returns
    */
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(UploadFileMiddleware)
+  @UseInterceptors(FilesInterceptor('files', 4))
   @Post('/post/createPost')
   async postCard(
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @GetPayload() payload: JwtPayload,
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
-  ): Promise<object> {
+  ): Promise<{ msg: string }> {
     const userIdx: UUID = payload.sub;
 
     const postCard: CardPosts = await this.cardpostsService.postCard(
       userIdx,
       createCardDto,
+      files,
     );
-
-    return { msg: `${postCard.title} 작성에 성공했습니다.` };
+    postCard;
+    return { msg: '포스트 작성에 성공했습니다.' };
   }
 
   /**
@@ -140,22 +149,25 @@ export class CardpostsController {
    * @param payload
    * @param postIdx
    * @param createCardDto
+   * @param files
    * @returns
    */
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(UploadFileMiddleware)
+  @UseInterceptors(FilesInterceptor('files', 4))
   @Put('/post/createPost/:postIdx')
   async updatePost(
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
-  ): Promise<object> {
+  ): Promise<{ msg: string }> {
     const userIdx: UUID = payload.sub;
 
     const updatePost: UpdateResult = await this.cardpostsService.updatePost(
       userIdx,
       postIdx,
       createCardDto,
+      files,
     );
 
     updatePost;
@@ -174,7 +186,7 @@ export class CardpostsController {
   async deletePost(
     @GetPayload() payload: JwtPayload,
     @Param('postIdx') postIdx: UUID,
-  ): Promise<object> {
+  ): Promise<{ msg: string }> {
     const userIdx: UUID = payload.sub;
     const deletePost: void = await this.cardpostsService.deletePost(
       userIdx,
@@ -182,5 +194,17 @@ export class CardpostsController {
     );
     deletePost;
     return { msg: '게시글 삭제에 성공했습니다.' };
+  }
+
+  /**
+   * 9. 지정 카드의 Img 배열을 가져옵니다.
+   * @param postIdx
+   * @returns
+   */
+  @Get('/post/imgs/:postIdx')
+  async findImg(@Param('postIdx') postIdx: UUID): Promise<{ imgs: string[] }> {
+    const findImg: string[] = await this.cardpostsService.findImg(postIdx);
+
+    return { imgs: findImg };
   }
 }

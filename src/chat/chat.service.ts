@@ -1,15 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Chats } from 'src/entities/Chats.entity';
+import { Chats } from '../entities/Chats.entity';
 import { DeleteResult, Repository, SelectQueryBuilder } from 'typeorm';
 import {
   EnterUserChatDto,
   CreateUserChatDto,
   CreateChatSaveDto,
 } from './dto/chat.dto';
-import { Users } from 'src/entities/Users.entity';
+import { Users } from '../entities/Users.entity';
 import { UUID } from 'crypto';
-import { ChatSaves } from 'src/entities/ChatSaves.entity';
+import { ChatSaves } from '../entities/ChatSaves.entity';
 
 @Injectable()
 export class ChatService {
@@ -18,8 +18,6 @@ export class ChatService {
     private chatRepository: Repository<Chats>,
     @InjectRepository(ChatSaves)
     private chatSavesRepository: Repository<ChatSaves>,
-    @InjectRepository(Users)
-    private usersRepository: Repository<Users>,
   ) {}
 
   /**
@@ -28,7 +26,7 @@ export class ChatService {
    * @returns
    */
   async chatRooms(enterUserChatDto: EnterUserChatDto): Promise<object[]> {
-    const { splitNumber, splitPageNumber } = enterUserChatDto;
+    const { splitNumber, splitPageNumber }: EnterUserChatDto = enterUserChatDto;
 
     const qb: SelectQueryBuilder<object> = await this.chatRepository
       .createQueryBuilder('c')
@@ -36,7 +34,13 @@ export class ChatService {
       .offset(splitNumber * (splitPageNumber - 1))
       .limit(splitNumber)
       .leftJoin(Users, 'u', 'c.userIdx = u.userIdx')
-      .select(['c.chatIdx', 'c.roomName', 'c.maxParty', 'u.nickname']);
+      .select([
+        'c.chatIdx as chatIdx',
+        'c.roomName as roomName',
+        'c.maxParty as maxParty',
+        'u.nickname as nickname',
+      ])
+      .groupBy('c.userIdx');
 
     return qb.getRawMany();
   }
@@ -51,7 +55,7 @@ export class ChatService {
     userIdx: UUID,
     createUserChatDto: CreateUserChatDto,
   ): Promise<Chats> {
-    const { maxParty, roomName } = createUserChatDto;
+    const { maxParty, roomName }: CreateUserChatDto = createUserChatDto;
 
     const createChat: Chats = await this.chatRepository.save({
       userIdx,
@@ -139,7 +143,7 @@ export class ChatService {
    * @returns
    */
   async chatSave(createChatSaveDto: CreateChatSaveDto): Promise<void> {
-    const { nickname, room, saveData } = createChatSaveDto;
+    const { nickname, room, saveData }: CreateChatSaveDto = createChatSaveDto;
     try {
       await this.chatSavesRepository.save({ nickname, room, saveData });
     } catch (error) {
@@ -154,17 +158,27 @@ export class ChatService {
    * @returns
    */
   async doneChat(): Promise<object[]> {
-    // const doneChat: object[] = await this.chatSavesRepository
-    //   .createQueryBuilder()
-    //   .select(['chatSaveIdx', 'room'])
-    //   .getMany();
-
-    const doneChat = await this.chatSavesRepository
+    const doneChat: ChatSaves[] = await this.chatSavesRepository
       .createQueryBuilder()
       .from(ChatSaves, 'cs')
       .select(['cs.chatSaveIdx', 'cs.room'])
       .getMany();
 
     return doneChat;
+  }
+
+  /**
+   * 8. 메인에 보여줄 무작위 훈수배틀을 보여줍니다.
+   * @returns
+   */
+  async liveChat(): Promise<Chats> {
+    const randLiveChat: Chats = await this.chatRepository
+      .createQueryBuilder()
+      .from(Chats, 'c')
+      .select(['c.roomName as roomName'])
+      .orderBy('RAND()')
+      .getRawOne();
+
+    return randLiveChat;
   }
 }

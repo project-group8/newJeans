@@ -64,6 +64,7 @@ export class HotCardPostsMockPipe implements PipeTransform {
     value.maincategory = null;
     value.splitNumber = null;
     value.splitPageNumber = null;
+
     return value;
   }
 }
@@ -89,17 +90,6 @@ export class CardPostCreateValidPipe implements PipeTransform {
       tag = null,
       imgUrl = null,
     } = value;
-
-    console.log(
-      typeof title,
-      typeof maincategory,
-      typeof category,
-      typeof desc,
-      title,
-      maincategory,
-      category,
-      desc,
-    );
 
     if (
       title === null ||
@@ -131,19 +121,21 @@ export class CardPostCreateValidPipe implements PipeTransform {
       throw new BadRequestException('desc는 1500를 넘을 수 없습니다.');
     }
 
-    if (pollType !== null && pollType !== 'string') {
+    console.log(typeof pollType);
+
+    if (typeof pollType !== null && typeof pollType !== 'string') {
       throw new BadRequestException('pollType 타입에 오류가 있습니다.');
     }
 
-    if (pollTitle !== null && typeof pollTitle !== 'string') {
+    if (typeof pollTitle !== null && typeof pollTitle !== 'string') {
       throw new BadRequestException('pollTitle 타입에 오류가 있습니다.');
     }
 
-    if (tag !== null && typeof tag !== 'string') {
+    if (typeof tag !== null && typeof tag !== 'string') {
       throw new BadRequestException('tag 타입에 오류가 있습니다.');
     }
 
-    if (imgUrl !== null && typeof imgUrl !== 'string') {
+    if (typeof imgUrl !== null && typeof imgUrl !== 'string') {
       throw new BadRequestException('imgUrl 타입에 오류가 있습니다.');
     }
 

@@ -3,12 +3,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from '../entities/Users.entity';
 import { CardPosts } from '../entities/CardPosts.entity';
 import { Repository } from 'typeorm';
-import { SplitCardsDto, CreateCardDto } from './dto/cardposts.dto';
+import {
+  SplitCardsDto,
+  CreateCardDto,
+  CardPostWithIsLike,
+  CardPostWithContents,
+} from './dto/cardposts.dto';
 import { PostLikes } from '../entities/PostLikes.entity';
 import { Comments } from '../entities/Comments.entity';
 import { Prefers } from '../entities/Prefers.entity';
 import { UUID } from 'crypto';
-import { SelectQueryBuilder, UpdateResult, DeleteResult } from 'typeorm';
+import {
+  SelectQueryBuilder,
+  UpdateResult,
+  DeleteResult,
+  DeepPartial,
+} from 'typeorm';
+import { UploadsService } from '../uploads/uploads.service';
 
 @Injectable()
 export class CardpostsService {
@@ -17,6 +28,9 @@ export class CardpostsService {
     private cardPostsRepository: Repository<CardPosts>,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
+    @InjectRepository(Prefers)
+    private readonly prefersRepository: Repository<Prefers>,
+    private uploadsService: UploadsService,
   ) {}
 
   /**
@@ -32,8 +46,9 @@ export class CardpostsService {
   }
 
   /**
-   * 1. 페이지 네이션으로 작동합니다.
-   * 2. 핫 훈수 카드로 작동합니다.
+   * 1.
+   * 1) 페이지 네이션으로 작동합니다.
+   * 2) 핫 훈수 카드로 작동합니다.
    * @param SplitCardsDto
    * @returns
    */
@@ -67,7 +82,7 @@ export class CardpostsService {
         'COUNT(DISTINCT pl.postLikeIdx) as likesCount',
       ]);
     /**
-     * 값이 없으면 상위 5개의 인기 게시글을 노출합니다.
+     * 1-1. 값이 없으면 상위 5개의 인기 게시글을 노출합니다.
      */
     if (!maincategory && !category && !splitNumber && !splitPageNumber) {
       qb.andWhere('cp.createdAt > :sevenDaysAgo', { sevenDaysAgo })
@@ -80,7 +95,7 @@ export class CardpostsService {
     }
 
     /**
-     * 인자에 따라서 페이지 네이션 기능을 합니다.
+     * 1-2. 인자에 따라서 페이지 네이션 기능을 합니다.
      */
     if (
       maincategory !== undefined &&
@@ -89,10 +104,8 @@ export class CardpostsService {
       splitPageNumber
     ) {
       qb.orderBy('cp.createdAt', 'DESC')
-        .where(
-          !maincategory ? {} : { maincategory },
-          !category ? {} : { category },
-        )
+        .where(!maincategory ? {} : { maincategory })
+        .andWhere(!category ? {} : { category })
         .limit(splitNumber)
         .offset(splitNumber * (splitPageNumber - 1));
     }
@@ -101,17 +114,19 @@ export class CardpostsService {
   }
 
   /**
-   * 1. 지정한 카드를 불러들입니다.
-   * 2. 로그인한 유저라면 포스트에 좋아요를 했는지 봅니다.
+   * 3.
+   * 1) 지정한 카드를 불러들입니다.
+   * 2) 로그인한 유저라면 포스트에 좋아요를 했는지 봅니다.
    * @param postIdx
    */
-  async findOnePost(userIdx: UUID, postIdx: UUID): Promise<object> {
-    const qb: SelectQueryBuilder<object> = await this.cardPostsRepository
+  async findOnePost(userIdx: UUID, postIdx: UUID): Promise<CardPostWithIsLike> {
+    const qb: SelectQueryBuilder<CardPosts> = await this.cardPostsRepository
       .createQueryBuilder('cp')
       .where(`cp.postIdx = :postIdx`, { postIdx })
       .leftJoin(PostLikes, 'pl', 'cp.postIdx = pl.postIdx')
       .leftJoin(Comments, 'c', 'cp.postIdx = c.postIdx')
       .leftJoin(Users, 'u', 'cp.userIdx = u.userIdx')
+      .groupBy('cp.postIdx')
       .select([
         'cp.desc as `desc`',
         'cp.postIdx as postIdx',
@@ -126,49 +141,61 @@ export class CardpostsService {
     if (userIdx) {
       qb.addSelect(
         `CASE WHEN EXISTS (
-          SELECT 1 FROM PostLikes pl WHERE pl.postIdx = cp.postIdx AND pl.userIdx = :userIdx
-        ) THEN true ELSE false END`,
-        'IsLike',
+          SELECT pl.* FROM PostLikes pl WHERE pl.postIdx = cp.postIdx AND pl.userIdx = :userIdx
+        ) THEN true ELSE false END as IsLike`,
       ).setParameter('userIdx', userIdx);
-    } else {
+    } else if (!userIdx) {
       qb.addSelect('false', 'IsLike');
     }
 
-    return qb.getRawOne();
+    const result = await qb.getRawOne();
+
+    result.IsLike = result.IsLike === '1';
+
+    return result;
   }
 
   /**
-   * 지정한 카드의 Content를 가져옵니다.
+   * 4. 지정한 카드의 Content를 가져옵니다.
    * @param postIdx
    * @returns
    */
-  async findOnePostContents(userIdx: UUID, postIdx: UUID): Promise<object> {
-    const qb: SelectQueryBuilder<object> = await this.cardPostsRepository
+  async findOnePostContents(
+    userIdx: UUID,
+    postIdx: UUID,
+  ): Promise<CardPostWithContents> {
+    const qb: SelectQueryBuilder<CardPosts> = await this.cardPostsRepository
       .createQueryBuilder('cp')
       .where('cp.postIdx = :postIdx', { postIdx })
-      .leftJoin(Prefers, 'p', 'cp.postIdx = p.postIdx')
+      .leftJoin('cp.Prefers', 'p')
+      .setParameters({ userIdx, postIdx })
       .groupBy('cp.postIdx')
       .select([
         'cp.pollType as pollType',
         'cp.pollTitle as pollTitle',
-        'cp.imgUrl as imgUrl',
         'cp.tag as tag',
-        'COUNT(CASE WHEN p.selectprefer = 7 THEN 1 END) as conCount',
-        'COUNT(CASE WHEN p.selectprefer = 8 THEN 1 END) as proCount',
+        'COUNT(CASE WHEN COALESCE(p.selectprefer, 0) = 7 THEN 1 END) as conCount',
+        'COUNT(CASE WHEN COALESCE(p.selectprefer, 0) = 8 THEN 1 END) as proCount',
         `CASE WHEN EXISTS(
-          SELECT 1 FROM Prefers p WHERE p.userIdx = :userIdx AND p.selectprefer = 7)
+          SELECT p.* FROM Prefers p WHERE p.userIdx = :userIdx AND p.selectprefer = 7 AND p.postIdx = :postIdx)
           THEN true ELSE false END as proInputValue`,
         `CASE WHEN EXISTS(
-          SELECT 1 FROM Prefers p WHERE p.userIdx = :userIdx AND p.selectprefer = 8)
+          SELECT p.* FROM Prefers p WHERE p.userIdx = :userIdx AND p.selectprefer = 8 AND p.postIdx = :postIdx)
           THEN true ELSE false END as conInputValue`,
-      ])
-      .setParameter('userIdx', userIdx);
+      ]);
 
-    return qb.getRawOne();
+    const result = await qb.getRawOne();
+
+    result.conCount = Number(result.conCount);
+    result.proCount = Number(result.proCount);
+    result.proInputValue = result.proInputValue === '1';
+    result.conInputValue = result.conInputValue === '1';
+
+    return result;
   }
 
   /**
-   * 지정한 카드의 Category를 가져옵니다.
+   * 5. 지정한 카드의 Category를 가져옵니다.
    * @param postIdx
    * @returns
    */
@@ -180,13 +207,14 @@ export class CardpostsService {
   }
 
   /**
-   * 카드를 생성합니다.
+   * 6. 카드를 생성합니다.
    * @param createCardDto
    * @returns
    */
   async postCard(
     userIdx: UUID,
     createCardDto: CreateCardDto,
+    files: Array<Express.Multer.File>,
   ): Promise<CardPosts> {
     const {
       maincategory,
@@ -194,19 +222,33 @@ export class CardpostsService {
       title,
       desc,
       tag,
-      imgUrl,
       pollType,
       pollTitle,
-    } = createCardDto;
+    }: CreateCardDto = createCardDto;
 
-    const createPost: CardPosts = await this.cardPostsRepository.save({
+    const imageList = [];
+
+    if (files) {
+      const uploadImage = await this.uploadsService.uploadFileToS3(files);
+      uploadImage.forEach((data) => {
+        const key = data['key'].split('/');
+
+        imageList.push(key[0]);
+      });
+    }
+
+    const Chatimg = imageList.join(',');
+
+    const createPost: CardPosts = await this.cardPostsRepository.save<
+      DeepPartial<CardPosts>
+    >({
       userIdx,
       maincategory,
       category,
       title,
       desc,
       tag,
-      imgUrl,
+      imgUrl: Chatimg,
       pollType,
       pollTitle,
     });
@@ -214,10 +256,19 @@ export class CardpostsService {
     return createPost;
   }
 
+  /**
+   * 7. 게시글을 수정합니다.
+   * @param userIdx
+   * @param postIdx
+   * @param createCardDto
+   * @param files
+   * @returns
+   */
   async updatePost(
     userIdx: UUID,
     postIdx: UUID,
     createCardDto: CreateCardDto,
+    files: Array<Express.Multer.File>,
   ): Promise<UpdateResult> {
     const {
       maincategory,
@@ -225,10 +276,9 @@ export class CardpostsService {
       title,
       desc,
       tag,
-      imgUrl,
       pollType,
       pollTitle,
-    } = createCardDto;
+    }: CreateCardDto = createCardDto;
 
     const existPost = await this.cardPostsRepository.findOne({
       where: { postIdx },
@@ -241,6 +291,19 @@ export class CardpostsService {
       throw new BadRequestException('해당 게시글 수정 권한이 없습니다.');
     }
 
+    const imageList = [];
+
+    if (files) {
+      const uploadImage = await this.uploadsService.uploadFileToS3(files);
+      uploadImage.forEach((data) => {
+        const key = data['key'].split('/');
+
+        imageList.push(key[0]);
+      });
+    }
+
+    const Chatimg = imageList.join(',');
+
     const updatePost: UpdateResult = await this.cardPostsRepository
       .createQueryBuilder()
       .update(CardPosts)
@@ -250,7 +313,7 @@ export class CardpostsService {
         title,
         desc,
         tag,
-        imgUrl,
+        imgUrl: Chatimg,
         pollType,
         pollTitle,
       })
@@ -264,7 +327,7 @@ export class CardpostsService {
   }
 
   /**
-   * 카드를 삭제합니다.
+   * 8. 카드를 삭제합니다.
    * @param postIdx
    * @returns
    */
@@ -291,5 +354,19 @@ export class CardpostsService {
 
     deletePost;
     return;
+  }
+
+  /**
+   * 9. 지정 카드의 Img 배열을 가져옵니다.
+   * @param postIdx
+   * @returns
+   */
+  async findImg(postIdx: UUID): Promise<string[]> {
+    const findImg: CardPosts = await this.cardPostsRepository.findOne({
+      where: { postIdx },
+      select: ['imgUrl'],
+    });
+
+    return findImg.imgUrl.split(',');
   }
 }
