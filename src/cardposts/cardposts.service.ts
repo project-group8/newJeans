@@ -19,7 +19,7 @@ import {
   DeleteResult,
   DeepPartial,
 } from 'typeorm';
-import { UploadsService } from 'src/uploads/uploads.service';
+import { UploadsService } from '../uploads/uploads.service';
 
 @Injectable()
 export class CardpostsService {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ChatSaves } from 'src/entities/ChatSaves.entity';
+import { ChatSaves } from '../entities/ChatSaves.entity';
 
 @Injectable()
 export class SocketGatewayService {

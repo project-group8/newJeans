@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
-import { CardPosts } from 'src/entities/CardPosts.entity';
-import { PostLikes } from 'src/entities/PostLikes.entity';
+import { CardPosts } from '../entities/CardPosts.entity';
+import { PostLikes } from '../entities/PostLikes.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

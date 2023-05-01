@@ -4,14 +4,11 @@ import {
   PipeTransform,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Prefers } from 'src/entities/Prefers.entity';
+import { Prefers } from '../../entities/Prefers.entity';
 import { Repository } from 'typeorm';
 
 export class CreatePollValidPipe implements PipeTransform {
-  constructor(
-    @InjectRepository(Prefers)
-    private prefersRepository: Repository<Prefers>,
-  ) {}
+  constructor() {}
   async transform(value: any, metadata: ArgumentMetadata) {
     value.proInputValue = Boolean(value.proInputValue);
     value.conInputValue = Boolean(value.conInputValue);

@@ -26,10 +26,10 @@ import {
 } from './dto/cardposts.dto';
 import { UUID } from 'crypto';
 import { UpdateResult } from 'typeorm';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
-import { GetPayload } from 'src/common/decorators/get.payload.decorator';
-import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
-import { AllUsersJwtAuthGuard } from 'src/middleware/allusersjwtauthguard';
+import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
+import { GetPayload } from '../common/decorators/get.payload.decorator';
+import { JwtPayload } from '../auth/jwt/jwt.payload.dto';
+import { AllUsersJwtAuthGuard } from '../middleware/allusersjwtauthguard';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('/postCards')

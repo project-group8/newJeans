@@ -11,9 +11,9 @@ import { PreferService } from './prefer.service';
 import { CreatePollValidPipe } from './pipes/prefer.pipe';
 import { CreatePollDto } from './dto/prefer.dto';
 import { UUID } from 'crypto';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
-import { GetPayload } from 'src/common/decorators/get.payload.decorator';
-import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
+import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
+import { GetPayload } from '../common/decorators/get.payload.decorator';
+import { JwtPayload } from '../auth/jwt/jwt.payload.dto';
 
 @Controller('prefer')
 export class PreferController {

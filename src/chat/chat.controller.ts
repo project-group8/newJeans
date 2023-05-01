@@ -20,12 +20,12 @@ import {
   CreateUserChatDto,
   CreateChatSaveDto,
 } from './dto/chat.dto';
-import { Chats } from 'src/entities/Chats.entity';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
-import { GetPayload } from 'src/common/decorators/get.payload.decorator';
-import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
+import { Chats } from '../entities/Chats.entity';
+import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
+import { GetPayload } from '../common/decorators/get.payload.decorator';
+import { JwtPayload } from '../auth/jwt/jwt.payload.dto';
 import { UUID } from 'crypto';
-import { ChatSaves } from 'src/entities/ChatSaves.entity';
+import { ChatSaves } from '../entities/ChatSaves.entity';
 
 @Controller('chat')
 export class ChatController {
