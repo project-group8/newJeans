@@ -1,8 +1,6 @@
 import { UUID } from "crypto";
 
-export class ReplyCommentDeleteRequestDto {
-
-  public replyIdx: UUID;
+export class ReplyCommentGetRequestDto {
 
   public postIdx: UUID;
 

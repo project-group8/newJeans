@@ -4,7 +4,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CardpostsModule } from './cardposts/cardposts.module';
 import { PreferModule } from './prefer/prefer.module';
-import { CommentLikeModule } from './comment-like/comment-like.module';
 import { PostLikeModule } from './post-like/post-like.module';
 import { UsersModule } from './users/users.module';
 import { ChatModule } from './chat/chat.module';
@@ -29,6 +28,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { TestController } from './slack/slack-error-mesage-test';
 // import { SocketGatewayModule } from './gateway/socket.module';
 import { SocketIoModule } from './gateway/socket.module';
+import { CommentLikeModule } from './comment-like/comment-like.module';
 
 @Module({
   imports: [
@@ -61,7 +61,6 @@ import { SocketIoModule } from './gateway/socket.module';
     CommentsModule,
     ReplycommentsModule,
     PreferModule,
-    CommentLikeModule,
     PostLikeModule,
     UsersModule,
     ChatModule,
@@ -69,6 +68,7 @@ import { SocketIoModule } from './gateway/socket.module';
     UploadsModule,
     AuthModule,
     SocketIoModule,
+    CommentLikeModule,
   ],
   controllers: [AppController, TestController],
   providers: [

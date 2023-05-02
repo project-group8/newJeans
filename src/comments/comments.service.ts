@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comments } from 'src/entities/Comments.entity';
 import { UsersService } from 'src/users/users.service';
@@ -7,6 +7,8 @@ import { CommentCreateRequestDto } from './dtos/comment.create.request.dto';
 import { Repository } from 'typeorm/repository/Repository';
 import { CommentUpdateRequestDto } from './dtos/comment.update.dto';
 import { CommentDeleteRequestDto } from './dtos/comment.delete.dto';
+import { CommentGetRequestDto } from './dtos/comment.get.dto';
+import { SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class CommentsService {
@@ -86,5 +88,51 @@ export class CommentsService {
         return '댓글을 삭제했습니다.';
     }
 
+    async getAllComment(commentGetRequestDto: CommentGetRequestDto  ) {
+      
+      const allComment = await this.commentsRepository
+        .createQueryBuilder('c')
+        .select([
+          'c.commentIdx',
+          'c.postIdx',
+          'u.nickname',
+          'c.comment',
+          'c.selectedTag',
+          'cl',
+          'c.createdAt',
+        ])
+        .leftJoin('c.Users', 'u')
+        .leftJoin('c.CommentLikes', 'cl')
+        .loadRelationCountAndMap('c.likesCount', 'c.CommentLikes')
+        .where('c.postIdx = :postIdx', { postIdx: commentGetRequestDto.postIdx })
+        // .andWhere('u.userIdx = :userIdx', { userIdx: commentGetRequestDto.userIdx })
+        .orderBy('c.createdAt', 'DESC')
+        .getMany();
+  
 
+      if (!allComment) {
+        throw new BadRequestException('댓글 조회에 실패했습니다.');
+      }
+  
+      const data = allComment.map((comment) => {
+        const isLiked = comment.CommentLikes.filter((v) => {
+          if (v.userIdx === commentGetRequestDto.userIdx) return v;
+        });
+  
+        return {
+          commentIdx: comment.commentIdx,
+          postIdx: comment.postIdx,
+          nickname: comment.Users.nickname,
+          comment: comment.comment,
+          likesCount: comment['likesCount'],
+          createdAt: comment.createdAt,
+          isLiked: isLiked.length !== 0 ? true : false,
+
+        };
+      });
+  
+      return data;
+    }
+    
+    
 }
