@@ -1,0 +1,11 @@
+nestapp:
+  build: "."
+  container_name: "nest"
+  working_dir: "/app"
+  ports:
+   - "3000:3000"
+  links:
+   - "noderedis"
+nestredis:
+  image: "redis:3"
+  container_name: "nestredis"
