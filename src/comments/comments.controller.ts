@@ -7,6 +7,8 @@ import { CommentCreateRequestDto } from './dtos/comment.create.request.dto';
 import { UUID } from 'crypto';
 import { CommentUpdateRequestDto } from './dtos/comment.update.dto';
 import { CommentDeleteRequestDto } from './dtos/comment.delete.dto';
+import { CommentGetRequestDto } from './dtos/comment.get.dto';
+import { AllUsersJwtAuthGuard } from 'src/middleware/allusersjwtauthguard';
 
 @Controller('comment')
 export class CommentsController {
@@ -59,16 +61,28 @@ export class CommentsController {
     commentDeleteRequestDto.commentIdx = commentIdx;
     
     return await this.commentsService.deleteComment(commentDeleteRequestDto);
-  }
+    }
 
   // @UseGuards(JwtAuthGuard)
-  // @Get()
-  // @HttpCode(200)
-  // async getAllComment(
-  //   @Param('postIdx') postIdx: UUID,
-  //   @GetPayload() payload: JwtPayload,
-  // ) {
+  @UseGuards(AllUsersJwtAuthGuard)
+  @Get(':postIdx')
+  @HttpCode(200)
+  async getAllComment(
+    @Param('postIdx') postIdx: UUID,
+    @GetPayload() payload: JwtPayload,
+  ) {
 
-  //   return await this.commentsService.getAllComment(postIdx, payload);
-  // }
+    const commentGetRequestDto = new CommentGetRequestDto();
+
+    commentGetRequestDto.userIdx = payload ? payload.sub : null;
+    commentGetRequestDto.postIdx = postIdx;
+
+    // return await this.commentsService.getAllComment(commentGetRequestDto);
+
+    const response = {
+      comments: await this.commentsService.getAllComment(commentGetRequestDto)
+    }
+
+    return response
+  }
 }

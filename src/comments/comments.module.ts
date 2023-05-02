@@ -5,12 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Comments } from 'src/entities/Comments.entity';
-import { Users } from 'src/entities/Users.entity';
 import mysqlDataSource from 'src/config/typeorm-cli.config';
+import { CommentLikes } from 'src/entities/CommentLikes.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Comments], mysqlDataSource),
+    TypeOrmModule.forFeature([Comments, CommentLikes], mysqlDataSource),
     AuthModule,
     UsersModule,
   ],
