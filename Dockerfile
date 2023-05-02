@@ -1,3 +1,4 @@
+# Step 1 : Build
 FROM node:latest AS builder
 
 # Work Directory 설정
@@ -10,6 +11,11 @@ RUN npm install
 COPY ["tsconfig.build.json" , "tsconfig.json", "./"]
 COPY ["nest-cli.json" , "./"]
 COPY ["src/", "./src/"]
+
+# 테스트 실행
+# RUN npm run test
+
+# 프로젝트 빌드
 RUN npm run build
 
 # Step 2 : Run
