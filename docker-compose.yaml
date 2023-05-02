@@ -1,0 +1,15 @@
+version: "3"
+services:
+  newjeans:
+    build: "."
+    container_name: "newjeans"
+    working_dir: "/app"
+    ports:
+      - "3000:3000"
+    links:
+      - "noderedis"
+    env_file:
+      - newJeans.env
+  noderedis:
+    image: "redis:3"
+    container_name: "nestredis"
