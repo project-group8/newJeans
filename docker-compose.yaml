@@ -9,7 +9,7 @@ services:
     links:
       - "noderedis"
     env_file:
-      - newJeans.env
+      - ../newJeans.env
   noderedis:
     image: "redis:3"
     container_name: "nestredis"
