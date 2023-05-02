@@ -53,7 +53,8 @@ describe('ChatService', () => {
 
       jest
         .spyOn(chatService, 'chatRooms')
-        .mockReturnValue(Promise.resolve(mockDataResult));
+        // .mockReturnValue(Promise.resolve(mockDataResult));
+        .mockResolvedValue(mockDataResult);
 
       const testMethod = await chatService.chatRooms(enterUserChatDto);
 
@@ -124,7 +125,7 @@ describe('ChatService', () => {
       const mockData: AdminUser = {
         nickname: 'test1',
       };
-      const mockDataResult: Promise<AdminUser> = Promise.resolve(mockData);
+      const mockDataResult = mockData;
 
       jest
         .spyOn(chatService, 'adminUserFind')
