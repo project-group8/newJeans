@@ -29,6 +29,8 @@ import { TestController } from './slack/slack-error-mesage-test';
 // import { SocketGatewayModule } from './gateway/socket.module';
 import { SocketIoModule } from './gateway/socket.module';
 import { CommentLikeModule } from './comment-like/comment-like.module';
+import { SearchModule } from './search/search.module';
+
 
 @Module({
   imports: [
@@ -69,6 +71,7 @@ import { CommentLikeModule } from './comment-like/comment-like.module';
     AuthModule,
     SocketIoModule,
     CommentLikeModule,
+    SearchModule,
   ],
   controllers: [AppController, TestController],
   providers: [
