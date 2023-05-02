@@ -174,8 +174,8 @@ export class CardpostsService {
         'cp.pollType as pollType',
         'cp.pollTitle as pollTitle',
         'cp.tag as tag',
-        'COUNT(CASE WHEN COALESCE(p.selectprefer, 0) = 7 THEN 1 END) as conCount',
-        'COUNT(CASE WHEN COALESCE(p.selectprefer, 0) = 8 THEN 1 END) as proCount',
+        'COUNT(CASE WHEN COALESCE(p.selectprefer, 0) = 7 THEN 1 END) as proCount',
+        'COUNT(CASE WHEN COALESCE(p.selectprefer, 0) = 8 THEN 1 END) as conCount',
         `CASE WHEN EXISTS(
           SELECT p.* FROM Prefers p WHERE p.userIdx = :userIdx AND p.selectprefer = 7 AND p.postIdx = :postIdx)
           THEN true ELSE false END as proInputValue`,

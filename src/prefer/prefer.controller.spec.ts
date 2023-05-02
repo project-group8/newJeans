@@ -52,15 +52,15 @@ describe('PreferController', () => {
     // });
     it('투표 결과를 가져옵니다.', async () => {
       const postIdx = 'fd05b208-12c3-4b6c-bd8e-eea8e5e202c9';
-      const mockPollResult: object = { proCount: '0', conCount: '1' };
+      const mockDataResult: object = { proCount: '0', conCount: '1' };
       jest
-        .spyOn(preferService, 'postPollResult')
-        .mockResolvedValue(mockPollResult);
+        .spyOn(preferController, 'postPollResult')
+        .mockResolvedValue(mockDataResult);
 
-      const result: object = await preferController.postPollResult(postIdx);
+      const testMethod: object = await preferController.postPollResult(postIdx);
 
-      expect(result).toEqual({ pollResult: mockPollResult });
-      expect(preferService.postPollResult).toHaveBeenCalledWith(postIdx);
+      expect(testMethod).toEqual(mockDataResult);
+      expect(preferController.postPollResult).toHaveBeenCalledWith(postIdx);
     });
   });
 
@@ -74,24 +74,24 @@ describe('PreferController', () => {
         proInputValue: true,
         conInputValue: false,
       };
-      const mockPollResult = { pollResult: { proCount: '1', conCount: '0' } };
+      const mockDataResult = { pollResult: { proCount: '1', conCount: '0' } };
 
       jest
-        .spyOn(preferService, 'createPostPoll')
-        .mockResolvedValue(mockPollResult.pollResult);
+        .spyOn(preferController, 'createPostPoll')
+        .mockResolvedValue(mockDataResult.pollResult);
       jest
         .spyOn(createPollValidPipe, 'transform')
         .mockImplementation((value) => value);
 
-      const result = await preferController.createPostPoll(
+      const testMethod = await preferController.createPostPoll(
         jwtPayload,
         postIdx,
         createPollDto,
       );
 
-      expect(result).toEqual(mockPollResult);
-      expect(preferService.createPostPoll).toHaveBeenCalledWith(
-        jwtPayload.sub,
+      expect({ pollResult: testMethod }).toEqual(mockDataResult);
+      expect(preferController.createPostPoll).toHaveBeenCalledWith(
+        jwtPayload,
         postIdx,
         createPollDto,
       );

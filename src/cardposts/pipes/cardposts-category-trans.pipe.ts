@@ -121,8 +121,6 @@ export class CardPostCreateValidPipe implements PipeTransform {
       throw new BadRequestException('desc는 1500를 넘을 수 없습니다.');
     }
 
-    console.log(typeof pollType);
-
     if (typeof pollType !== null && typeof pollType !== 'string') {
       throw new BadRequestException('pollType 타입에 오류가 있습니다.');
     }
