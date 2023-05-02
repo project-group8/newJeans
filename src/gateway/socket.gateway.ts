@@ -110,7 +110,7 @@ export class SocketIoGateway
       maxParty: `${maxParty}`,
     });
 
-    if (numUsers >= user.maxParty) {
+    if (!!(user.maxParty <= numUsers) == false) {
       return {
         error: '방이 가득 찼습니다. 다른 방을 이용해 주세요.',
       };
@@ -118,6 +118,13 @@ export class SocketIoGateway
 
     // 해당 방에 유저 추가
     socket.join(user.room);
+
+    const sessionId = socket.handshake.query.t;
+
+    socket.emit('sessionId', {
+      sessionId: sessionId,
+      text: `${user.name} has ${sessionId}`,
+    });
 
     if (!this.rooms[user.room]) {
       this.rooms[user.room] = { messages: [] };
@@ -153,22 +160,20 @@ export class SocketIoGateway
 
     // rooms[room].messages.push({ name: user.name, message: message });
 
-    this.server.to(room).emit('message', { user: user.name, text: message });
+    // this.server
+    //   .to(room)
+    //   .emit('server_message', { user: user.name, text: message });
+
+    socket.emit('server_message', { user: user.name, text: message });
 
     // io.to(room).emit("message", { name: user.name, message: message });
     // 채팅 불러오기 트라이
-
-    this.server.to(room).emit('roomData', {
-      room: room,
-      users: this.getUsersInRoom(room),
-      messages: this.rooms[room].messages,
-    });
 
     // 채팅 불러오기 트라이
   }
 
   handleConnection(socket: Socket, ...args: any[]) {
-    const sessionId = socket.handshake.query.sessionId;
+    const sessionId = socket.handshake.query.t;
     if (typeof sessionId === 'string' && this.sessions[sessionId]) {
       // 기존 세션 ID로 새 소켓을 교체
       this.sessions[sessionId].disconnect();

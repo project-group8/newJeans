@@ -48,6 +48,7 @@ export class PostLikeService {
         })
         .execute();
       const message: string = '좋아요를 취소하였습니다.';
+
       return message;
     }
   }

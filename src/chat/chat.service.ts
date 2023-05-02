@@ -11,6 +11,10 @@ import { Users } from '../entities/Users.entity';
 import { UUID } from 'crypto';
 import { ChatSaves } from '../entities/ChatSaves.entity';
 
+type AdminUser = {
+  nickname: string;
+};
+
 @Injectable()
 export class ChatService {
   constructor(
@@ -102,7 +106,7 @@ export class ChatService {
    * @param roomName
    * @returns
    */
-  async adminUserFind(roomName: string): Promise<Chats> {
+  async adminUserFind(roomName: string): Promise<AdminUser> {
     const existChat: Chats = await this.chatRepository.findOne({
       where: { roomName },
     });
@@ -113,7 +117,7 @@ export class ChatService {
       );
     }
 
-    const findAdmin: Chats = await this.chatRepository
+    const findAdmin: AdminUser = await this.chatRepository
       .createQueryBuilder('c')
       .where('c.roomName = :roomName', { roomName })
       .select(['u.nickname as nickname'])

@@ -24,6 +24,7 @@ export class PreferService {
     const exeistPost = await this.cardPostsRepository.findOne({
       where: { postIdx },
     });
+
     if (!exeistPost) {
       throw new BadRequestException('해당 포스트가 존재하지 않습니다.');
     }

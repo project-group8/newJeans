@@ -26,7 +26,9 @@ import { GetPayload } from '../common/decorators/get.payload.decorator';
 import { JwtPayload } from '../auth/jwt/jwt.payload.dto';
 import { UUID } from 'crypto';
 import { ChatSaves } from '../entities/ChatSaves.entity';
-
+type AdminUser = {
+  nickname: string;
+};
 @Controller('chat')
 export class ChatController {
   constructor(private chatService: ChatService) {}
@@ -43,7 +45,7 @@ export class ChatController {
     const enterUserChat: object[] = await this.chatService.chatRooms(
       enterUserChatDto,
     );
-
+    console.log(enterUserChat);
     return { result: enterUserChat };
   }
 
@@ -64,6 +66,7 @@ export class ChatController {
       userIdx,
       createUserChatDto,
     );
+
     createUserChat;
     return { msg: '채팅방 생성에 성공했습니다.' };
   }
@@ -85,6 +88,7 @@ export class ChatController {
       userIdx,
       roomName,
     );
+
     chatDelete;
     return { msg: '채팅방 삭제에 성공했습니다.' };
   }
@@ -96,7 +100,7 @@ export class ChatController {
    */
   @Get('/hunsuChat/admin/:roomName')
   async adminUserFind(@Param('roomName') roomName: string): Promise<object> {
-    const adminUserFind: object = await this.chatService.adminUserFind(
+    const adminUserFind: AdminUser = await this.chatService.adminUserFind(
       roomName,
     );
 
