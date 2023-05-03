@@ -60,11 +60,11 @@ jobs:
 
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
-          docker run -i -t --env-file /home/ubuntu/sample.env -d -p 3000:3000 --name realjeans ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+          docker run -i -t --env-file /home/ubuntu/newJeans.env -d -p 3000:3000 --name realjeans ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
   deploy_instance2:
     needs: build # build 후에 실행되도록 정의
-    name:  Deploy to Instance 2
+    name: Deploy to Instance 2
     runs-on: [self-hosted, label-go-instance2] # AWS ./configure에서 사용할 label명
     steps:
       - name: Login to ghcr
@@ -79,4 +79,5 @@ jobs:
 
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
-          docker run -i -t --env-file /home/ubuntu/sample.env -d -p 3000:3000 --name realjeans ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+          docker run -i -t --env-file /home/ubuntu/newJeans.env -d -p 3000:3000 --name realjeans ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+
