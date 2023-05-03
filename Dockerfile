@@ -59,9 +59,9 @@ COPY --from=builder /app ./
 EXPOSE 3000
 
 # Add your terminal commands here
-RUN apt-get update && \
-    apt-get install -y redis-server && \
-    redis-server --daemonize yes
+RUN apt-get update -y
+RUN apt-get install -y redis-server
+RUN redis-server --daemonize yes
 
 # npm run start:prod
 CMD ["npm" , "run" ,"start:prod"]
