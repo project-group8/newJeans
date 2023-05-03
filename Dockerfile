@@ -30,7 +30,7 @@
 # CMD ["npm" , "run" ,"start:prod"]
 
 # Step 1 : Build
-FROM node:alpine AS builder
+FROM node:latest AS builder
 
 # Work Directory 설정
 WORKDIR /app
@@ -50,7 +50,7 @@ COPY ["src/", "./src/"]
 RUN npm run build
 
 # Step 2 : Run
-FROM node:alpine
+FROM node
 # Work Directory 설정
 WORKDIR /app
 # Stemp 1의 builder에서 build된 프로젝트를 복사
