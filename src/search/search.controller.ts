@@ -6,8 +6,9 @@ import { CardPosts } from 'src/entities/CardPosts.entity';
 export class SearchController {
     constructor(private readonly searchService: SearchService) {}
     @Get('/')
-    async search(@Query('q') query: string): Promise<CardPosts[]> {
+    async search(@Query('q') query: string): Promise<{data: CardPosts[]}> {
         const results = await this.searchService.search(query);
-        return results;
+        
+        return { data: results};
   }
 }

@@ -30,8 +30,8 @@ export class SearchService {
       .getMany();
 
     // 검색 결과를 캐시에 저장
-    await redisClient.set(cacheKey, JSON.stringify(results), 'EX', 60);
-
+    await redisClient.set(cacheKey, JSON.stringify(results), 'EX', 600);
+    
     return results;
   }
 }
