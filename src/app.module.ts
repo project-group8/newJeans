@@ -71,7 +71,7 @@ import { SearchModule } from './search/search.module';
     AuthModule,
     SocketIoModule,
     CommentLikeModule,
-    // SearchModule,
+    SearchModule,
   ],
   controllers: [AppController, TestController],
   providers: [
