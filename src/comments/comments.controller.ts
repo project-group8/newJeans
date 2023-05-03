@@ -31,7 +31,7 @@ export class CommentsController {
 
     @UseGuards(JwtAuthGuard)
     @HttpCode(201)
-    @Put(':commentIdx')
+    @Put(':postIdx/:commentIdx')
     async updateComment(
       @Param('postIdx') postIdx: UUID,
       @Param('commentIdx') commentIdx: UUID,
@@ -47,7 +47,7 @@ export class CommentsController {
     }
     
     @UseGuards(JwtAuthGuard)
-    @Delete(':commentIdx')
+    @Delete(':postIdx/:commentIdx')
     @HttpCode(204)
     async deleteComment(
       @Param('postIdx') postIdx: UUID,

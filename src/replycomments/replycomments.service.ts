@@ -28,9 +28,10 @@ export class ReplycommentsService {
     
         return {
           replyIdx: replycomment.replyIdx,
-          userIdx: user.userIdx,
-          comment: replycomment.comment,
+          commentIdx: replycommentCreateRequestDto.commentIdx,
+          postIdx: replycommentCreateRequestDto.postIdx,
           nickname: user.nickname,
+          comment: replycomment.comment,
           createdAt: replycomment.createdAt,
         };
     }
@@ -95,7 +96,7 @@ export class ReplycommentsService {
           'r.createdAt',
         ])
         .leftJoin('r.Users', 'u')
-        .where('r.postIdx = :postIdx', { postIdx: replycommentGetRequestDto.postIdx })
+        .where('r.commentIdx = :commentIdx', { commentIdx: replycommentGetRequestDto.commentIdx })
         // .andWhere('u.userIdx = :userIdx', { userIdx: commentGetRequestDto.userIdx })
         .orderBy('r.createdAt', 'DESC')
         .getMany();

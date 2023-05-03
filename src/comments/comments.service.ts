@@ -35,6 +35,9 @@ export class CommentsService {
           selectedTag: comment.selectedTag,
           nickname: user.nickname,
           createdAt: comment.createdAt,
+          postIdx: commentCreateRequestDto.postIdx,
+          isLiked: false,
+          likesCount: 0,
         };
     }
 
