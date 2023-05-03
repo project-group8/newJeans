@@ -1,0 +1,82 @@
+name: CICD # actions 이름. 아무렇게나 지어도 됨
+
+on:
+  push:
+    branches: [main] # main branch에 push될 때 해당 파일을 실행
+
+jobs:
+  # 빌드
+  build:
+    runs-on: ubuntu-latest
+    steps: #step 순서대로 실행됨
+      # 레포지토리의 파일을 CI 서버로 내려받음
+      - name: Checkout # step의 이름. 아무렇게나 지어도 됨
+        uses: actions/checkout@v2 # 사용할 동작을 정의
+
+      # docker cli 플러그인인 buildx 설치. 후에 도커를 빌드할 수 있게 해줌
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # dockerhub에 이미지를 업로드 하기 위해 도커 로그인
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }} # dockerhub name
+          password: ${{ secrets.DOCKERHUB_TOKEN }} # dockerhub password
+
+      # .env파일 생성. 웹을 만들다보면 유출되면 안되는 변수를 .env에 담는다. 배포할 때는 같이 빌드되어야하기 때문에 깃헙 액션으로 설정해줘야 한다.
+      - name: Generate Environment Variables File for Production
+        run: |
+          mkdir -p dir
+          echo "VARIABLE=$VARIABLE" >> ./dir/.env
+        env:
+          VARIABLE: ${{ secrets.VARIABLE }}
+
+      # docker 이미지를 생성하고 dockerhub에 푸쉬
+      - name: Proxy Build And Push
+        uses: docker/build-push-action@v2
+        with:
+          context: . # dockerfile이 있는 위치랑 맞춰주자
+          file: ./Dockerfile # 빌드할 Dockerfile이 있는 디렉토리
+          platforms: linux/amd64 # 빌드할 때 사용할 환경.
+          push: true # Dockerhub 푸쉬 여부
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans # docker 이미지 이름
+
+  # 배포
+  deploy_instance1:
+    needs: build # build 후에 실행되도록 정의
+    name: Deploy to Instance 1
+    runs-on: [self-hosted, label-go-instance1] # AWS ./configure에서 사용할 label명
+    steps:
+      - name: Login to ghcr
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+      - name: Docker run
+        run: |
+          docker stop newjeans && docker rm newjeans && docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+
+          docker run -i -t --env-file /home/ubuntu/sample.env -d -p 3000:3000 --name realjeans ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+
+  deploy_instance2:
+    needs: build # build 후에 실행되도록 정의
+    name:  Deploy to Instance 2
+    runs-on: [self-hosted, label-go-instance2] # AWS ./configure에서 사용할 label명
+    steps:
+      - name: Login to ghcr
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+      - name: Docker run
+        run: |
+          docker stop newjeans && docker rm newjeans && docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+
+          docker run -i -t --env-file /home/ubuntu/sample.env -d -p 3000:3000 --name realjeans ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
