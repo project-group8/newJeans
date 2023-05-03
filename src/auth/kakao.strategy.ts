@@ -8,7 +8,8 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     super({
       clientID: 'a558b560602bb0e31eec3dcf9866557e',
       clientSecret: 'u8rQ5HJHR7WhNfSWqe7HJpqz2Hau4Iax',
-      callbackURL: 'http://localhost:3000/auth/kakao/redirect',
+      // callbackURL: 'http://localhost:3000/auth/kakao/redirect',
+      callbackURL: 'http://hoonsoo.net/auth/kakao/redirect',
 
       scope: ['account_email', 'profile_nickname'],
     });
