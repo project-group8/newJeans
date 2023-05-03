@@ -12,6 +12,7 @@ import mysqlDataSource from 'src/config/typeorm-cli.config';
     RedisModule.forRoot({
       config:{
         host: process.env.REDIS_HOST,
+        // host: '127.0.0.1',
         port: parseInt(process.env.REDIS_PORT, 10) || 6379,
       }
     })
