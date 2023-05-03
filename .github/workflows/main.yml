@@ -60,7 +60,7 @@ jobs:
 
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
-          docker run -i -t --env-file /home/ubuntu/sample.env -d -p 3000:3000 --name realjeans ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+          docker run -i -t --env-file /home/ubuntu/newJeans.env -d -p 3000:3000 --name realjeans ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
   deploy_instance2:
     needs: build # build 후에 실행되도록 정의
@@ -79,4 +79,4 @@ jobs:
 
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
-          docker run -i -t --env-file /home/ubuntu/sample.env -d -p 3000:3000 --name realjeans ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+          docker run -i -t --env-file /home/ubuntu/newJeans.env -d -p 3000:3000 --name realjeans ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
