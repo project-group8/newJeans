@@ -227,7 +227,6 @@ export class CardpostsService {
     }: CreateCardDto = createCardDto;
 
     const imageList = [];
-
     if (files) {
       const uploadImage = await this.uploadsService.uploadFileToS3(files);
       uploadImage.forEach((data) => {
@@ -238,7 +237,6 @@ export class CardpostsService {
     }
 
     const Chatimg = imageList.join(',');
-
     const createPost: CardPosts = await this.cardPostsRepository.save<
       DeepPartial<CardPosts>
     >({
