@@ -88,9 +88,7 @@ export class CardPostCreateValidPipe implements PipeTransform {
       pollTitle = null,
       pollType = null,
       tag = null,
-      imgUrl = null,
     } = value;
-
     if (
       title === null ||
       maincategory === null ||
@@ -131,10 +129,6 @@ export class CardPostCreateValidPipe implements PipeTransform {
 
     if (typeof tag !== null && typeof tag !== 'string') {
       throw new BadRequestException('tag 타입에 오류가 있습니다.');
-    }
-
-    if (typeof imgUrl !== null && typeof imgUrl !== 'string') {
-      throw new BadRequestException('imgUrl 타입에 오류가 있습니다.');
     }
 
     return true;
