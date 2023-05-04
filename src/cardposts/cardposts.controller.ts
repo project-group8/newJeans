@@ -134,7 +134,6 @@ export class CardpostsController {
     @Body(CardPostCreateValidPipe) createCardDto: CreateCardDto,
   ): Promise<{ msg: string }> {
     const userIdx: UUID = payload.sub;
-
     const postCard: CardPosts = await this.cardpostsService.postCard(
       userIdx,
       createCardDto,
