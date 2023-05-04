@@ -56,7 +56,7 @@ jobs:
           password: ${{ secrets.GHCR_TOKEN }}
       - name: Docker run
         run: |
-          docker stop newjeans && docker rm newjeans && docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+          docker stop realjeans;docker realjeans;docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
@@ -78,7 +78,7 @@ jobs:
           password: ${{ secrets.GHCR_TOKEN }}
       - name: Docker run
         run: |
-          docker stop newjeans && docker rm newjeans && docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
+          docker stop realjeans;docker realjeans;docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
