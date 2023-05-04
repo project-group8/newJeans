@@ -75,7 +75,6 @@ jobs:
           password: ${{ secrets.GHCR_TOKEN }}
       - name: Docker run
         run: |
-          sudo docker stop realjeans;sudo docker rm realjeans;sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/realjeans:realjeans
 
