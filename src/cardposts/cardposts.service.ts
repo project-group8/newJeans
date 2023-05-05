@@ -20,6 +20,8 @@ import {
   DeepPartial,
 } from 'typeorm';
 import { UploadsService } from '../uploads/uploads.service';
+import { OpenAIApi, Configuration } from 'openai';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CardpostsService {
@@ -30,7 +32,10 @@ export class CardpostsService {
     private readonly usersRepository: Repository<Users>,
     @InjectRepository(Prefers)
     private readonly prefersRepository: Repository<Prefers>,
+    @InjectRepository(Comments)
+    private readonly CommentRepository: Repository<Comments>,
     private uploadsService: UploadsService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -226,6 +231,13 @@ export class CardpostsService {
       pollTitle,
     }: CreateCardDto = createCardDto;
 
+    const configuration = new Configuration({
+      organization: process.env.OPENAI_OG,
+      apiKey: process.env.OPENAI_APIKEY,
+    });
+
+    const openai = new OpenAIApi(configuration);
+
     const imageList = [];
     if (files) {
       const uploadImage = await this.uploadsService.uploadFileToS3(files);
@@ -249,6 +261,28 @@ export class CardpostsService {
       imgUrl: Chatimg,
       pollType,
       pollTitle,
+    });
+
+    const test = title;
+    const response = await openai.createCompletion({
+      model: 'text-davinci-003',
+      prompt: `나는 인공지능 AI Chatbot이야. 질문을 하면 내가 답변을 해줄께. 만약 모른다면 "모름"이라고 할께.\n\nQ: ${test}\nA:`,
+      temperature: 0.8,
+      max_tokens: 2048,
+      top_p: 1,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
+      stop: ['\n'],
+    });
+
+    const addBotComment = response.data.choices[0].text;
+
+    const addApiComment = await createPost.postIdx;
+    await this.CommentRepository.save<DeepPartial<Comments>>({
+      userIdx: 'c08f3c63-c2b3-4d15-8eaa-1ba0610f7323',
+      comment: addBotComment,
+      selectedTag: '',
+      postIdx: addApiComment,
     });
 
     return createPost;
