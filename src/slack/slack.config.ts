@@ -15,7 +15,7 @@ export class SlackService {
     const errorMessage = 'Error: Cannot GET /socket.io/?EIO=4&transport';
 
     const DisconnecterrorMessage = 'Error: Cannot GET /ws';
-
+    const noaddmessage = 'Error: Cannot GET /';
     // Socket.IO 통신 관련 에러를 확인하고 무시합니다.
     if (
       message.includes(errorMessage) ||
