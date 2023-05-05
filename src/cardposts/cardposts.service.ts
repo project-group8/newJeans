@@ -230,7 +230,7 @@ export class CardpostsService {
       pollType,
       pollTitle,
     }: CreateCardDto = createCardDto;
-
+    const test = title;
     const configuration = new Configuration({
       organization: process.env.OPENAI_OG,
       apiKey: process.env.OPENAI_APIKEY,
@@ -249,7 +249,7 @@ export class CardpostsService {
     }
 
     const Chatimg = imageList.join(',');
-    const createPost: CardPosts = await this.cardPostsRepository.save<
+    const createPostPromise = this.cardPostsRepository.save<
       DeepPartial<CardPosts>
     >({
       userIdx,
@@ -263,8 +263,7 @@ export class CardpostsService {
       pollTitle,
     });
 
-    const test = title;
-    const response = await openai.createCompletion({
+    const chatbotResponsePromise = openai.createCompletion({
       model: 'text-davinci-003',
       prompt: `나는 인공지능 AI Chatbot이야. 질문을 하면 내가 답변을 해줄께. 만약 모른다면 "모름"이라고 할께.\n\nQ: ${test}\nA:`,
       temperature: 0.8,
@@ -275,9 +274,14 @@ export class CardpostsService {
       stop: ['\n'],
     });
 
-    const addBotComment = response.data.choices[0].text;
+    const [createPost, response] = await Promise.all([
+      createPostPromise,
+      chatbotResponsePromise,
+    ]);
 
-    const addApiComment = await createPost.postIdx;
+    const addBotComment = response.data.choices[0].text;
+    const addApiComment = createPost.postIdx;
+
     await this.CommentRepository.save<DeepPartial<Comments>>({
       userIdx: 'c08f3c63-c2b3-4d15-8eaa-1ba0610f7323',
       comment: addBotComment,

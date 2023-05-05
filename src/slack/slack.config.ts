@@ -19,7 +19,8 @@ export class SlackService {
     // Socket.IO 통신 관련 에러를 확인하고 무시합니다.
     if (
       message.includes(errorMessage) ||
-      message.includes(DisconnecterrorMessage)
+      message.includes(DisconnecterrorMessage) ||
+      message === noaddmessage
     ) {
       return;
     }
