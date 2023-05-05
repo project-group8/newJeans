@@ -45,6 +45,9 @@ export class Users {
   @Column({ type: 'varchar', nullable: false, default: 'US000001' })
   status: string; // 디폴트 벨류 "US000001"
 
+  @Column({ type: 'int', nullable: false, default: 0 })
+  exp: number; // 디폴트 벨류 "0"
+
   @CreateDateColumn({ type: 'datetime', nullable: false })
   createdAt: Date;
 
