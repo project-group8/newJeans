@@ -116,7 +116,7 @@ export class SocketIoGateway
       };
     }
 
-    // 해당 방에 유저 추가 합니다. git hub test
+    // 해당 방에 유저 추가 합니다.
     socket.join(user.room);
 
     const sessionId = socket.handshake.query.t;
