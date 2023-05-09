@@ -55,7 +55,7 @@ export class SocketIoGateway
 
     // Validate username
     if (existingUser) {
-      return { error: '이미 존재하는 이름입니다..' };
+      return { error: '이미 존재하는 이름입니다.' };
     }
 
     // Store user
