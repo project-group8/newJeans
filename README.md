@@ -1,73 +1,81 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# 🔔 [훈수] 나한테 훈수를 해줘❗
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+###  AI훈수킹과 함께하는 훈수 파티
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- 제목을 보고 일정 확률로 AI훈수킹이 훈수를 해줍니다.
+- 다양한 카테고리가 분류를 통해서 원하는 훈수를 들을 수 있습니다.
+- 다른 사람의 글에 훈수를 남겨줄 수 있습니다.
+- 찬반 투표 훈수로 서로의 의견을 나눌 수 있습니다.
 
-## Installation
+### [📌 훈수를 체험해보세요!](https://hoonsoo.net/)  
 
-```bash
-$ npm install
-```
+## Contents | 목차
+1. [TimeLine | 타임라인](#-timeline-|-타임라인)
+2. [Architecture | 아키텍쳐](#-architecture-|-아키텍쳐)
+3. [Feature | 구현 기능](#-feature-|-구현-기능)
+4. [ERD | 데이터 구조도](#-erd-|-데이터-구조도)
+5. [Stacks | 사용 스택](#-stacks-|-사용-스택)
+6. [Trouble Shooting | 트러블 슈팅](#-trouble-shooting-|-트러블-슈팅)
+8. [Team | 팀원 소개](#-who-made-it-|-팀원-소개)
 
-## Running the app
+## TimeLine | 타임라인
+- 총 프로젝트 기간 3월 31일 ~ 5월 11일 (6주)
+- 5월 5일 배포 및 런칭
 
-```bash
-# development
-$ npm run start
+## Architecture | 아키텍쳐
 
-# watch mode
-$ npm run start:dev
+<img width="1096" alt="20230509193730" src="https://github.com/project-group8/newJeans/assets/124944568/f5274200-44a6-458d-ae4f-c4a50858a58e">
 
-# production mode
-$ npm run start:prod
-```
+## ERD | 데이터 구조도
+- ERD 예정
 
-## Test
+## Feature | 구현 기능
 
-```bash
-# unit tests
-$ npm run test
+#### 무플 방지 AI 훈수킹
+  ```
+  무플 걱정은 마세요. AI 훈수킹이 제목을 보고 훈수를 남겨줍니다!
+  ```
+#### 서로 의견이 다를 땐 투표를 받아보자
+  ```
+  찬반 투표, 선택형 투표로 구성된 투표기능을 이용해 어떤 의견이 더 많은지 확인해 보세요.
+  ```
+#### 내 관심사만 보고 싶을 땐 다양한 카테고리 검색
+  ```
+  카테고리를 여러 분야로 나누어 내 관신사만 볼 수 있습니다.
+  또한 진지, 유머로 나누어져 편하게 대화도, 진지한 훈수도 받아볼 수 있어요.
+  ```
 
-# e2e tests
-$ npm run test:e2e
+## 🛠️ Stacks | 사용 스택
 
-# test coverage
-$ npm run test:cov
-```
+**Back End**
+<br/>
+<br/>
+ #### 공통
+<img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON Web Tokens&logoColor=white"> <img src="https://img.shields.io/badge/NODE.JS-339933?style=for-the-badge&logo=NODE.JS&logoColor=black"> <img src="https://img.shields.io/badge/MYSQL-4479A1?style=for-the-badge&logo=MYSQL&logoColor=white"> <img src="https://img.shields.io/badge/MULTER-F46519?style=for-the-badge&logo=MULTER&logoColor=white"> <img src="https://img.shields.io/badge/AXIOS-5A29E4?style=for-the-badge&logo=AXIOS&logoColor=white"> <img src="https://img.shields.io/badge/Github-181717?style=for-the-badge&logo=GITHUB&logoColor=white"> <img src="https://img.shields.io/badge/VISUAL STUDIO CODE-007ACC?style=for-the-badge&logo=VISUAL STUDIO CODE&logoColor=white"> <img src="https://img.shields.io/badge/AMAZON EC2-ff9900?style=for-the-badge&logo=AMAZON EC2&logoColor=white">  <img src="https://img.shields.io/badge/AMAZON S3-569A31?style=for-the-badge&logo=AMAZON S3&logoColor=white">
 
-## Support
+ #### nest.js
+<img src="https://img.shields.io/badge/TYPESCRIPT-3178C6?style=for-the-badge&logo=Typescript&logoColor=black"> <img src="https://img.shields.io/badge/EXPRESS-000000?style=for-the-badge&logo=Express&logoColor=white">
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+ #### express
+<img src="https://img.shields.io/badge/PM2-2B037A?style=for-the-badge&logo=PM2&logoColor=white"> <img src="https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=NGINX&logoColor=white"> <img src="https://img.shields.io/badge/SEQUELIZE-52B0E7?style=for-the-badge&logo=SEQUELIZE&logoColor=white">
 
-## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## License
 
-Nest is [MIT licensed](LICENSE).
+
+
+
+
+
+
+
+
+
+
+<br/>
+
+
+
+
