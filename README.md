@@ -53,7 +53,7 @@
 
 <img src="https://img.shields.io/badge/TYPESCRIPT-3178C6?style=for-the-badge&logo=Typescript&logoColor=black"> <img src="https://img.shields.io/badge/nestjs-E0234E?style=for-the-badge&logo=nestjs&logoColor=white"> <img src="https://img.shields.io/badge/NODE.JS-339933?style=for-the-badge&logo=NODE.JS&logoColor=black"> <img src="https://img.shields.io/badge/EXPRESS-000000?style=for-the-badge&logo=Express&logoColor=white">
 
-<img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=slack&logoColor=white"> <img src="https://img.shields.io/badge/MYSQL-4479A1?style=for-the-badge&logo=MYSQL&logoColor=white"> <img src="https://img.shields.io/badge/SEQUELIZE-52B0E7?style=for-the-badge&logo=SEQUELIZE&logoColor=white"> 
+<img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"> <img src="https://img.shields.io/badge/MYSQL-4479A1?style=for-the-badge&logo=MYSQL&logoColor=white"> <img src="https://img.shields.io/badge/SEQUELIZE-52B0E7?style=for-the-badge&logo=SEQUELIZE&logoColor=white"> 
 
 <img src="https://img.shields.io/badge/AMAZON S3-569A31?style=for-the-badge&logo=AMAZON S3&logoColor=white"> <img src="https://img.shields.io/badge/AMAZON EC2-ff9900?style=for-the-badge&logo=AMAZON EC2&logoColor=white">
 
