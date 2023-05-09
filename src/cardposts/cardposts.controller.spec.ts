@@ -55,6 +55,24 @@ describe('CardpostsController', () => {
   });
 
   describe('findSplitCards', () => {
+    it('should return 201 response code', async () => {
+      const req: any = {}; // Mock request object
+      const res: any = {
+        statusCode: null,
+        end: jest.fn(),
+      };
+      const next = jest.fn();
+
+      jest
+        .spyOn(cardPostscontroller, 'findSplitCards')
+        .mockResolvedValue(undefined);
+
+      await cardPostscontroller.findSplitCards(req);
+
+      expect(res.statusCode).toBe(201);
+      expect(res.end).toHaveBeenCalled();
+    });
+
     it('findSplitCards', async () => {
       const result: { postCards: object[] } = { postCards: [] };
       jest
@@ -64,6 +82,11 @@ describe('CardpostsController', () => {
       expect(
         await cardPostscontroller.findSplitCards(new SplitCardsDto()),
       ).toEqual(result);
+    });
+    it('should have a object', () => {
+      expect(
+        typeof cardPostscontroller.findSplitCards(new SplitCardsDto()),
+      ).toBe('object');
     });
   });
 
