@@ -29,7 +29,7 @@
 <img width="1096" alt="20230509193730" src="https://github.com/project-group8/newJeans/assets/124944568/f5274200-44a6-458d-ae4f-c4a50858a58e">
 
 ## ERD | 데이터 구조도
-- ERD 예정
+![image](https://github.com/project-group8/newJeans/assets/124944568/41b4c883-d66c-4feb-943e-af435d5979aa)
 
 ## Feature | 구현 기능
 
