@@ -26,7 +26,8 @@
 
 ## Architecture | 아키텍쳐
 
-<img width="1096" alt="20230509193730" src="https://github.com/project-group8/newJeans/assets/124944568/f5274200-44a6-458d-ae4f-c4a50858a58e">
+![image](https://github.com/project-group8/newJeans/assets/124944568/0f4594fb-0540-4268-ac0e-ec099b9d8b43)
+
 
 ## ERD | 데이터 구조도
 ![image](https://github.com/project-group8/newJeans/assets/124944568/41b4c883-d66c-4feb-943e-af435d5979aa)
