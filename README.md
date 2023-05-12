@@ -412,17 +412,25 @@ async function main() {
 </details>
 
 <details><summary>Redis connection refused</summary>
+	
 - 포트 설정 확인
+	
     - 6379 기본 redis 포트 확인 → 다음 단계로 진행
+	
 - 방화벽 설정 확인
+	
     - EC2 보안그룹, iptables 확인 6379 port open 확인 → 다음 단계로 진행
+	
 - redis 설치 확인
+	
     - EC2 ubuntu계정 redis-server 명령어 실행 → 설치됨 → docker 컨테이너 확인 → 설치 안됨
+	
 - docker 컨테이너 redis 설치
     
     apt-get update -y
     apt install redis-server -y
     redis-server --daemonize ye
+	
 </details>
 
 ## Team | 팀원 소개
