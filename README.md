@@ -70,7 +70,7 @@
 
 ## Trouble Shooting | 트러블 슈팅
 <details><summary>Docker overlay2</summary>
-1. **[문제점]** Server2가 CD 과정중에 용량 부족으로 실패하는 에러가 발생했다.
+1. [문제점] Server2가 CD 과정중에 용량 부족으로 실패하는 에러가 발생했다.
 	
 2. 우리팀 서버는 EC2 프리티어를 사용하고있다.
 	
@@ -78,7 +78,7 @@
 	
 4. jenkins를 통해서 CI/CD결과를 받아보고 서버의 남은 용량이 5% 밖에 남지 않았다는 것을 인지하게 되었다. 직접 확인해 보니 정말로 5%밖에 남지 않았다.
     
-    ![제목 없음-2.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/96417542-fe7d-452f-8726-a4bd97ecaab7/%EC%A0%9C%EB%AA%A9_%EC%97%86%EC%9D%8C-2.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/06e12e72-3482-47a8-bf1e-a63ee0e7a915)
     
 5. workflow에서 이전 버전의 container 및 image의 삭제를 자동화 해놓은상황이었기 때문에 서버에 직접 접속해서 남아있는 구버전의 container와 image가 남아있는지 명령어로 확인했다.
 6. 하지만 구버전의 image와 container는 존재하지 않았다.
