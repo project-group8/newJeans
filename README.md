@@ -68,9 +68,12 @@
 
 <img src="https://img.shields.io/badge/slack-4A154B?style=for-the-badge&logo=slack&logoColor=white"> <img src="https://img.shields.io/badge/Github-181717?style=for-the-badge&logo=GITHUB&logoColor=white"> <img src="https://img.shields.io/badge/VISUAL STUDIO CODE-007ACC?style=for-the-badge&logo=VISUAL STUDIO CODE&logoColor=white">
 
+## Team | 팀원 소개
 
-
-
+|  | 팀장 | 팀원 |
+|--------|--------|--------|
+| FE | 이은형 | 김은영 |
+| BE | 이건선 | 김오성 |
 
 
 
