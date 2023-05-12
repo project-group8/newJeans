@@ -115,7 +115,7 @@
     ![image](https://github.com/project-group8/newJeans/assets/111474725/342345dc-c71b-49a7-9a44-bbe70752c46a)
     
 
-**[해결 방법]** 돌고 돌아 ***GitHub Actions*** 써야한다. 그리고 ******버리기 아까운 ***Jenkins*** EC2서버
+**[해결 방법]** 돌고 돌아 ***GitHub Actions*** 써야한다. 그리고 버리기 아까운 ***Jenkins*** EC2서버
 
 1. 멘토님과 상담에서 이러한 고민을 질문했고, 근본적인 해결법은 EC2 서버의 사양을 늘리는 것이었다.
 2. 만약에 ***Jenkins*** EC2서버가 터지면 어떻게 해결할 것이냐는 질문을 던지셨다.
@@ -132,7 +132,7 @@
     ![image](https://github.com/project-group8/newJeans/assets/111474725/6920ef51-eb06-4be9-a725-f384a13ee25f)
     
 
-**[결과]** ***GitHub Actions***을 이용한 ******CI/CD결과
+**[결과]** ***GitHub Actions***을 이용한 CI/CD결과
 
 1. 압도적인 성능개선 효과가 있었다. build 발생시 메모리 부족으로 build가 되지 않던 불안정한 배포 상태가 해결되었고 배포 시간도 5배 이상 줄어들었다.
 	
@@ -151,11 +151,11 @@
 
 ### 생성
 
-![https://velog.velcdn.com/images/lom/post/dfc8a68b-f960-4fae-91fb-10a751a19bb3/image.png](https://velog.velcdn.com/images/lom/post/dfc8a68b-f960-4fae-91fb-10a751a19bb3/image.png)
+![image](https://github.com/project-group8/newJeans/assets/111474725/3be55e93-da96-4e53-9b17-8ae32b365195)
 
 ### 실행되지 않는 경우
 
-**1. [문제점]** **유니크 옵션이 설정되어있는 컬럼이 존재한다.**
+**1. [문제점] **유니크 옵션이 설정되어있는 컬럼이 존재한다.**
 
 **[해결 방법]**
 
