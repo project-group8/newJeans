@@ -125,16 +125,19 @@
 6. ***Jenkins*** EC2서버의 선언적 파이프 라인 코드를 변경해서 main에 merge가 발생할 때, 각각 배포서버의 저장공간, docker image, docker container 상태를 확인하고 슬랙으로 정보를 보내는 임무로 변경했다. 
 - ***Jenkins*** 선언적 파이프라인을 변경한 코드 일부
     
-    ![Jenkins_Trans.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7a99818a-0d4e-451e-bcb0-f39e6e008565/Jenkins_Trans.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/5600ce73-aa31-46e0-8d21-1599dbe54a10)
     
 - 서버의 health를 확인하는 ***Jenkins***
     
-    ![Jenkins_slack.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4ae74c22-fcd3-472b-b3f1-bb57d0aef102/Jenkins_slack.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/6920ef51-eb06-4be9-a725-f384a13ee25f)
     
 
 **[결과]** ***GitHub Actions***을 이용한 ******CI/CD결과
 
 1. 압도적인 성능개선 효과가 있었다. build 발생시 메모리 부족으로 build가 되지 않던 불안정한 배포 상태가 해결되었고 배포 시간도 5배 이상 줄어들었다.
+	
+	![image](https://github.com/project-group8/newJeans/assets/111474725/19f61ccf-c3b7-4cee-bbc7-98c1ab9f49cb)
+
 </details>
 
 <details><summary>Does not work</summary>
