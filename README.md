@@ -83,13 +83,13 @@
 5. workflow에서 이전 버전의 container 및 image의 삭제를 자동화 해놓은상황이었기 때문에 서버에 직접 접속해서 남아있는 구버전의 container와 image가 남아있는지 명령어로 확인했다.
 6. 하지만 구버전의 image와 container는 존재하지 않았다.
     
-    ![2.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7d0ec07d-11b4-4ef0-8f4d-9af3162cc3d0/2.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/602adb33-c788-443e-bded-8f5379ecae16)
     
 7. 확인해 보니 /var/lib/docker/overlay2 경로에서 많은 용량을 차지하고 있는 것을 발견했다.
     
-    ![KakaoTalk_20230506_172942323.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8432d0a6-ab10-412a-bc91-936cd7d68492/KakaoTalk_20230506_172942323.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/fb102db5-84d9-486c-8efc-64e3961d726c)
     
-8. **[해결 방법]** 문제를 찾아보니 /var/lib/docker/overlay2 가 용량이 큰 경우 diff/tmp 에 컨테이너 내부 파일구조 변경 사항들이 과도하게 쌓였기 때문이라고 한다. 이 파일은 삭제해도 동작에 큰 문제가 생기지 않는다고 한다.
+8. [해결 방법] 문제를 찾아보니 /var/lib/docker/overlay2 가 용량이 큰 경우 diff/tmp 에 컨테이너 내부 파일구조 변경 사항들이 과도하게 쌓였기 때문이라고 한다. 이 파일은 삭제해도 동작에 큰 문제가 생기지 않는다고 한다.
     1. Docker 컨테이너의 작동원리는 여러 개의 레이어로 구성된 이미지를 기반으로 실행된다.
     2. 각 레이어는 독립적인 파일 시스템을 가지는데 이러한 레이어들을 효율적으로 관리하고 겹치게 하기 위해 Docker는 스토리지 드라이버를 사용한다.
     3. 이번에 문제가 된 overlay2 스토리지 드라이버는 Linux의 OverlayFS 기능을 활용한다.
@@ -99,7 +99,7 @@
 </details>
 
 <details><summary>Jenkins⇒ GitHub Actions</summary>
-**[문제점]** Nest.js build를 못버티는 ***Jenkins*** EC2 프리티어 서버
+[문제점] Nest.js build를 못버티는 Jenkins EC2 프리티어 서버
 
 1. node.js express를 사용할 때는 문제가 없었다.
 2. 하지만 Nest.js로 마이그레이션을 마치고 테스트하자 CI/CD가 이루어지지 않았다.
@@ -112,7 +112,7 @@
 9.  그리고 Dockerfile에서 멀티 스테이지 빌드를 사용했다. 젠킨스 서버에서 빌드를 마친 이미지를 올림으로써 다른 서버에서는 빌드를 할 필요가 없게 만들었다.
 10. 성공은 했지만 프로젝트의 크기에 비해서 CI/CD에 소모되는 시간값이 컸다. 그리고 이것마저도 빌드의 안정성이 보장되지 않았고 빌드에 실패하는 경우가 대부분이었다. 
     
-    ![3. jenkins.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c77f490f-011b-4099-9205-a7b8fdfa8fde/3._jenkins.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/342345dc-c71b-49a7-9a44-bbe70752c46a)
     
 
 **[해결 방법]** 돌고 돌아 ***GitHub Actions*** 써야한다. 그리고 ******버리기 아까운 ***Jenkins*** EC2서버
