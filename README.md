@@ -140,8 +140,8 @@
 
 </details>
 
-<details><summary>Does not work</summary>
-### 데이터 베이스에 자동으로 더미 데이터 채우기
+<details><summary>Nest.js Prisma seed 자동 생성</summary>
+데이터 베이스에 자동으로 더미 데이터 채우기
 
 1. **[문제점]** prisma migration시에 발생하는 데이터 테이블 drop문제를 해결해야 하는데 근본적인 해결책을 찾기까지 시간이 오래걸릴 것으로 예상함.
 2. 자동으로 seed를 생성하면 아래와 같은 3가지 이점이 있을 것으로 기대함
@@ -155,7 +155,7 @@
 
 ### 실행되지 않는 경우
 
-**1. [문제점] **유니크 옵션이 설정되어있는 컬럼이 존재한다.**
+1. [문제점] **유니크 옵션이 설정되어있는 컬럼이 존재한다.**
 
 **[해결 방법]**
 
@@ -169,6 +169,7 @@
 
 관계설정이 되어있는 테이블의 데이터를 먼저 생성하고 그 후에 가져와서 붙여준다. 예를 들어서 CardPost와 User간에 userIdx로 관계 설정이 되어있다면 User에서 userIdx를 찾아와서 붙인다.
   ```javascript
+	
   	...
 
 async function main() {
@@ -181,16 +182,22 @@ async function main() {
      userIdx: userIdx,
 
 	...
+	
   ```
 </details>
 
 <details><summary>Nest.js Dto</summary>
+	
 - 아래와같이 클래스로 정의된 Dto <"Data Transfer Object"> 가 존재
+	
 - 코드 실행시 Dto로 정의 된 값만 가져오기를 기대함.
+	
 - **[문제점]** 그러나 모든 BODY를 가져오는 문제 발생함.
+	
 - Dto가 존재하는데 모든 BODY를 가져오면 지정한 프로퍼티만 가져온다는 Dto의 의미가 희석되지 않나 생각이 들었다.
     
     ```javascript
+	
     export class CardPostsDto {
       @IsNotEmpty()
       maincategory: string;
@@ -215,6 +222,7 @@ async function main() {
     export class UpdateCatAgeDto extends PickType(CardPostsDto, [
       'splitPageNumber',
     ]) {}
+	
     ```
     
 - 아래는 위 Dto를 적용한 코드와 실행 결과입니다.
@@ -260,11 +268,11 @@ async function main() {
 
 1. 문제의 파라미터를 가지고 와서 프로퍼티를 찍어보면 정의한 프로퍼티 2개가 들어있었다.
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2e57de03-83d2-4740-b328-3fb4318c2780/Untitled.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/bd1f5ab0-6994-4ba2-8006-8b8071d70a53)
     
 2. 의도 하지않은 값 badprop을 출력해 보려고 하니 오류가 발생한다.
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/93e36544-d7ac-4f83-8f4d-7f679c9de27c/Untitled.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/29dbc43b-06ea-4d46-98a1-b9a23d30e725)
     
 
 ---
@@ -274,9 +282,9 @@ async function main() {
 1.  배열에 직접 입력해서 create
 2. 결과에 변화가 없었다.
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/51fea7d7-970f-40de-8705-9ea9a7824370/Untitled.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/c3c0465a-c552-46ac-8b9d-317e150ffd93)
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6de913e0-f107-4e90-8680-9e4ac5ea1627/Untitled.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/8178e3e5-4200-48d5-8e26-3fe2eff57e89)
     
 
 ---
@@ -286,15 +294,15 @@ async function main() {
 1. 타입 체크는 아니지만 express에서 비슷하게 테스트 해보았다.
 2. 일반 클래스와 빈 클래스 생성
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4ffd3e76-90ec-424a-aeff-0d533f3ed47f/Untitled.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/9cff0a46-3ad7-4092-97d1-f616fecc8182)
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0084fd12-ca88-412e-9c25-8536afb0863f/Untitled.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/35065043-dcf2-4905-a48a-82eb0c0be974)
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/715fb94c-22f7-4c6a-8dee-b27cf096fc47/Untitled.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/a75f43bd-5be9-4ee0-aa06-3f638640c8e2)
     
 3. 결과
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/218ba5f0-a3a2-4520-9f32-46ab659ba007/Untitled.png)
+    ![image](https://github.com/project-group8/newJeans/assets/111474725/7ec43bb0-0a4c-4e18-838d-25810b139e3e)
     
 
 지금 겪고 있는 문제와 완전히 동일해 보였다. 
