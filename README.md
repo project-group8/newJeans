@@ -71,8 +71,11 @@
 ## Trouble Shooting | 트러블 슈팅
 <details><summary>Docker overlay2</summary>
 1. **[문제점]** Server2가 CD 과정중에 용량 부족으로 실패하는 에러가 발생했다.
+	
 2. 우리팀 서버는 EC2 프리티어를 사용하고있다.
+	
 3. EC2 프리티어의 용량이 8GB 밖에 되지 않기 때문에 백업 버전관리를 서버에서 직접하지 않고 도커 허브를 통해서 하고 있었다.
+	
 4. jenkins를 통해서 CI/CD결과를 받아보고 서버의 남은 용량이 5% 밖에 남지 않았다는 것을 인지하게 되었다. 직접 확인해 보니 정말로 5%밖에 남지 않았다.
     
     ![제목 없음-2.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/96417542-fe7d-452f-8726-a4bd97ecaab7/%EC%A0%9C%EB%AA%A9_%EC%97%86%EC%9D%8C-2.png)
