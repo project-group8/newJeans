@@ -426,10 +426,12 @@ async function main() {
     - EC2 ubuntu계정 redis-server 명령어 실행 → 설치됨 → docker 컨테이너 확인 → 설치 안됨
 	
 - docker 컨테이너 redis 설치
-    
+	
+```
     apt-get update -y
     apt install redis-server -y
     redis-server --daemonize ye
+```
 	
 </details>
 
