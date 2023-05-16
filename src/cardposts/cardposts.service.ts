@@ -30,12 +30,9 @@ export class CardpostsService {
     private cardPostsRepository: Repository<CardPosts>,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
-    @InjectRepository(Prefers)
-    private readonly prefersRepository: Repository<Prefers>,
     @InjectRepository(Comments)
     private readonly CommentRepository: Repository<Comments>,
     private uploadsService: UploadsService,
-    private readonly configService: ConfigService,
   ) {}
 
   /**
