@@ -10,6 +10,12 @@ const mockPostLikeEntitiy = () => ({
   postToggleLike: jest.fn(),
   findOne: jest.fn(),
   save: jest.fn(),
+  createQueryBuilder: jest.fn().mockImplementation(() => ({
+    delete: jest.fn().mockReturnThis(),
+    from: jest.fn().mockReturnThis(),
+    where: jest.fn().mockReturnThis(),
+    execute: jest.fn().mockResolvedValue(undefined),
+  })),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
@@ -64,11 +70,11 @@ describe('PostLikeService', () => {
 
       const mockDataResult = '좋아요를 등록하였습니다.';
 
-      jest.spyOn(cardPostsRepository, 'findOne').mockRejectedValueOnce(postIdx);
-      jest.spyOn(postLikesRepository, 'findOne').mockRejectedValueOnce(null);
-      jest.spyOn(postLikesRepository, 'save').mockRejectedValueOnce(saveInput);
+      jest.spyOn(cardPostsRepository, 'findOne').mockResolvedValueOnce(postIdx);
+      jest.spyOn(postLikesRepository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(postLikesRepository, 'save').mockResolvedValueOnce(saveInput);
 
-      const testMethod = postLikeservice.postToggleLike(userIdx, postIdx);
+      const testMethod = await postLikeservice.postToggleLike(userIdx, postIdx);
 
       expect(testMethod).toEqual(mockDataResult);
     });
@@ -77,18 +83,23 @@ describe('PostLikeService', () => {
       const userIdx = 'fd05b208-12c3-4b6c-bd8e-eea8e5e202c9';
       const postIdx = 'fd05b208-12c3-4b6c-bd8e-eea8e5e202c9';
       const mockDataResult = '좋아요를 취소하였습니다.';
+      const deleteMock = jest.fn().mockReturnThis();
 
-      jest
-        .spyOn(postLikeservice, 'postToggleLike')
-        .mockResolvedValue(mockDataResult);
+      jest.spyOn(cardPostsRepository, 'findOne').mockResolvedValue(postIdx);
+      jest.spyOn(postLikesRepository, 'findOne').mockResolvedValue(postIdx);
+      jest.spyOn(postLikesRepository, 'createQueryBuilder').mockReturnValue({
+        delete: deleteMock,
+        from: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        execute: jest.fn().mockResolvedValue(undefined),
+        getRawOne: jest.fn().mockResolvedValue(undefined),
+      });
 
       const testMethod = await postLikeservice.postToggleLike(userIdx, postIdx);
 
       expect(testMethod).toEqual(mockDataResult);
-      expect(postLikeservice.postToggleLike).toHaveBeenCalledWith(
-        userIdx,
-        postIdx,
-      );
+      expect(deleteMock).toHaveBeenCalled();
     });
   });
 });

@@ -10,8 +10,17 @@ import {
   SplitCardsDto,
 } from './dto/cardposts.dto';
 import { Users } from 'src/entities/Users.entity';
+import { Comments } from 'src/entities/Comments.entity';
+import { UploadsService } from 'src/uploads/uploads.service';
+import { BadRequestException } from '@nestjs/common';
 
-const mockChatEntity = {
+const mockUploadsService = () => ({
+  // 여기에 UploadsService의 메소드를 추가하세요. 예를 들어:
+  uploadFile: jest.fn(),
+  downloadFile: jest.fn(),
+});
+
+const mockCardPostsEntity = () => ({
   findUser: jest.fn(),
   findSplitCards: jest.fn(),
   findOnePost: jest.fn(),
@@ -21,16 +30,50 @@ const mockChatEntity = {
   updatePost: jest.fn(),
   deletePost: jest.fn(),
   findImg: jest.fn(),
-};
+  findOne: jest.fn(),
+  createQueryBuilder: jest.fn().mockImplementation(() => ({})),
+});
+
+type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 describe('CardpostsService', () => {
   let cardpostsService: CardpostsService;
+  let cardPostsRepository: MockRepository<CardPosts>;
+  let usersRepository: MockRepository<Users>;
+  let commentsRepository: MockRepository<Comments>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [{ provide: CardpostsService, useValue: mockChatEntity }],
+      providers: [
+        CardpostsService,
+        {
+          provide: getRepositoryToken(CardPosts),
+          useValue: mockCardPostsEntity(),
+        },
+        {
+          provide: getRepositoryToken(Users),
+          useValue: mockCardPostsEntity(),
+        },
+        {
+          provide: getRepositoryToken(Comments),
+          useValue: mockCardPostsEntity(),
+        },
+        {
+          provide: UploadsService,
+          useValue: mockUploadsService(),
+        },
+      ],
     }).compile();
 
     cardpostsService = module.get<CardpostsService>(CardpostsService);
+    cardPostsRepository = module.get<MockRepository<CardPosts>>(
+      getRepositoryToken(CardPosts),
+    );
+    usersRepository = module.get<MockRepository<Users>>(
+      getRepositoryToken(Users),
+    );
+    commentsRepository = module.get<MockRepository<Comments>>(
+      getRepositoryToken(Comments),
+    );
   });
 
   it('should be defined', () => {
@@ -38,8 +81,17 @@ describe('CardpostsService', () => {
   });
 
   describe('findSplitCards', () => {
-    it('findSplitCards', async () => {
-      const splitCardsDto: SplitCardsDto = new SplitCardsDto();
+    it('페이지 네이션으로 작동합니다.', async () => {
+      const mockInput = {
+        maincategory: '진지',
+        category: '스포츠',
+        splitNumber: 1,
+        splitPageNumber: 1,
+      };
+
+      const mockDto = new SplitCardsDto();
+
+      Object.assign(mockDto, mockInput);
 
       const mockDataResult: object[] = [
         {
@@ -58,20 +110,74 @@ describe('CardpostsService', () => {
       ];
 
       jest
-        .spyOn(cardpostsService, 'findSplitCards')
-        .mockResolvedValue(mockDataResult);
+        .spyOn(cardPostsRepository, 'createQueryBuilder')
+        .mockImplementationOnce(() => {
+          const qb: any = {
+            leftJoin: jest.fn().mockReturnThis(),
+            orderBy: jest.fn().mockReturnThis(),
+            groupBy: jest.fn().mockReturnThis(),
+            where: jest.fn().mockReturnThis(),
+            andWhere: jest.fn().mockReturnThis(),
+            limit: jest.fn().mockReturnThis(),
+            offset: jest.fn().mockReturnThis(),
+            select: jest.fn().mockReturnThis(),
+            getRawMany: jest.fn().mockResolvedValue(mockDataResult),
+          };
+          return qb;
+        });
 
-      const testMethod = await cardpostsService.findSplitCards(splitCardsDto);
+      const testMethod = await cardpostsService.findSplitCards(mockDto);
 
       expect(testMethod).toEqual(mockDataResult);
-      expect(cardpostsService.findSplitCards).toHaveBeenCalledWith(
-        splitCardsDto,
-      );
+    });
+
+    it('핫 훈수 카드로 작동합니다.', async () => {
+      const mockInput = {};
+
+      const mockDto = new SplitCardsDto();
+
+      Object.assign(mockDto, mockInput);
+
+      const mockDataResult: object[] = [
+        {
+          postIdx: '21c01d77-e275-4eea-bc97-209cb980415a',
+          maincategory: '21c01d77-e275-4eea-bc97-209cb980415a',
+          category: '21c01d77-e275-4eea-bc97-209cb980415a',
+          title: '21c01d77-e275-4eea-bc97-209cb980415a',
+          desc: '21c01d77-e275-4eea-bc97-209cb980415a',
+          nickname: '21c01d77-e275-4eea-bc97-209cb980415a',
+          createdAt: new Date(),
+          postViewCount: 1,
+          isImg: 1,
+          commentCount: '0',
+          likesCount: '1',
+        },
+      ];
+
+      jest
+        .spyOn(cardPostsRepository, 'createQueryBuilder')
+        .mockImplementationOnce(() => {
+          const qb: any = {
+            leftJoin: jest.fn().mockReturnThis(),
+            groupBy: jest.fn().mockReturnThis(),
+            select: jest.fn().mockReturnThis(),
+            addSelect: jest.fn().mockReturnThis(),
+            andWhere: jest.fn().mockReturnThis(),
+            orderBy: jest.fn().mockReturnThis(),
+            limit: jest.fn().mockReturnThis(),
+            getRawMany: jest.fn().mockResolvedValue(mockDataResult),
+          };
+          return qb;
+        });
+
+      const testMethod = await cardpostsService.findSplitCards(mockDto);
+
+      expect(testMethod).toEqual(mockDataResult);
     });
   });
 
   describe('findUser', () => {
-    it('findUser', async () => {
+    it('email로 유저의 userIdx를 찾습니다.', async () => {
       const email = '21c01d77-e275-4eea-bc97-209cb980415a';
 
       const mockDataResult = {
@@ -90,59 +196,95 @@ describe('CardpostsService', () => {
       const mockUser = new Users();
       Object.assign(mockUser, mockDataResult);
 
-      jest.spyOn(cardpostsService, 'findUser').mockResolvedValue(mockUser);
+      jest.spyOn(usersRepository, 'findOne').mockResolvedValue(mockUser);
 
       const testMethod = await cardpostsService.findUser(email);
 
       expect(testMethod).toEqual(mockDataResult);
-      expect(cardpostsService.findUser).toHaveBeenCalledWith(email);
     });
   });
 
   describe('findOnePost', () => {
-    it('findOnePost', async () => {
+    it('로그인한 유저라면 포스트에 좋아요를 했는지 봅니다.', async () => {
       const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
       const posetIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
       const mockDataResult = new CardPostWithIsLike();
 
       jest
-        .spyOn(cardpostsService, 'findOnePost')
-        .mockResolvedValue(mockDataResult);
+        .spyOn(cardPostsRepository, 'createQueryBuilder')
+        .mockImplementationOnce(() => {
+          const qb: any = {
+            where: jest.fn().mockReturnThis(),
+            leftJoin: jest.fn().mockReturnThis(),
+            groupBy: jest.fn().mockReturnThis(),
+            select: jest.fn().mockReturnThis(),
+            addSelect: jest.fn().mockReturnThis(),
+            setParameter: jest.fn().mockReturnThis(),
+            getRawOne: jest.fn().mockResolvedValue(mockDataResult),
+          };
+          return qb;
+        });
 
       const testMethod = await cardpostsService.findOnePost(userIdx, posetIdx);
 
       expect(testMethod).toEqual(mockDataResult);
-      expect(cardpostsService.findOnePost).toHaveBeenCalledWith(
-        userIdx,
-        posetIdx,
-      );
+    });
+
+    it('지정한 카드를 불러들입니다.', async () => {
+      const userIdx = null;
+      const posetIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+      const mockDataResult = new CardPostWithIsLike();
+
+      jest
+        .spyOn(cardPostsRepository, 'createQueryBuilder')
+        .mockImplementationOnce(() => {
+          const qb: any = {
+            where: jest.fn().mockReturnThis(),
+            leftJoin: jest.fn().mockReturnThis(),
+            groupBy: jest.fn().mockReturnThis(),
+            select: jest.fn().mockReturnThis(),
+            addSelect: jest.fn().mockReturnThis(),
+            getRawOne: jest.fn().mockResolvedValue(mockDataResult),
+          };
+          return qb;
+        });
+
+      const testMethod = await cardpostsService.findOnePost(userIdx, posetIdx);
+
+      expect(testMethod).toEqual(mockDataResult);
     });
   });
 
   describe('findOnePostContents', () => {
-    it('findOnePostContents', async () => {
+    it('지정한 카드의 Content를 가져옵니다.', async () => {
       const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
       const posetIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
       const mockDataResult = new CardPostWithContents();
 
       jest
-        .spyOn(cardpostsService, 'findOnePostContents')
-        .mockResolvedValue(mockDataResult);
+        .spyOn(cardPostsRepository, 'createQueryBuilder')
+        .mockImplementationOnce(() => {
+          const qb: any = {
+            where: jest.fn().mockReturnThis(),
+            leftJoin: jest.fn().mockReturnThis(),
+            setParameters: jest.fn().mockReturnThis(),
+            groupBy: jest.fn().mockReturnThis(),
+            select: jest.fn().mockReturnThis(),
+            getRawOne: jest.fn().mockResolvedValue(mockDataResult),
+          };
+          return qb;
+        });
 
       const testMethod = await cardpostsService.findOnePostContents(
         userIdx,
         posetIdx,
       );
       expect(testMethod).toEqual(mockDataResult);
-      expect(cardpostsService.findOnePostContents).toHaveBeenCalledWith(
-        userIdx,
-        posetIdx,
-      );
     });
   });
 
   describe('findOnePostCategorys', () => {
-    it('findOnePostCategorys', async () => {
+    it('지정한 카드의 Category를 가져옵니다.', async () => {
       const posetIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
 
       const mockDataResult = {
@@ -165,102 +307,165 @@ describe('CardpostsService', () => {
       Object.assign(mockCardpost, mockDataResult);
 
       jest
-        .spyOn(cardpostsService, 'findOnePostCategorys')
+        .spyOn(cardPostsRepository, 'findOne')
         .mockResolvedValue(mockCardpost);
+
       const testMethod = await cardpostsService.findOnePostCategorys(posetIdx);
       expect(testMethod).toEqual(mockDataResult);
-      expect(cardpostsService.findOnePostCategorys).toHaveBeenCalledWith(
-        posetIdx,
-      );
     });
   });
 
-  describe('postCard', () => {
-    it('postCard', async () => {
-      const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-      const createCardDto = new CreateCardDto();
-      const mockDataResult = new CardPosts();
-      const files = [];
+  // describe('postCard', () => {
+  //   it('카드를 생성합니다.', async () => {
+  //     const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+  //     const createCardDto = new CreateCardDto();
+  //     const mockDataResult = new CardPosts();
+  //     const files = [];
 
-      jest
-        .spyOn(cardpostsService, 'postCard')
-        .mockResolvedValue(mockDataResult);
-      const testMethod = await cardpostsService.postCard(
-        userIdx,
-        createCardDto,
-        files,
-      );
-      expect(testMethod).toEqual(mockDataResult);
-      expect(cardpostsService.postCard).toHaveBeenCalledWith(
-        userIdx,
-        createCardDto,
-        files,
-      );
-    });
-  });
+  //     jest
+  //       .spyOn(cardpostsService, 'postCard')
+  //       .mockResolvedValue(mockDataResult);
 
-  describe('updatePost', () => {
-    it('updatePost', async () => {
-      const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-      const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-      const files = [];
-      const createCardDto = new CreateCardDto();
-      const mockDataResult: Promise<UpdateResult> = Promise.resolve({
-        raw: [],
-        affected: 1,
-        generatedMaps: [],
-      });
+  //     const testMethod = await cardpostsService.postCard(
+  //       userIdx,
+  //       createCardDto,
+  //       files,
+  //     );
 
-      jest
-        .spyOn(cardpostsService, 'updatePost')
-        .mockResolvedValue(mockDataResult);
+  //     expect(testMethod).toEqual(mockDataResult);
+  //   });
+  //   // it('카드를 생성합니다.', async () => {
+  //   //   const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+  //   //   const createCardDto = new CreateCardDto();
+  //   //   const mockDataResult = new CardPosts();
+  //   //   const files = [];
 
-      const testMethod = await cardpostsService.updatePost(
-        userIdx,
-        postIdx,
-        createCardDto,
-        files,
-      );
+  //   //   jest
+  //   //     .spyOn(cardpostsService, 'postCard')
+  //   //     .mockResolvedValue(mockDataResult);
 
-      expect(testMethod).toEqual(await mockDataResult);
-      expect(cardpostsService.updatePost).toHaveBeenCalledWith(
-        userIdx,
-        postIdx,
-        createCardDto,
-        files,
-      );
-    });
-  });
+  //   //   const testMethod = await cardpostsService.postCard(
+  //   //     userIdx,
+  //   //     createCardDto,
+  //   //     files,
+  //   //   );
+
+  //   //   expect(testMethod).toEqual(mockDataResult);
+  //   // });
+  // });
+
+  // describe('updatePost', () => {
+  //   it('updatePost', async () => {
+  //     const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+  //     const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+  //     const files = [];
+  //     const createCardDto = new CreateCardDto();
+  //     const mockDataResult: Promise<UpdateResult> = Promise.resolve({
+  //       raw: [],
+  //       affected: 1,
+  //       generatedMaps: [],
+  //     });
+
+  //     jest
+  //       .spyOn(cardpostsService, 'updatePost')
+  //       .mockResolvedValue(mockDataResult);
+
+  //     const testMethod = await cardpostsService.updatePost(
+  //       userIdx,
+  //       postIdx,
+  //       createCardDto,
+  //       files,
+  //     );
+
+  //     expect(testMethod).toEqual(await mockDataResult);
+  //     expect(cardpostsService.updatePost).toHaveBeenCalledWith(
+  //       userIdx,
+  //       postIdx,
+  //       createCardDto,
+  //       files,
+  //     );
+  //   });
+  // });
 
   describe('deletePost', () => {
-    it('deletePost', async () => {
+    it('해당 게시글이 존재하지 않습니다.', async () => {
       const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
       const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
 
-      const mockDataResult = undefined;
+      jest.spyOn(cardPostsRepository, 'findOne').mockResolvedValue(null);
+      try {
+        await cardpostsService.deletePost(userIdx, postIdx);
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toEqual('해당 게시글이 존재하지 않습니다.');
+      }
+    });
+
+    it('해당 게시글 삭제 권한이 없습니다.', async () => {
+      const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+      const ortheruserIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+      const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
 
       jest
-        .spyOn(cardpostsService, 'deletePost')
-        .mockResolvedValueOnce(mockDataResult);
+        .spyOn(cardPostsRepository, 'findOne')
+        .mockResolvedValue(ortheruserIdx);
+      try {
+        await cardpostsService.deletePost(userIdx, postIdx);
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toEqual('해당 게시글 삭제 권한이 없습니다.');
+      }
+    });
+
+    it('카드를 삭제합니다.', async () => {
+      const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+      const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+      const mockobject = {
+        userIdx: '21c01d77-e275-4eea-bc97-209cb980415a',
+        postIdx: '21c01d77-e275-4eea-bc97-209cb980415a',
+      };
+      const mockCardpost = new CardPosts();
+      Object.assign(mockCardpost, mockobject);
+
+      const mockDataResult = undefined;
+      jest
+        .spyOn(cardPostsRepository, 'findOne')
+        .mockResolvedValue(mockCardpost);
+      jest
+        .spyOn(cardPostsRepository, 'createQueryBuilder')
+        .mockImplementationOnce(() => {
+          const qb: any = {
+            delete: jest.fn().mockReturnThis(),
+            from: jest.fn().mockReturnThis(),
+            where: jest.fn().mockReturnThis(),
+            execute: jest.fn().mockResolvedValue(undefined),
+          };
+          return qb;
+        });
+
       const testMethod = await cardpostsService.deletePost(userIdx, postIdx);
+
       expect(testMethod).toEqual(mockDataResult);
-      expect(cardpostsService.deletePost).toHaveBeenCalledWith(
-        userIdx,
-        postIdx,
-      );
     });
   });
 
   describe('findImg', () => {
-    it('findImg', async () => {
+    it('지정 카드의 Img 배열을 가져옵니다.', async () => {
       const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
       const mockDataResult = ['string'];
+      const mockEntitiy = new CardPosts();
+      const mockobject = {
+        postIdx: '21c01d77-e275-4eea-bc97-209cb980415a',
+        imgUrl: mockDataResult.join(','),
+      };
 
-      jest.spyOn(cardpostsService, 'findImg').mockResolvedValue(mockDataResult);
+      Object.assign(mockEntitiy, mockobject);
+
+      jest.spyOn(cardPostsRepository, 'findOne').mockResolvedValue(mockEntitiy);
+
       const testMethod = await cardpostsService.findImg(postIdx);
 
       expect(testMethod).toEqual(mockDataResult);
-      expect(cardpostsService.findImg).toHaveBeenCalledWith(postIdx);
     });
   });
 });
