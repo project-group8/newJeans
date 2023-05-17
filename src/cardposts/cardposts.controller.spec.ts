@@ -12,6 +12,8 @@ import {
   CreateCardDto,
   SplitCardsDto,
 } from './dto/cardposts.dto';
+import { CardPosts } from 'src/entities/CardPosts.entity';
+import { UpdateResult } from 'typeorm';
 
 const mockCardPostsController = {
   findSplitCards: jest.fn(),
@@ -55,35 +57,20 @@ describe('CardpostsController', () => {
   });
 
   describe('findSplitCards', () => {
-    it('should return 201 response code', async () => {
-      const req: any = {}; // Mock request object
-      const res: any = {
-        statusCode: null,
-        end: jest.fn(),
-      };
-      const next = jest.fn();
-
-      jest
-        .spyOn(cardPostscontroller, 'findSplitCards')
-        .mockResolvedValue(undefined);
-
-      await cardPostscontroller.findSplitCards(req);
-
-      expect(res.statusCode).toBe(201);
-      expect(res.end).toHaveBeenCalled();
-    });
-
-    it('findSplitCards', async () => {
+    it('페이지 네이션 기능.', async () => {
       const result: { postCards: object[] } = { postCards: [] };
       jest
-        .spyOn(cardPostscontroller, 'findSplitCards')
-        .mockImplementation(() => Promise.resolve(result));
+        .spyOn(cardpostsService, 'findSplitCards')
+        .mockResolvedValue(result.postCards);
+      jest
+        .spyOn(cardPostCreateValidPipe, 'transform')
+        .mockImplementation((value) => value);
 
       expect(
         await cardPostscontroller.findSplitCards(new SplitCardsDto()),
       ).toEqual(result);
     });
-    it('should have a object', () => {
+    it('object타입을 확인합니다.', () => {
       expect(
         typeof cardPostscontroller.findSplitCards(new SplitCardsDto()),
       ).toBe('object');
@@ -91,11 +78,9 @@ describe('CardpostsController', () => {
   });
 
   describe('findHotCards', () => {
-    it('findHotCards', async () => {
+    it('인기게시글 조회 기능.', async () => {
       const result: object[] = [];
-      jest
-        .spyOn(cardpostsService, 'findSplitCards')
-        .mockImplementation(() => Promise.resolve(result));
+      jest.spyOn(cardpostsService, 'findSplitCards').mockResolvedValue(result);
 
       expect(
         await cardPostscontroller.findHotCards(new SplitCardsDto()),
@@ -104,7 +89,7 @@ describe('CardpostsController', () => {
   });
 
   describe('findOnePost', () => {
-    it('findOnePost', async () => {
+    it('상세페이지 조회', async () => {
       const result: { post: CardPostWithIsLike } = {
         post: new CardPostWithIsLike(),
       };
@@ -112,8 +97,8 @@ describe('CardpostsController', () => {
       const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
 
       jest
-        .spyOn(cardPostscontroller, 'findOnePost')
-        .mockImplementation(() => Promise.resolve(result));
+        .spyOn(cardpostsService, 'findOnePost')
+        .mockResolvedValue(new CardPostWithIsLike());
 
       expect(
         await cardPostscontroller.findOnePost(jwtPayload, postIdx),
@@ -122,7 +107,7 @@ describe('CardpostsController', () => {
   });
 
   describe('findOnePostContents', () => {
-    it('findOnePostContents', async () => {
+    it('상세페이지 Contents 조회', async () => {
       const result: { contents: CardPostWithContents } = {
         contents: new CardPostWithContents(),
       };
@@ -130,8 +115,8 @@ describe('CardpostsController', () => {
       const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
 
       jest
-        .spyOn(cardPostscontroller, 'findOnePostContents')
-        .mockImplementation(() => Promise.resolve(result));
+        .spyOn(cardpostsService, 'findOnePostContents')
+        .mockResolvedValue(new CardPostWithContents());
 
       expect(
         await cardPostscontroller.findOnePostContents(jwtPayload, postIdx),
@@ -140,13 +125,13 @@ describe('CardpostsController', () => {
   });
 
   describe('findOnePostCategorys', () => {
-    it('findOnePostCategorys', async () => {
+    it('상세페이지 Category 조회', async () => {
       const result = {};
       const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
 
       jest
-        .spyOn(cardPostscontroller, 'findOnePostCategorys')
-        .mockImplementation(() => Promise.resolve(result));
+        .spyOn(cardpostsService, 'findOnePostCategorys')
+        .mockResolvedValue(new Object());
 
       expect(await cardPostscontroller.findOnePostCategorys(postIdx)).toEqual(
         result,
@@ -155,7 +140,7 @@ describe('CardpostsController', () => {
   });
 
   describe('postCard', () => {
-    it('postCard', async () => {
+    it('게시글 작성하기', async () => {
       const result = { msg: '포스트 작성에 성공했습니다.' };
       const jwtPayload = {
         sub: '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`,
@@ -164,8 +149,8 @@ describe('CardpostsController', () => {
       const files = [];
 
       jest
-        .spyOn(cardPostscontroller, 'postCard')
-        .mockImplementation(() => Promise.resolve(result));
+        .spyOn(cardpostsService, 'postCard')
+        .mockResolvedValue(new CardPosts());
 
       expect(
         await cardPostscontroller.postCard(files, jwtPayload, createCardDto),
@@ -174,7 +159,7 @@ describe('CardpostsController', () => {
   });
 
   describe('updatePost', () => {
-    it('updatePost', async () => {
+    it('게시글 수정하기', async () => {
       const result = { msg: '게시글 수정에 성공했습니다.' };
       const jwtPayload = {
         sub: '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`,
@@ -184,8 +169,8 @@ describe('CardpostsController', () => {
       const files = [];
 
       jest
-        .spyOn(cardPostscontroller, 'updatePost')
-        .mockImplementation(() => Promise.resolve(result));
+        .spyOn(cardpostsService, 'updatePost')
+        .mockResolvedValue(new UpdateResult());
 
       expect(
         await cardPostscontroller.updatePost(
@@ -199,20 +184,31 @@ describe('CardpostsController', () => {
   });
 
   describe('deletePost', () => {
-    it('deletePost', async () => {
+    it('게시글 삭제', async () => {
       const result = { msg: '게시글 삭제에 성공했습니다.' };
       const jwtPayload = {
         sub: '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`,
       };
       const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
 
-      jest
-        .spyOn(cardPostscontroller, 'deletePost')
-        .mockImplementation(() => Promise.resolve(result));
+      jest.spyOn(cardpostsService, 'deletePost').mockResolvedValue(undefined);
 
       expect(await cardPostscontroller.deletePost(jwtPayload, postIdx)).toEqual(
         result,
       );
+    });
+  });
+
+  describe('ImgArray', () => {
+    it('지정 카드의 Img 배열을 가져옵니다.', async () => {
+      const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+      const mockResult: string[] = ['newString'];
+
+      jest.spyOn(cardpostsService, 'findImg').mockResolvedValue(mockResult);
+
+      expect(await cardPostscontroller.findImg(postIdx)).toEqual({
+        imgs: mockResult,
+      });
     });
   });
 });

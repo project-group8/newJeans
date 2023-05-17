@@ -45,7 +45,7 @@ export class ChatController {
     const enterUserChat: object[] = await this.chatService.chatRooms(
       enterUserChatDto,
     );
-    console.log(enterUserChat);
+
     return { result: enterUserChat };
   }
 
