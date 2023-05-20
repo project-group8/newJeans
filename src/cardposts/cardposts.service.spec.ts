@@ -32,6 +32,7 @@ const mockCardPostsEntity = () => ({
   findImg: jest.fn(),
   findOne: jest.fn(),
   createQueryBuilder: jest.fn().mockImplementation(() => ({})),
+  save: jest.fn(),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
@@ -315,44 +316,42 @@ describe('CardpostsService', () => {
     });
   });
 
-  // describe('postCard', () => {
-  //   it('카드를 생성합니다.', async () => {
-  //     const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-  //     const createCardDto = new CreateCardDto();
-  //     const mockDataResult = new CardPosts();
-  //     const files = [];
+  describe('postCard', () => {
+    it('카드를 생성합니다.', async () => {
+      const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+      const createCardDto = new CreateCardDto();
+      const mockDataResult = new CardPosts();
+      const files = null;
 
-  //     jest
-  //       .spyOn(cardpostsService, 'postCard')
-  //       .mockResolvedValue(mockDataResult);
+      jest.spyOn(cardPostsRepository, 'save').mockResolvedValue(undefined);
 
-  //     const testMethod = await cardpostsService.postCard(
-  //       userIdx,
-  //       createCardDto,
-  //       files,
-  //     );
+      const testMethod = await cardpostsService.postCard(
+        userIdx,
+        createCardDto,
+        files,
+      );
 
-  //     expect(testMethod).toEqual(mockDataResult);
-  //   });
-  //   // it('카드를 생성합니다.', async () => {
-  //   //   const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-  //   //   const createCardDto = new CreateCardDto();
-  //   //   const mockDataResult = new CardPosts();
-  //   //   const files = [];
+      expect(testMethod).toEqual(mockDataResult);
+    });
+    // it('카드를 생성합니다.', async () => {
+    //   const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+    //   const createCardDto = new CreateCardDto();
+    //   const mockDataResult = new CardPosts();
+    //   const files = [];
 
-  //   //   jest
-  //   //     .spyOn(cardpostsService, 'postCard')
-  //   //     .mockResolvedValue(mockDataResult);
+    //   jest
+    //     .spyOn(cardpostsService, 'postCard')
+    //     .mockResolvedValue(mockDataResult);
 
-  //   //   const testMethod = await cardpostsService.postCard(
-  //   //     userIdx,
-  //   //     createCardDto,
-  //   //     files,
-  //   //   );
+    //   const testMethod = await cardpostsService.postCard(
+    //     userIdx,
+    //     createCardDto,
+    //     files,
+    //   );
 
-  //   //   expect(testMethod).toEqual(mockDataResult);
-  //   // });
-  // });
+    //   expect(testMethod).toEqual(mockDataResult);
+    // });
+  });
 
   // describe('updatePost', () => {
   //   it('updatePost', async () => {
