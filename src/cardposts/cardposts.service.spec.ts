@@ -13,9 +13,11 @@ import { Users } from 'src/entities/Users.entity';
 import { Comments } from 'src/entities/Comments.entity';
 import { UploadsService } from 'src/uploads/uploads.service';
 import { BadRequestException } from '@nestjs/common';
+import { OpenAIApi } from 'openai';
 
 const mockUploadsService = () => ({
   // 여기에 UploadsService의 메소드를 추가하세요. 예를 들어:
+  uploadFileToS3: jest.fn().mockResolvedValue([]),
   uploadFile: jest.fn(),
   downloadFile: jest.fn(),
 });
@@ -32,7 +34,23 @@ const mockCardPostsEntity = () => ({
   findImg: jest.fn(),
   findOne: jest.fn(),
   createQueryBuilder: jest.fn().mockImplementation(() => ({})),
-  save: jest.fn(),
+  save: jest.fn().mockResolvedValue(new Comments()),
+});
+
+const mockOpenAIService = () => ({
+  generateText: jest.fn().mockResolvedValue({}),
+  createCompletion: jest.fn().mockImplementation(() => {
+    console.log('createCompletion mock triggered');
+    return Promise.resolve({
+      data: {
+        choices: [
+          {
+            text: 'Mocked AI response',
+          },
+        ],
+      },
+    });
+  }),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
@@ -41,6 +59,8 @@ describe('CardpostsService', () => {
   let cardPostsRepository: MockRepository<CardPosts>;
   let usersRepository: MockRepository<Users>;
   let commentsRepository: MockRepository<Comments>;
+  let uploadsService: UploadsService;
+  let openAIService: OpenAIApi;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -62,6 +82,10 @@ describe('CardpostsService', () => {
           provide: UploadsService,
           useValue: mockUploadsService(),
         },
+        {
+          provide: OpenAIApi,
+          useValue: mockOpenAIService(),
+        },
       ],
     }).compile();
 
@@ -75,6 +99,8 @@ describe('CardpostsService', () => {
     commentsRepository = module.get<MockRepository<Comments>>(
       getRepositoryToken(Comments),
     );
+    uploadsService = module.get<UploadsService>(UploadsService);
+    openAIService = module.get<OpenAIApi>(OpenAIApi);
   });
 
   it('should be defined', () => {
@@ -317,41 +343,85 @@ describe('CardpostsService', () => {
   });
 
   describe('postCard', () => {
-    it('카드를 생성합니다.', async () => {
-      const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-      const createCardDto = new CreateCardDto();
-      const mockDataResult = new CardPosts();
-      const files = null;
+    it('should save a new card post and return it', async () => {
+      // Arrange
+      const mockUUID =
+        '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`;
+      const mockCreateCardDto: CreateCardDto = new CreateCardDto();
+      const mockFile: Express.Multer.File[] = []; // Update this with a real mock file if required
+      const mockCardPosts: CardPosts = new CardPosts();
 
-      jest.spyOn(cardPostsRepository, 'save').mockResolvedValue(undefined);
+      jest.spyOn(uploadsService, 'uploadFileToS3').mockResolvedValue([]);
+      jest
+        .spyOn(openAIService, 'createCompletion')
+        .mockResolvedValue(Promise.resolve(undefined));
+      jest.spyOn(cardPostsRepository, 'save').mockResolvedValue(mockCardPosts);
 
-      const testMethod = await cardpostsService.postCard(
-        userIdx,
-        createCardDto,
-        files,
+      // Here you should mock the openAI call, but for this example it is skipped.
+
+      // Act
+      const result = await cardpostsService.postCard(
+        mockUUID,
+        mockCreateCardDto,
+        mockFile,
       );
 
-      expect(testMethod).toEqual(mockDataResult);
+      // Assert
+      expect(cardPostsRepository.save).toHaveBeenCalledWith({
+        userIdx: mockUUID,
+        maincategory: mockCreateCardDto.maincategory,
+        category: mockCreateCardDto.category,
+        title: mockCreateCardDto.title,
+        desc: mockCreateCardDto.desc,
+        tag: mockCreateCardDto.tag,
+        imgUrl: '', // This is because no files are passed
+        pollType: mockCreateCardDto.pollType,
+        pollTitle: mockCreateCardDto.pollTitle,
+      });
+
+      expect(result).toEqual(mockCardPosts);
     });
-    // it('카드를 생성합니다.', async () => {
-    //   const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-    //   const createCardDto = new CreateCardDto();
-    //   const mockDataResult = new CardPosts();
-    //   const files = [];
 
-    //   jest
-    //     .spyOn(cardpostsService, 'postCard')
-    //     .mockResolvedValue(mockDataResult);
-
-    //   const testMethod = await cardpostsService.postCard(
-    //     userIdx,
-    //     createCardDto,
-    //     files,
-    //   );
-
-    //   expect(testMethod).toEqual(mockDataResult);
-    // });
+    // You can add more tests here to test how the function behaves when there are files
+    // or how it behaves when an error occurs, etc.
   });
+
+  // describe('postCard', () => {
+  //   it('카드를 생성합니다.', async () => {
+  //     const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+  //     const createCardDto = new CreateCardDto();
+  //     const mockDataResult = new CardPosts();
+  //     const files = null;
+
+  //     jest.spyOn(cardPostsRepository, 'save').mockResolvedValue(undefined);
+
+  //     const testMethod = await cardpostsService.postCard(
+  //       userIdx,
+  //       createCardDto,
+  //       files,
+  //     );
+
+  //     expect(testMethod).toEqual(mockDataResult);
+  //   });
+  //   // it('카드를 생성합니다.', async () => {
+  //   //   const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
+  //   //   const createCardDto = new CreateCardDto();
+  //   //   const mockDataResult = new CardPosts();
+  //   //   const files = [];
+
+  //   //   jest
+  //   //     .spyOn(cardpostsService, 'postCard')
+  //   //     .mockResolvedValue(mockDataResult);
+
+  //   //   const testMethod = await cardpostsService.postCard(
+  //   //     userIdx,
+  //   //     createCardDto,
+  //   //     files,
+  //   //   );
+
+  //   //   expect(testMethod).toEqual(mockDataResult);
+  //   // });
+  // });
 
   // describe('updatePost', () => {
   //   it('updatePost', async () => {
