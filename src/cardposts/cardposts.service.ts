@@ -209,6 +209,19 @@ export class CardpostsService {
   }
 
   /**
+   * test : OpenAI 테스트입니다.
+   * @returns
+   */
+  getOpenAIApiInstance(): OpenAIApi {
+    const configuration = new Configuration({
+      organization: process.env.OPENAI_OG,
+      apiKey: process.env.OPENAI_APIKEY,
+    });
+
+    return new OpenAIApi(configuration);
+  }
+
+  /**
    * 6. 카드를 생성합니다.
    * @param createCardDto
    * @returns
@@ -228,12 +241,8 @@ export class CardpostsService {
       pollTitle,
     }: CreateCardDto = createCardDto;
     const test = title;
-    const configuration = new Configuration({
-      organization: process.env.OPENAI_OG,
-      apiKey: process.env.OPENAI_APIKEY,
-    });
 
-    const openai = new OpenAIApi(configuration);
+    const openai = this.getOpenAIApiInstance();
 
     const imageList = [];
     if (files) {
