@@ -13,9 +13,10 @@ import { Users } from 'src/entities/Users.entity';
 import { Comments } from 'src/entities/Comments.entity';
 import { UploadsService } from 'src/uploads/uploads.service';
 import { BadRequestException } from '@nestjs/common';
+import { OpenAIApi, Configuration } from 'openai';
 
 const mockUploadsService = () => ({
-  // 여기에 UploadsService의 메소드를 추가하세요. 예를 들어:
+  uploadFileToS3: jest.fn().mockResolvedValue([]),
   uploadFile: jest.fn(),
   downloadFile: jest.fn(),
 });
@@ -32,6 +33,32 @@ const mockCardPostsEntity = () => ({
   findImg: jest.fn(),
   findOne: jest.fn(),
   createQueryBuilder: jest.fn().mockImplementation(() => ({})),
+  save: jest.fn().mockResolvedValue(new Comments()),
+});
+
+jest.mock('openai', () => {
+  return {
+    OpenAIApi: jest.fn().mockImplementation(() => {
+      return {
+        createCompletion: jest.fn().mockImplementation(() => {
+          return Promise.resolve({
+            data: {
+              choices: [
+                {
+                  text: 'Mocked AI response',
+                },
+              ],
+            },
+          });
+        }),
+      };
+    }),
+    Configuration: jest.fn().mockImplementation(() => {
+      return {
+        // You may need to return some mock properties here if they are used in your code
+      };
+    }),
+  };
 });
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
@@ -40,6 +67,8 @@ describe('CardpostsService', () => {
   let cardPostsRepository: MockRepository<CardPosts>;
   let usersRepository: MockRepository<Users>;
   let commentsRepository: MockRepository<Comments>;
+  let uploadsService: UploadsService;
+  let openAIService: OpenAIApi;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -61,6 +90,7 @@ describe('CardpostsService', () => {
           provide: UploadsService,
           useValue: mockUploadsService(),
         },
+        OpenAIApi,
       ],
     }).compile();
 
@@ -74,6 +104,8 @@ describe('CardpostsService', () => {
     commentsRepository = module.get<MockRepository<Comments>>(
       getRepositoryToken(Comments),
     );
+    uploadsService = module.get<UploadsService>(UploadsService);
+    openAIService = module.get<OpenAIApi>(OpenAIApi);
   });
 
   it('should be defined', () => {
@@ -315,77 +347,124 @@ describe('CardpostsService', () => {
     });
   });
 
-  // describe('postCard', () => {
-  //   it('카드를 생성합니다.', async () => {
-  //     const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-  //     const createCardDto = new CreateCardDto();
-  //     const mockDataResult = new CardPosts();
-  //     const files = [];
+  describe('postCard', () => {
+    it('카드를 생성합니다.', async () => {
+      // Arrange
+      const mockUUID =
+        '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`;
+      const mockCreateCardDto: CreateCardDto = new CreateCardDto();
+      const mockFile: Express.Multer.File[] = []; // Update this with a real mock file if required
+      const mockCardPosts: CardPosts = new CardPosts();
 
-  //     jest
-  //       .spyOn(cardpostsService, 'postCard')
-  //       .mockResolvedValue(mockDataResult);
+      jest.spyOn(uploadsService, 'uploadFileToS3').mockResolvedValue([]);
 
-  //     const testMethod = await cardpostsService.postCard(
-  //       userIdx,
-  //       createCardDto,
-  //       files,
-  //     );
+      // Act
+      const result = await cardpostsService.postCard(
+        mockUUID,
+        mockCreateCardDto,
+        mockFile,
+      );
 
-  //     expect(testMethod).toEqual(mockDataResult);
-  //   });
-  //   // it('카드를 생성합니다.', async () => {
-  //   //   const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-  //   //   const createCardDto = new CreateCardDto();
-  //   //   const mockDataResult = new CardPosts();
-  //   //   const files = [];
+      // Assert
+      expect(cardPostsRepository.save).toHaveBeenCalledWith({
+        userIdx: mockUUID,
+        maincategory: mockCreateCardDto.maincategory,
+        category: mockCreateCardDto.category,
+        title: mockCreateCardDto.title,
+        desc: mockCreateCardDto.desc,
+        tag: mockCreateCardDto.tag,
+        imgUrl: '', // This is because no files are passed
+        pollType: mockCreateCardDto.pollType,
+        pollTitle: mockCreateCardDto.pollTitle,
+      });
 
-  //   //   jest
-  //   //     .spyOn(cardpostsService, 'postCard')
-  //   //     .mockResolvedValue(mockDataResult);
+      expect(result).toEqual(mockCardPosts);
+    });
+  });
 
-  //   //   const testMethod = await cardpostsService.postCard(
-  //   //     userIdx,
-  //   //     createCardDto,
-  //   //     files,
-  //   //   );
+  describe('updatePost', () => {
+    it('게시글을 수정하는데 해당 게시글이 존재하지 않습니다.', async () => {
+      // Arrange
+      const mockUUID =
+        '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`;
+      const mockpostIdx =
+        '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`;
+      const mockCreateCardDto: CreateCardDto = new CreateCardDto();
+      const mockFile: Express.Multer.File[] = []; // Update this with a real mock file if required
 
-  //   //   expect(testMethod).toEqual(mockDataResult);
-  //   // });
-  // });
+      jest.spyOn(cardPostsRepository, 'findOne').mockResolvedValue(null);
 
-  // describe('updatePost', () => {
-  //   it('updatePost', async () => {
-  //     const userIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-  //     const postIdx = '21c01d77-e275-4eea-bc97-209cb980415a';
-  //     const files = [];
-  //     const createCardDto = new CreateCardDto();
-  //     const mockDataResult: Promise<UpdateResult> = Promise.resolve({
-  //       raw: [],
-  //       affected: 1,
-  //       generatedMaps: [],
-  //     });
+      try {
+        await cardpostsService.updatePost(
+          mockUUID,
+          mockpostIdx,
+          mockCreateCardDto,
+          mockFile,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toEqual('해당 게시글이 존재하지 않습니다.');
+      }
+      // Act
+    });
+    it('게시글을 수정하는데 해당 게시글이 수정 권한이 존재하지 않습니다.', async () => {
+      // Arrange
+      const mockUUID =
+        '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`;
+      const mockpostIdx =
+        '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`;
+      const mockCreateCardDto: CreateCardDto = new CreateCardDto();
+      const mockFile: Express.Multer.File[] = []; // Update this with a real mock file if required
 
-  //     jest
-  //       .spyOn(cardpostsService, 'updatePost')
-  //       .mockResolvedValue(mockDataResult);
+      jest
+        .spyOn(cardPostsRepository, 'findOne')
+        .mockResolvedValue(new CardPosts());
 
-  //     const testMethod = await cardpostsService.updatePost(
-  //       userIdx,
-  //       postIdx,
-  //       createCardDto,
-  //       files,
-  //     );
+      try {
+        await cardpostsService.updatePost(
+          mockUUID,
+          mockpostIdx,
+          mockCreateCardDto,
+          mockFile,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toEqual('해당 게시글 수정 권한이 없습니다.');
+      }
+      // Act
+    });
+    it('게시글을 수정합니다.', async () => {
+      // Arrange
+      const mockUUID =
+        '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`;
+      const mockpostIdx =
+        '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`;
+      const mockCreateCardDto: CreateCardDto = new CreateCardDto();
+      const mockFile: Express.Multer.File[] = []; // Update this with a real mock file if required
+      const mockCardPosts: CardPosts = new CardPosts();
 
-  //     expect(testMethod).toEqual(await mockDataResult);
-  //     expect(cardpostsService.updatePost).toHaveBeenCalledWith(
-  //       userIdx,
-  //       postIdx,
-  //       createCardDto,
-  //       files,
-  //     );
-  //   });
-  // });
+      jest
+        .spyOn(cardPostsRepository, 'findOne')
+        .mockResolvedValue({ ...new CardPosts(), userIdx: mockUUID });
+      jest.spyOn(uploadsService, 'uploadFileToS3').mockResolvedValue([]);
+      jest.spyOn(cardPostsRepository, 'createQueryBuilder').mockReturnValue({
+        update: jest.fn().mockReturnThis(),
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        execute: jest.fn().mockResolvedValue(mockCardPosts),
+      });
+
+      // Act
+      const result = await cardpostsService.updatePost(
+        mockUUID,
+        mockpostIdx,
+        mockCreateCardDto,
+        mockFile,
+      );
+
+      expect(result).toEqual(mockCardPosts);
+    });
+  });
 
   describe('deletePost', () => {
     it('해당 게시글이 존재하지 않습니다.', async () => {
