@@ -13,7 +13,7 @@ describe('AppController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.setGlobalPrefix('api'); // add this line
+    app.setGlobalPrefix('api'); // add this line1
     await app.init();
   });
 
