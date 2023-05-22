@@ -2,7 +2,7 @@ import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Redis from 'ioredis';
-import { CardPosts } from 'src/entities/CardPosts.entity';
+import { CardPosts } from '../entities/CardPosts.entity';
 import { Repository } from 'typeorm/repository/Repository';
 
 @Injectable()
@@ -10,8 +10,8 @@ export class SearchService {
   constructor(
     @InjectRepository(CardPosts)
     private readonly cardPostRepository: Repository<CardPosts>,
-    // private readonly redis: Redis,
-  ) {}
+  ) // private readonly redis: Redis,
+  {}
 
   async search(query: string): Promise<CardPosts[]> {
     const redisClient = new Redis();
@@ -26,12 +26,14 @@ export class SearchService {
     // 검색 결과를 데이터베이스에서 가져옴
     const results = await this.cardPostRepository
       .createQueryBuilder('post')
-      .where('post.title LIKE :query OR post.desc LIKE :query', { query: `%${query}%` })
+      .where('post.title LIKE :query OR post.desc LIKE :query', {
+        query: `%${query}%`,
+      })
       .getMany();
 
     // 검색 결과를 캐시에 저장
     await redisClient.set(cacheKey, JSON.stringify(results), 'EX', 600);
-    
+
     return results;
   }
 }
