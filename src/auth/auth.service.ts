@@ -6,15 +6,15 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UUID } from 'crypto';
-import { Tokens } from 'src/entities/Tokens.entity';
-import { Users } from 'src/entities/Users.entity';
+import { Tokens } from '../entities/Tokens.entity';
+import { Users } from '../entities/Users.entity';
 import { Repository } from 'typeorm';
 import { LoginRequestDto } from './dtos/login.request.dto';
 import * as bcrypt from 'bcrypt';
 import { KakaoRequestDto } from './dtos/kakao.request.dto';
 import axios from 'axios';
-import { SignupReqeustDto } from 'src/users/dtos/signup.dto';
-import { UsersService } from 'src/users/users.service';
+import { SignupReqeustDto } from '../users/dtos/signup.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {

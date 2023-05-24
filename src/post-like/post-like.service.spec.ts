@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PostLikeService } from './post-like.service';
 import { Repository } from 'typeorm';
-import { PostLikes } from 'src/entities/PostLikes.entity';
+import { PostLikes } from '../entities/PostLikes.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { CardPosts } from 'src/entities/CardPosts.entity';
+import { CardPosts } from '../entities/CardPosts.entity';
 import { BadRequestException } from '@nestjs/common';
 
 const mockPostLikeEntitiy = () => ({

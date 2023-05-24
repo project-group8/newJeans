@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CardpostsService } from './cardposts.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { CardPosts } from 'src/entities/CardPosts.entity';
+import { CardPosts } from '../entities/CardPosts.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import {
   CardPostWithContents,
@@ -9,9 +9,9 @@ import {
   CreateCardDto,
   SplitCardsDto,
 } from './dto/cardposts.dto';
-import { Users } from 'src/entities/Users.entity';
-import { Comments } from 'src/entities/Comments.entity';
-import { UploadsService } from 'src/uploads/uploads.service';
+import { Users } from '../entities/Users.entity';
+import { Comments } from '../entities/Comments.entity';
+import { UploadsService } from '../uploads/uploads.service';
 import { BadRequestException } from '@nestjs/common';
 import { OpenAIApi, Configuration } from 'openai';
 

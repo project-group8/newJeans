@@ -1,7 +1,7 @@
 import { Controller, HttpCode, Param, Put, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
-import { JwtPayload } from 'src/auth/jwt/jwt.payload.dto';
-import { GetPayload } from 'src/common/decorators/get.payload.decorator';
+import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
+import { JwtPayload } from '../auth/jwt/jwt.payload.dto';
+import { GetPayload } from '../common/decorators/get.payload.decorator';
 import { CommentLikeService } from './comment-like.service';
 import { UUID } from 'crypto';
 import { CommentLikeUpdateRequestDto } from './dtos/commentLIke.update.dto';
@@ -19,11 +19,13 @@ export class CommentLikeController {
     @GetPayload() payload: JwtPayload,
   ) {
     const commentLikeUpdateRequestDto = new CommentLikeUpdateRequestDto();
-    
+
     commentLikeUpdateRequestDto.userIdx = payload.sub;
     commentLikeUpdateRequestDto.postIdx = postIdx;
-    commentLikeUpdateRequestDto.commentIdx = commentIdx
+    commentLikeUpdateRequestDto.commentIdx = commentIdx;
 
-    return await this.commentLikeService.updateCommentLike(commentLikeUpdateRequestDto);
+    return await this.commentLikeService.updateCommentLike(
+      commentLikeUpdateRequestDto,
+    );
   }
 }

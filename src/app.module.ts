@@ -8,15 +8,15 @@ import { PostLikeModule } from './post-like/post-like.module';
 import { UsersModule } from './users/users.module';
 import { ChatModule } from './chat/chat.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Users } from 'src/entities/Users.entity';
-import { CardPosts } from 'src/entities/CardPosts.entity';
-import { Chats } from 'src/entities/Chats.entity';
-import { ChatSaves } from 'src/entities/ChatSaves.entity';
-import { CommentLikes } from 'src/entities/CommentLikes.entity';
-import { Comments } from 'src/entities/Comments.entity';
-import { PostLikes } from 'src/entities/PostLikes.entity';
-import { Prefers } from 'src/entities/Prefers.entity';
-import { ReplyComments } from 'src/entities/ReplyComments.entity';
+import { Users } from './entities/Users.entity';
+import { CardPosts } from './entities/CardPosts.entity';
+import { Chats } from './entities/Chats.entity';
+import { ChatSaves } from './entities/ChatSaves.entity';
+import { CommentLikes } from './entities/CommentLikes.entity';
+import { Comments } from './entities/Comments.entity';
+import { PostLikes } from './entities/PostLikes.entity';
+import { Prefers } from './entities/Prefers.entity';
+import { ReplyComments } from './entities/ReplyComments.entity';
 import { Tokens } from './entities/Tokens.entity';
 import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
@@ -30,7 +30,6 @@ import { TestController } from './slack/slack-error-mesage-test';
 import { SocketIoModule } from './gateway/socket.module';
 import { CommentLikeModule } from './comment-like/comment-like.module';
 import { SearchModule } from './search/search.module';
-
 
 @Module({
   imports: [
