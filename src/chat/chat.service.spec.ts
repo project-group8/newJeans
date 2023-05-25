@@ -6,8 +6,8 @@ import {
   EnterUserChatDto,
 } from './dto/chat.dto';
 import { UUID } from 'crypto';
-import { ChatSaves } from 'src/entities/ChatSaves.entity';
-import { Chats } from 'src/entities/Chats.entity';
+import { ChatSaves } from '../entities/ChatSaves.entity';
+import { Chats } from '../entities/Chats.entity';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { BadRequestException } from '@nestjs/common';

@@ -7,8 +7,8 @@ import {
   EnterUserChatDto,
 } from './dto/chat.dto';
 import { ChatSplitValidPipe } from './pipes/chat.pipe';
-import { Chats } from 'src/entities/Chats.entity';
-import { ChatSaves } from 'src/entities/ChatSaves.entity';
+import { Chats } from '../entities/Chats.entity';
+import { ChatSaves } from '../entities/ChatSaves.entity';
 
 const mockChatController = {
   chatRooms: jest.fn(),

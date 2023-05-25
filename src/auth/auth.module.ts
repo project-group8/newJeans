@@ -4,10 +4,10 @@ import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { Users } from 'src/entities/Users.entity';
-import { Tokens } from 'src/entities/Tokens.entity';
-import mysqlDataSource from 'src/config/typeorm-cli.config';
-import { UsersModule } from 'src/users/users.module';
+import { Users } from '../entities/Users.entity';
+import { Tokens } from '../entities/Tokens.entity';
+import mysqlDataSource from '../config/typeorm-cli.config';
+import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { KakaoStrategy } from './kakao.strategy';
 

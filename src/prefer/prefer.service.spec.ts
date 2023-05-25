@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PreferService } from './prefer.service';
 import { Repository } from 'typeorm';
-import { Prefers } from 'src/entities/Prefers.entity';
+import { Prefers } from '../entities/Prefers.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { CardPosts } from 'src/entities/CardPosts.entity';
+import { CardPosts } from '../entities/CardPosts.entity';
 import { CreatePollDto } from './dto/prefer.dto';
 import { BadRequestException } from '@nestjs/common';
 

@@ -12,7 +12,7 @@ import {
   CreateCardDto,
   SplitCardsDto,
 } from './dto/cardposts.dto';
-import { CardPosts } from 'src/entities/CardPosts.entity';
+import { CardPosts } from '../entities/CardPosts.entity';
 import { UpdateResult } from 'typeorm';
 
 const mockCardPostsController = {
