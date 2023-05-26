@@ -2,14 +2,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import {
-  CreateCardDto,
-  SplitCardsDto,
-} from '../src/cardposts/dto/cardposts.dto';
 
+let useMock = true;
 jest.mock('../src/auth/jwt/jwt.guard', () => ({
-  JwtAuthGuard: jest.fn(() => ({
-    canActivate: jest.fn().mockReturnValue(true),
+  JwtAuthGuard: jest.fn().mockImplementation(() => ({
+    canActivate: jest.fn().mockImplementation((context) => {
+      if (useMock) {
+        const req = context.switchToHttp().getRequest();
+        req.user = {
+          sub: 'd87f78c5-7e86-44d7-a065-d994668d5e84' as `${string}-${string}-${string}-${string}-${string}`,
+        };
+        return true;
+      }
+    }),
   })),
 }));
 
@@ -62,7 +67,7 @@ describe('AppController (e2e)', () => {
     const fakePostIdx = '02dbb646-7eb0-49d0-8fe4-d1017e81b6b9';
     const response = await request(app.getHttpServer())
       .get(`/api/postCards/post/${fakePostIdx}`)
-      .set('Authorization', `Bearer ${fakeToken.sub}`) // assuming you're using bearer token authentication
+      // .set('Authorization', `Bearer ${fakeToken.sub}`) // assuming you're using bearer token authentication
       .expect(200);
 
     expect(response.body.post).toBeDefined();
@@ -91,29 +96,75 @@ describe('AppController (e2e)', () => {
     expect(response.body).toBeDefined();
   });
 
-  it('/api/postCards/post/createPost', async () => {
-    const fakeToken = {
-      sub: '3cffe849-7987-4369-b1d1-0961ee5efe82' as `${string}-${string}-${string}-${string}-${string}`,
-    };
+  it('/api/postCards/post/createPost', () => {
     const createCardDto = {
-      title: '안녕하세요 타이틀 입니다.',
-      maincategory: '진지',
-      category: '스포츠',
-      desc: '나는왜 desc를 만드는데 20글자가 필요한지 정말 모르겠다 그냥 아무렇게나 허용해 주면 안되나?',
-      pollType: '모름',
-      pollTitle: '왜 타이틀도 제한을 둔걸꺼?',
-      tag: null,
-      imgUrl: null,
+      title: 'Test Title',
+      maincategory: 'TestCategory',
+      category: 'SubCategory',
+      desc: 'Test Description',
+      pollType: 'Test Poll Type',
+      pollTitle: 'Test Poll Title',
+      tag: 'TestTag',
+      imgUrl: 'https://example.com/test.jpg',
+    };
+
+    const payload = {
+      sub: '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`,
     };
 
     return request(app.getHttpServer())
       .post('/api/postCards/post/createPost')
-      .set('Authorization', `Bearer ${fakeToken.sub}`)
-      .field('createCardDto', JSON.stringify(createCardDto))
+      .set('Authorization', `Bearer ${payload.sub}`)
       .attach('files', Buffer.from([]), 'filename.txt')
-      .expect(HttpStatus.CREATED)
-      .then((response) => {
-        expect(response.body.msg).toEqual('포스트 작성에 성공했습니다.');
-      });
+      .field(createCardDto)
+      .expect(201)
+      .expect({ msg: '포스트 작성에 성공했습니다.' });
+  });
+
+  it('/api/postCards/post/createPost/:postIdx', async () => {
+    const mockPostIdx = '02dbb646-7eb0-49d0-8fe4-d1017e81b6b9';
+    const payload = {
+      sub: '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`,
+    };
+    const createCardDto = {
+      title: 'Test Title',
+      maincategory: 'TestCategory',
+      category: 'SubCategory',
+      desc: 'Test Description',
+      pollType: 'Test Poll Type',
+      pollTitle: 'Test Poll Title',
+      tag: 'TestTag',
+      imgUrl: 'https://example.com/test.jpg',
+    };
+
+    return request(app.getHttpServer())
+      .put(`/api/postCards/post/createPost/${mockPostIdx}`)
+      .set('Authorization', `Bearer ${payload.sub}`)
+      .attach('files', Buffer.from([]), 'filename.txt')
+      .field(createCardDto)
+      .expect(200)
+      .expect({ msg: '게시글 수정에 성공했습니다.' });
+  });
+
+  it('/api/postCards/post/createPost/:postIdx', async () => {
+    const mockPostIdx = '02dbb646-7eb0-49d0-8fe4-d1017e81b6b9';
+    const payload = {
+      sub: '21c01d77-e275-4eea-bc97-209cb980415a' as `${string}-${string}-${string}-${string}-${string}`,
+    };
+
+    return request(app.getHttpServer())
+      .delete(`/api/postCards/post/createPost/${mockPostIdx}`)
+      .set('Authorization', `Bearer ${payload.sub}`)
+      .expect(200)
+      .expect({ msg: '게시글 삭제에 성공했습니다.' });
+  });
+
+  it('/api/postCards/post/imgs/:postIdx', async () => {
+    const mockPostIdx = '02dbb646-7eb0-49d0-8fe4-d1017e81b6b9';
+    const findImg: string[] = [];
+    return request(app.getHttpServer())
+      .get(`/api/postCards/post/imgs/${mockPostIdx}`)
+      .expect(200)
+      .expect({ imgs: findImg });
   });
 });
