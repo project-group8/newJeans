@@ -80,6 +80,7 @@ class ChatRepository {
     return result;
   };
 
+  // nest done
   findChatSave = async (chatSaveIdx) => {
     const findChat = await ChatSaves.findOne({
       where: { chatSaveIdx: chatSaveIdx },

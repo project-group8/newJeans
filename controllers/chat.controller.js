@@ -11,7 +11,7 @@ class ChatController {
   }
 
   /**
-   * 채팅방을 생성합니다.
+   * 채팅방을 생성합니다. // nest done
    *
    * @param {*} req
    * @param {*} res
@@ -104,6 +104,7 @@ class ChatController {
     }
   };
 
+  // nest done
   adminUser = async (req, res, next) => {
     const { roomName } = req.params;
 
@@ -119,6 +120,7 @@ class ChatController {
     return res.status(200).json({ nickname });
   };
 
+  // nest done
   findChatSave = async (req, res, next) => {
     const { chatSaveIdx } = req.params;
 
@@ -133,6 +135,7 @@ class ChatController {
     return res.status(200).json({ saveData });
   };
 
+  // nest done
   chatSave = async (req, res, next) => {
     const { saveDataChat } = req.body;
 
@@ -145,6 +148,7 @@ class ChatController {
     return res.status(200).json({ msg: "데이터 저장에 성공했습니다." });
   };
 
+  // nest done
   doneChat = async (req, res, next) => {
     const allchatroom = await this.chatService.doneChat();
 
