@@ -288,45 +288,45 @@
 //   ])
 // ); // Output: 2
 
-function uniquePathsWithObstacles(obstacleGrid) {
-  let m = obstacleGrid.length;
-  let n = obstacleGrid[0].length;
-  if (obstacleGrid[0][0] === 1) return 0;
+// function uniquePathsWithObstacles(obstacleGrid) {
+//   let m = obstacleGrid.length;
+//   let n = obstacleGrid[0].length;
+//   if (obstacleGrid[0][0] === 1) return 0;
 
-  obstacleGrid[0][0] = 1;
+//   obstacleGrid[0][0] = 1;
 
-  for (let i = 1; i < m; i++) {
-    obstacleGrid[i][0] =
-      obstacleGrid[i][0] === 0 && obstacleGrid[i - 1][0] === 1 ? 1 : 0;
-  }
+//   for (let i = 1; i < m; i++) {
+//     obstacleGrid[i][0] =
+//       obstacleGrid[i][0] === 0 && obstacleGrid[i - 1][0] === 1 ? 1 : 0;
+//   }
 
-  for (let j = 1; j < n; j++) {
-    obstacleGrid[0][j] =
-      obstacleGrid[0][j] === 0 && obstacleGrid[0][j - 1] === 1 ? 1 : 0;
-  }
-  console.log(obstacleGrid);
-  for (let i = 1; i < m; i++) {
-    for (let j = 1; j < n; j++) {
-      if (obstacleGrid[i][j] === 0) {
-        obstacleGrid[i][j] = obstacleGrid[i - 1][j] + obstacleGrid[i][j - 1];
-      } else {
-        obstacleGrid[i][j] = 0;
-      }
-    }
-  }
+//   for (let j = 1; j < n; j++) {
+//     obstacleGrid[0][j] =
+//       obstacleGrid[0][j] === 0 && obstacleGrid[0][j - 1] === 1 ? 1 : 0;
+//   }
+//   console.log(obstacleGrid);
+//   for (let i = 1; i < m; i++) {
+//     for (let j = 1; j < n; j++) {
+//       if (obstacleGrid[i][j] === 0) {
+//         obstacleGrid[i][j] = obstacleGrid[i - 1][j] + obstacleGrid[i][j - 1];
+//       } else {
+//         obstacleGrid[i][j] = 0;
+//       }
+//     }
+//   }
 
-  return obstacleGrid[m - 1][n - 1];
-}
+//   return obstacleGrid[m - 1][n - 1];
+// }
 
-console.log(
-  uniquePathsWithObstacles([
-    [0, 0, 0, 0, 0],
-    [0, 1, 0, 1, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-  ])
-);
+// console.log(
+//   uniquePathsWithObstacles([
+//     [0, 0, 0, 0, 0],
+//     [0, 1, 0, 1, 0],
+//     [0, 0, 0, 0, 0],
+//     [0, 0, 0, 0, 0],
+//     [0, 0, 0, 0, 0],
+//   ])
+// );
 
 // 이 문제는 주어진 수를 합이 주어진 수와 같게 만들 수 있는 덧셈 방법의 수를 찾는 것입니다.
 
@@ -349,30 +349,23 @@ console.log(
 // console.log(combinationSum4([1, 2, 3], 4)); // Output: 7
 
 function solution(coinTypes, m) {
-  let n = coinTypes.length;
-  let dp = Array(m + 1).fill(Infinity); // 큰 값으로 초기화된 dp 테이블 생성
-  dp[0] = 0; // dp[0]은 0으로 설정
+  let length = coinTypes.length;
 
-  // for (let i = 0; i < n; i++) {
-  //   // 각 동전에 대해서
-  //   for (let j = coinTypes[i]; j <= m; j++) {
-  //     // 해당 동전으로 만들 수 있는 모든 금액에 대해서
+  let arr = Array(m + 1).fill(Infinity);
+  arr[0] = 0;
 
-  //     dp[j] = Math.min(dp[j], dp[j - coinTypes[i]] + 1); // 해당 금액을 만드는 최소 동전 개수 갱신
-  //   }
-  // }
-
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < length; i++) {
+    // 각 동전에 대해서
     for (let j = coinTypes[i]; j <= m; j++) {
-      dp[j] = Math.min(dp[j], dp[j - coinTypes[i]] + 1);
+      // 해당 동전으로 만들 수 있는 모든 금액에 대해서
+      arr[j] = Math.min(arr[j], arr[j - coinTypes[i]] + 1);
     }
   }
 
-  // 만약 m을 만들 수 없는 경우 => 4원 동전과 2원 동전만 가지고 있을 때 1원을 만들 수는 없다
-  if (dp[m] === Infinity) {
+  if (arr[m] === Infinity) {
     return -1; // -1 반환
   } else {
-    return dp[m]; // 그렇지 않은 경우, m을 만드는 최소 동전 개수 반환
+    return arr[m]; // 그렇지 않은 경우, m을 만드는 최소 동전 개수 반환
   }
 }
 
